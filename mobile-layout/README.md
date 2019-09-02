@@ -31,7 +31,7 @@ yarn run lint
 
 ### [postcss-px2torem](https://github.com/cuth/postcss-pxtorem)
 
-postcss的plugins配置如下，这里的rootValue表示页面`37.5px===1rem===html的font-size`，这里测37.5的设置参考的[vant的rem适配](https://youzan.github.io/vant/#/zh-CN/quickstart#rem-gua-pei)
+postcss的plugins配置如下，这里的rootValue表示页面`37.5px===1rem===html的font-size`，这里37.5的设置参考[vant的rem适配](https://youzan.github.io/vant/#/zh-CN/quickstart#rem-gua-pei)
 
 样式中的`与字体相关的的尺寸`会被转换为以rem为单位的尺寸，可通过该插件配置可转换的样式名及转换精度等。
 
@@ -45,9 +45,13 @@ postcss的plugins配置如下，这里的rootValue表示页面`37.5px===1rem===h
 
 这个库主要做了下面这三件事
 
-- 设置html的font-size为`document.clientWidth/10`
+- 设置html的font-size为`document.documentElement.clientWidth/10`
 - 设置body的font-size为`DPR*12`
 - 判断是否支持1物理像素边框，支持则在html上加上类名`hairlines`
+
+支持转换的CSS样式有
+
+> propList: ['font', 'font-size', 'line-height', 'letter-spacing']
 
 其全部的源码如下：
 
