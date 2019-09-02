@@ -17,7 +17,7 @@
         <pre class="test">{{JSON.stringify(style1Converted, null, 2)}}</pre>
       </div>
       <h4>test5：测试转换外部样式</h4>
-      <i>支持转换的CSS样式：</i>
+      <i>默认转换的CSS样式如下，可以通过propList参数进配置</i>
       <blockquote>propList: ['font', 'font-size', 'line-height', 'letter-spacing']</blockquote>
       <div class="test5">
         <div>转换前</div>
