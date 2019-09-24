@@ -1,0 +1,111 @@
+{
+  "config": {
+    "title": "Algorithm",
+    "description": "My awesome app using docz",
+    "menu": [],
+    "version": "1.0.0",
+    "repository": false,
+    "native": false,
+    "codeSandbox": true,
+    "themeConfig": {
+      "mode": "light",
+      "base": "/algorithm"
+    },
+    "separator": "-",
+    "typescript": false,
+    "theme": "/Users/johniexu/Documents/github/demo/algorithm/node_modules/docz-theme-umi/es/index.js",
+    "plugins": [
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  },
+  "entries": [
+    {
+      "key": "src/array.mdx",
+      "value": {
+        "name": "数组方法",
+        "id": "57b3d6e717783569f830879e08e88d89",
+        "filepath": "src/array.mdx",
+        "link": "",
+        "slug": "src-array",
+        "route": "/src-array",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "数组方法",
+            "depth": 1,
+            "value": "数组方法"
+          },
+          {
+            "slug": "数据扁平化flatten",
+            "depth": 2,
+            "value": "数据扁平化flatten"
+          },
+          {
+            "slug": "实现如下",
+            "depth": 3,
+            "value": "实现如下"
+          },
+          {
+            "slug": "使用实例",
+            "depth": 3,
+            "value": "使用实例"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/utils.mdx",
+      "value": {
+        "name": "工具函数",
+        "id": "aeab2163d9ec0d04ac0a8e33a9810e45",
+        "filepath": "src/utils.mdx",
+        "link": "",
+        "slug": "src-utils",
+        "route": "/src-utils",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "工具函数",
+            "depth": 1,
+            "value": "工具函数"
+          },
+          {
+            "slug": "截流throttle",
+            "depth": 2,
+            "value": "截流throttle"
+          },
+          {
+            "slug": "实现如下",
+            "depth": 3,
+            "value": "实现如下"
+          },
+          {
+            "slug": "使用实例",
+            "depth": 3,
+            "value": "使用实例"
+          },
+          {
+            "slug": "防抖debounce",
+            "depth": 2,
+            "value": "防抖debounce"
+          },
+          {
+            "slug": "实现如下-1",
+            "depth": 3,
+            "value": "实现如下"
+          },
+          {
+            "slug": "使用实例-1",
+            "depth": 3,
+            "value": "使用实例"
+          }
+        ]
+      }
+    }
+  ],
+  "props": []
+}

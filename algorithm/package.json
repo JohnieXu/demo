@@ -1,0 +1,15 @@
+{
+  "name": "algorithm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "father build --esm --cjs --umd",
+    "doc:dev": "father doc dev",
+    "doc:build": "father doc build",
+    "test": "father test"
+  },
+  "devDependencies": {
+    "father": "^2.18.1"
+  }
+}

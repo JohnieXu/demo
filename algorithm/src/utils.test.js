@@ -1,0 +1,35 @@
+import { throttle, debounce } from './utils'
+
+jest.useFakeTimers()
+
+test('utils.throttle', () => {
+  const fn = jest.fn()
+  const timeout = throttle(fn, 1000)
+  timeout()
+  timeout()
+  timeout()
+  expect(fn).not.toBeCalled()
+  jest.runAllTimers()
+  expect(fn).toHaveBeenCalledTimes(1)
+  timeout()
+  timeout()
+  expect(fn).toHaveBeenCalledTimes(1)
+  jest.runAllTimers()
+  expect(fn).toHaveBeenCalledTimes(2)
+})
+
+test('utils.debounce', () => {
+  const fn = jest.fn()
+  const timeout = debounce(fn, 1000)
+  timeout()
+  timeout()
+  timeout()
+  expect(fn).not.toBeCalled()
+  jest.runAllTimers()
+  expect(fn).toHaveBeenCalledTimes(1)
+  timeout()
+  timeout()
+  expect(fn).toHaveBeenCalledTimes(1)
+  jest.runAllTimers()
+  expect(fn).toHaveBeenCalledTimes(2)
+})

@@ -1,0 +1,48 @@
+---
+name: 数组方法
+---
+
+import { Playground } from 'docz'
+import { flatten } from './array'
+
+# 数组方法
+
+## 数据扁平化flatten
+
+### 实现如下
+
+```js
+/**
+ * 扁平化数组
+ * @param {Array} arr 需要扁平化的数组
+ */
+export const flatten = (arr) => {
+  if (!Array.isArray(arr)) {
+    return handleArgError('argument `arr` must be an array')
+  }
+  const set = new Set()
+  const flat = (item) => {
+    if (typeof item === 'undefined') { return }
+    if (!Array.isArray(item)) {
+      set.add(item)
+    } else {
+      item.forEach(item => flat(item))
+    }
+  }
+  arr.forEach(item => flat(item))
+  return [...set]
+}
+```
+
+### 使用实例
+
+<Playground>
+  <pre>
+    [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]
+  </pre>
+  <button onClick={() => {
+    const arr1 = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]
+    const flattenedArr1 = flatten(arr1)
+    console.log(flattenedArr1)
+  }}>flatten</button>
+</Playground>
