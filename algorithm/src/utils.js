@@ -44,3 +44,17 @@ export const shallowClone = (obj) => {
 }
 
 export const deepClone = (obj) => {}
+
+export const delay = (time, isDecorator = false, fn, ...props) => {
+  if (typeof time !== 'number') {
+    handleArgError('argument time must be Number')
+  }
+  console.log(time, isDecorator, fn, [...props])
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+      fn.call(this)
+    }, time)
+  })
+  // return () => {}
+}

@@ -73,3 +73,25 @@ export const debounce = (fn, delay = 300) => {
 ## 深拷贝
 
 ## 数组排序
+
+## 延迟delay
+
+### 需要实现的调用方式
+```js
+// 1. 延时函数作为返回的函数的参数
+delay(2000)(function a() {
+  console.log('a')
+})
+
+// 2. Promise的then方法执行延时函数
+delay(2000).then(() => {
+  console.log('a')
+})
+
+// 3. 第三个及以后的参数作为延时函数的入参
+delay(2000, function a(props) {
+  console.log(props.id)
+}, { id: 123 })
+```
+
+### 使用实例

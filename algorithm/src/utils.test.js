@@ -1,4 +1,4 @@
-import { throttle, debounce } from './utils'
+import { throttle, debounce, delay } from './utils'
 
 jest.useFakeTimers()
 
@@ -32,4 +32,15 @@ test('utils.debounce', () => {
   expect(fn).toHaveBeenCalledTimes(1)
   jest.runAllTimers()
   expect(fn).toHaveBeenCalledTimes(2)
+})
+
+test('utils.delay', () => {
+  // const fn = jest.fn()
+  delay(200, function a() {})
+  delay(300, true)
+  delay(301)
+  delay(400, function b(){}, 1)
+  delay(500, function c(){}, 1, 2)
+  delay(600, function d(){}, 1, 2, 3)
+  delay(700, false, function e(){}, 1, 2, 3, 4)
 })
