@@ -12,3 +12,4 @@
 [webpack](./webpack)|测试一些webpack的自定义配置和插件loader等|无
 [nuxt-babel](./nuxt-babel)|测试nuxt自定义配置|无
 [algorithm](./algorithm)|手写一些基本算法|无
+[webpack-project-base](./webpack-project-base)|完全使用webpack配置的vue项目基础架子|无
