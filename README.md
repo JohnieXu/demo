@@ -1,10 +1,10 @@
 # demo
 
-> 包含一系列测试用的demo
+> 主要包含一系列测试用用于测试或者原理分析的 demo
 
-## 列表
+## 项目列表
 
-项目名|描述|备注
+项目|描述|备注
 :----|:-----:|------:
 [mobile-layout](./mobile-layout)|测试移动端自适应布局方案|无
 [quill-editor](./quill-editor)|测试Vue中使用富文本编辑器|包含多种多种编辑器
@@ -13,3 +13,4 @@
 [nuxt-babel](./nuxt-babel)|测试nuxt自定义配置|无
 [algorithm](./algorithm)|手写一些基本算法|无
 [webpack-project-base](./webpack-project-base)|完全使用webpack配置的vue项目基础架子|无
+[bundler-tools](./bundler-tools)|常用打包构建工具分析|无

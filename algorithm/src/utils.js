@@ -39,10 +39,12 @@ export const debounce = (fn, delay = 300) => {
   }
 }
 
+// 浅复制
 export const shallowClone = (obj) => {
   // number string boolean null undefined
 }
 
+// 深复制
 export const deepClone = (obj) => {}
 
 export const delay = (time, isDecorator = false, fn, ...props) => {
@@ -58,3 +60,6 @@ export const delay = (time, isDecorator = false, fn, ...props) => {
   })
   // return () => {}
 }
+
+// 倒计时
+export const countDown = () => {}
