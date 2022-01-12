@@ -1,0 +1,10 @@
+<!--pages/login2/login2.wxml-->
+<view>
+  <text>用户名</text>
+  <input value="{{name}}" bind:input="handleInputChange"></input>
+  <button bind:tap="handleSaveTap">保存</button>
+  <button bind:tap="handleClearInput">清除</button>
+  <view>
+    <text>日志总数：{{logLength}}</text>
+  </view>
+</view>

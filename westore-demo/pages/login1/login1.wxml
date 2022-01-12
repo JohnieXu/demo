@@ -1,0 +1,6 @@
+<!--pages/login1/login1.wxml-->
+<view>
+  <text>用户名</text>
+  <input value="{{name}}"></input>
+  <button bind:tap="handleClearInput">清除</button>
+</view>
