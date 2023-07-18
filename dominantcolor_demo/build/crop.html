@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>image_crop_demo</title>
+</head>
+<body>
+  <input type="file" id="fileInput" type="image/jpeg"></input>
+  <label for="input1">起始点X</label><input id="input1" type="number">
+  <label for="input2">起始点Y</label><input id="input2" type="number">
+  <label for="input3">宽Width</label><input id="input3" type="number">
+  <label for="input4">高Height</label><input id="input4" type="number">
+  <button onclick="startCrop()">截取</button>
+  <!-- <div id="color_list"></div>
+  <div id="color_block" style="width: 100%; height: 70vh;"></div> -->
+
+  <div id="preview"></div>
+
+  <script src="./jquery3.6.4.js"></script>
+  <script src="./wasm_exec.js"></script>
+  <script>
+    // TODO: 添加 wasm 加载中提示
+    if (!WebAssembly.instantiateStreaming) { // polyfill
+			WebAssembly.instantiateStreaming = async (resp, importObject) => {
+				const source = await (await resp).arrayBuffer();
+				return await WebAssembly.instantiate(source, importObject);
+			};
+		}
+    const go = new Go();
+    WebAssembly.instantiateStreaming(fetch("./dominant_color.wasm"), go.importObject).then((result) => {
+      go.run(result.instance);
+    });
+
+  </script>
+  <script>
+    let ab = null
+
+    function fileToArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (!file) { return }
+      const arrayBuffer = await fileToArrayBuffer(file);
+      ab = arrayBuffer
+    });
+    
+    // function appendColor2List(color) {
+    //   $('#color_list').append(`<div style="margin: 10px; display: inline-block;">
+    //       <div style="background: ${color}; width: 50px; height: 50px;"></div>
+    //       <p style="margin: 0; font-size: 12px;">${color}</p>
+    //     </div>`)
+    // }
+
+    // function showColor(color) {
+    //   $('#color_block').css('background', color)
+    // }
+
+      function previewBuffer(buffer, width, height) {
+
+        if (buffer instanceof ArrayBuffer) {
+          const blob = new Blob([buffer], { type: 'image/jpeg' })
+          const url = URL.createObjectURL(blob)
+          $('#preview').append(`
+            <div>
+              <p style="margin: 0;">${width}x${height}px</p>
+              <img src=${url} style="width: ${width}px; height: ${height};"></img>
+            </div>
+          `)
+        } else {
+          alert('截取失败')
+        }
+      }
+
+    async function startCrop() {
+      if (ab === null) {
+        alert('请先选择图片')
+        return
+      }
+      const startX = $('#input1').val()
+      const startY = $('#input2').val()
+      const width = $('#input3').val()
+      const height = $('#input4').val()
+      
+      if (
+        typeof startX === 'undefined'
+        || typeof startY === 'undefined'
+        || typeof width === 'undefined'
+        || typeof height === 'undefined'
+      ) {
+        alert('请填写尺寸')
+        return
+      }
+
+      // 开始计算图片色卡
+      // console.log(window.getDominantColor)
+      const buffer = window.imageCrop(ab, Number(startX), Number(startY), Number(width), Number(height))
+      console.log(buffer)
+
+      previewBuffer(buffer, width, height)
+
+      // appendColor2List(res)
+      // showColor(res)
+    }
+  </script>
+</body>
+</html>
