@@ -4,6 +4,14 @@
 
 ![img_01.jpg](assets/img_01.jpg)
 
+## start
+
+```bash
+./start.sh
+```
+
+这个命令会自动执行下面的 `build` 和 `run demo` 步骤
+
 ## build
 
 ```bash

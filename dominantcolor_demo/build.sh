@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # copy wasm.exec.js
 cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" ./build
 
