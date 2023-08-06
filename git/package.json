@@ -1,0 +1,11 @@
+{
+  "name": "gite",
+  "version": "1.0.0",
+  "main": "hash.js",
+  "author": "JohnieXu <281910378@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "node test.js",
+    "start": "node hash.js"
+  }
+}

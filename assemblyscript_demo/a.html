@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jCanvas</title>
+</head>
+<body>
+  <canvas id="canvas" width="500" height="500"></canvas>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.6.4/jquery.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jcanvas/21.0.1/jcanvas.js"></script>
+  <script>
+    const getCanvasEl = () => {
+      return $('#canvas')
+    }
+    const $canvas = getCanvasEl()
+    $canvas.addLayer({
+      type: 'rectangle',
+      fillStyle: '#c333',
+      name: 'layer1',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 100,
+    }).drawLayers()
+  </script>
+</body>
+</html>
