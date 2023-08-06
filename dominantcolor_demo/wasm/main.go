@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image/jpeg"
+	"reflect"
 	"syscall/js"
 
 	"github.com/johniexu/dominantcolor2"
@@ -75,8 +76,36 @@ func bytesToJSValue(data []byte) js.Value {
 	return arrayBuffer
 }
 
+/**
+*	测试 JS 传递不同数据类型到 Go
+* js调用： testValue('aa', 12, true, undefined, null, Symbol(), {}, () => {})
+* Go打印：string aa,number <number: 12>,boolean <boolean: true>,undefined <undefined>,null <null>,symbol <symbol>,object <object>,function <function>
+**/
+func testValue(this js.Value, args []js.Value) interface{} {
+	println("testValue start")
+	// string number boolean undefined null symbol object function
+	fmt.Printf("string %v,number %v,boolean %v,undefined %v,null %v,symbol %v,object %v,function %v \n", args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7])
+	arg0 := args[0].String()
+	print("arg0 = ")
+	print(arg0, "\n")
+	return nil
+}
+
+func testValueOne(this js.Value, args []js.Value) interface{} {
+	println(("testValueOne start"))
+	// println("args[0] value = ", args[0].String(), "type = ", reflect.TypeOf(args[0].String()).Name())
+	println("args[0] value = ", args[0].String(), "type = ", reflect.TypeOf(args[0]).Name(), "type(string) = ", reflect.TypeOf(args[0].String()).Name())
+	isFn := args[0].InstanceOf(js.Global().Get("Function"))
+	println("isFn ", isFn)
+	return nil
+}
+
 func main() {
 	js.Global().Set("getDominantColor", js.FuncOf(getDominantColor))
 	js.Global().Set("imageCrop", js.FuncOf(imageCrop))
+
+	// 测试 JS 与 Go 传递数据用
+	js.Global().Set("testValue", js.FuncOf(testValue))
+	js.Global().Set("testValueOne", js.FuncOf(testValueOne))
 	select {}
 }
