@@ -20,9 +20,40 @@ func getDominantColor(this js.Value, args []js.Value) interface{} {
 		println(err.Error())
 		return nil
 	}
-	color := dominantcolor2.Hex(dominantcolor2.Find(image))
+	color := dominantcolor2.Find(image)
+	colorStr := dominantcolor2.Hex(color)
 	println("success")
-	return color
+	return colorStr
+}
+
+func getColorPalette(this js.Value, args []js.Value) interface{} {
+	println("doing")
+	// 将ArrayBuffer转换为字节数组
+	byteArray := js.Global().Get("Uint8Array").New(args[0])
+	count := args[1].Int()
+	buffer := make([]byte, byteArray.Length())
+	js.CopyBytesToGo(buffer, byteArray)
+	image, err := ConvertBytesToImage(buffer)
+	if err != nil {
+		println(err.Error())
+		return nil
+	}
+	colors := dominantcolor2.FindN(image, count)
+	// 字符串数组方式返回
+	colorsArray := js.Global().Get("Array").New((len(colors)))
+
+	for i, color := range colors {
+		colorsArray.SetIndex(i, dominantcolor2.Hex(color))
+	}
+
+	// 字符串拼接方式返回
+	// colorStr := ""
+	// for _, color := range colors {
+	// 	colorStr += dominantcolor2.Hex(color) + ","
+	// }
+	// colorStr = colorStr[:len(colorStr)-1]
+	println("success")
+	return colorsArray
 }
 
 func imageCrop(this js.Value, args []js.Value) interface{} {
@@ -102,6 +133,7 @@ func testValueOne(this js.Value, args []js.Value) interface{} {
 
 func main() {
 	js.Global().Set("getDominantColor", js.FuncOf(getDominantColor))
+	js.Global().Set("getColorPalette", js.FuncOf(getColorPalette))
 	js.Global().Set("imageCrop", js.FuncOf(imageCrop))
 
 	// 测试 JS 与 Go 传递数据用

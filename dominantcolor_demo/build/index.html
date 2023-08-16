@@ -7,12 +7,19 @@
   <title>dominant_color_demo</title>
 </head>
 <body>
+  <!-- TODO: 添加说明：需要原生支持WebAssembly/async/await/fetch的浏览器 -->
   <input type="file" id="fileInput" type="image/jpeg"></input>
   <button onclick="calcColor()">重新计算</button>
+  <button onclick="calcColorPalette()">提取色板</button>
   <div id="color_list"></div>
   <div id="color_block" style="width: 100%; height: 70vh;"></div>
   <script src="./jquery3.6.4.js"></script>
   <script src="./wasm_exec.js"></script>
+  <script>
+    function toggleLoading(loading) {
+      // TODO: 添加加载中实现
+    }
+  </script>
   <script>
     // TODO: 添加 wasm 加载中提示
     if (!WebAssembly.instantiateStreaming) { // polyfill
@@ -23,7 +30,15 @@
 		}
     const go = new Go();
     WebAssembly.instantiateStreaming(fetch("./dominant_color.wasm"), go.importObject).then((result) => {
-      go.run(result.instance);
+      // go.run 相当于执行 Go 里面的入口函数 main，
+      // 执行完成后会在 window 上挂载方法：getDominantColor
+      return go.run(result.instance);
+    }).then(() => {
+      toggleLoading(false)
+    }).catch(e => {
+      console.log(e)
+      window.alert("出错了，请检查控制台")
+      toggleLoading(false)
     });
 
   </script>
@@ -61,6 +76,7 @@
       $('#color_block').css('background', color)
     }
 
+    // 提取主色调
     async function calcColor() {
       if (ab === null) {
         alert('请先选择图片')
@@ -72,6 +88,28 @@
       console.log(color)
       appendColor2List(color)
       showColor(color)
+    }
+
+    // 提取色板
+    async function calcColorPalette(count = 4) {
+      if (ab === null) {
+        alert('请先选择图片')
+        return
+      }
+      const colors = window.getColorPalette(ab, count)
+      console.log(colors)
+      if (colors) {
+        if (typeof colors === 'string') {
+          colors.split(',').forEach(function (color) {
+            appendColor2List(color)
+          })
+        }
+        if (Array.isArray(colors)) {
+          colors.forEach(function (color) {
+            appendColor2List(color)
+          })
+        }
+      }
     }
   </script>
 </body>
