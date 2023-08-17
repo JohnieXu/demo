@@ -1,5 +1,7 @@
 # dominant_color_demo
 
+在线示例：https://dominant-color.surge.sh/
+
 ## 功能 1
 
 使用 Go 编写 wasm 模块，实现获取 JS 环境选择的图片的主色调功能；使用 k-means 算法在 Go 环境运行计算得到主色调值；k-means 算法支持获取图片多个主色调值，因此可以扩充为获取图片色卡功能。
