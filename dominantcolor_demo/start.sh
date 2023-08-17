@@ -6,6 +6,8 @@
 
 # 检查 build.sh 执行结果
 if [ $? -eq 0 ]; then
+  open http://localhost:8082
+
   # 执行 server.sh 脚本
   ./server.sh
 

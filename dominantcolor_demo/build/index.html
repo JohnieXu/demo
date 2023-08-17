@@ -5,17 +5,55 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>dominant_color_demo</title>
+  <style>
+    hr {
+      margin: 20px 0;
+    }
+    .box {
+      position: relative;
+    }
+    .picture_preview {
+      position: absolute;
+      top: 50px;
+      right: 20px;
+    }
+    .picture_preview > img {
+      margin: 10px 0;
+      width: 40vw;
+      height: 40vw;
+      object-fit: contain;
+    }
+    #color_block {
+      width: 40vw;
+      height: 40vw;
+    }
+  </style>
 </head>
 <body>
   <!-- TODO: 添加说明：需要原生支持WebAssembly/async/await/fetch的浏览器 -->
-  <input type="file" id="fileInput" type="image/jpeg"></input>
-  <button onclick="calcColor()">重新计算</button>
-  <button onclick="calcColorPalette()">提取色板</button>
-  <div id="color_list"></div>
-  <div id="color_block" style="width: 100%; height: 70vh;"></div>
+  <div class="box">
+    <input type="file" id="fileInput" type="image/jpeg"></input>
+    <div class="picture_preview picture_preview_1"></div>
+  
+    <button onclick="calcColor()">提取主色调</button>
+    <div id="color_list"></div>
+    <div id="color_block"></div>
+  </div>
+  <hr />
+  <div class="box">
+    <div class="picture_preview picture_preview_2"></div>
+
+    <input id="input_count" type="number" value="4" min="1" max="100"></input>
+    <button onclick="calcColorPalette()">提取色板</button>
+    <div id="color_list_2"></div>
+    <!-- <div id="color_block_2"></div> -->
+  </div>
+
   <script src="./jquery3.6.4.js"></script>
   <script src="./wasm_exec.js"></script>
+  <script src="./xt-core.min.js"></script>
   <script>
+    console.log(XtCore)
     function toggleLoading(loading) {
       // TODO: 添加加载中实现
     }
@@ -62,7 +100,8 @@
       if (!file) { return }
       const arrayBuffer = await fileToArrayBuffer(file);
       ab = arrayBuffer
-      calcColor() // 读取文件完成自动计算
+      previewPicture(file)
+      // calcColor() // 读取文件完成自动计算
     });
     
     function appendColor2List(color) {
@@ -72,8 +111,25 @@
         </div>`)
     }
 
+    function appendColor2List2(color) {
+      $('#color_list_2').append(`<div style="margin: 10px; display: inline-block;">
+          <div style="background: ${color}; width: 50px; height: 50px;"></div>
+          <p style="margin: 0; font-size: 12px;">${color}</p>
+        </div>`)
+    }
+
     function showColor(color) {
       $('#color_block').css('background', color)
+    }
+
+    function showColor2(color) {
+      $('#color_block_2').css('background', color)
+    }
+
+    function previewPicture(file) {
+      if (!file) { retrun }
+      const pictureUrl = XtCore.convertBlobToUrl(file).url
+      $('.picture_preview').html(`<img src="${pictureUrl}"/>`)
     }
 
     // 提取主色调
@@ -96,17 +152,18 @@
         alert('请先选择图片')
         return
       }
-      const colors = window.getColorPalette(ab, count)
+      const _count = Number.isNaN(Number($('#input_count').val())) ? count : Number($('#input_count').val())
+      const colors = window.getColorPalette(ab, _count)
       console.log(colors)
       if (colors) {
         if (typeof colors === 'string') {
           colors.split(',').forEach(function (color) {
-            appendColor2List(color)
+            appendColor2List2(color)
           })
         }
         if (Array.isArray(colors)) {
           colors.forEach(function (color) {
-            appendColor2List(color)
+            appendColor2List2(color)
           })
         }
       }
