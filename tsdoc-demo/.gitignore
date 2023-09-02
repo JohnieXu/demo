@@ -1,0 +1,6 @@
+node_modules
+temp
+dist
+docs/.vuepress/dist
+docs/api
+tsdoc-metadata.json

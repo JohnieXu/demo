@@ -17,3 +17,4 @@
 [grpc-demo](./grpc-demo)|go使用gRPC的demo|无
 [westore-demo](./westore-demo)|小程序架构框架[westore](https://github.com/Tencent/westore)使用的demo|无
 [dominantcolor_demo](./dominantcolor_demo)|Go实现获取图片主色调的 Wasm 模块|可运行
+[tsdoc-demo](./tsdoc-demo)|TSDoc注释生成项目文档|可运行
