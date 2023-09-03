@@ -207,7 +207,7 @@
      * DEFAULT VALUE: "<projectFolder>/temp/<unscopedPackageName>.api.json"
      */
     // "apiJsonFilePath": "<projectFolder>/temp/<unscopedPackageName>.api.json",
-    "apiJsonFilePath": "<projectFolder>/temp/<unscopedPackageName>.api.json",
+    "apiJsonFilePath": "<projectFolder>/temp/<unscopedPackageName>.api.json"
 
     /**
      * Whether "forgotten exports" should be included in the doc model file. Forgotten exports are declarations
