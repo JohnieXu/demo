@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "api-extractor": "api-extractor run",
     "api-documenter": "api-documenter markdown -i temp -o docs/api",
-    "docs:prepare": "npm run api-extractor && npm run api-documenter",
+    "docs:prepare": "npm run build && npm run api-extractor && npm run api-documenter",
     "docs:dev": "npm run docs:prepare && vuepress dev docs",
     "docs:build": "npm run docs:prepare && vuepress build docs"
   },
@@ -19,6 +19,8 @@
     "@microsoft/api-extractor": "^7.36.4",
     "@types/node": "^20.5.8",
     "tsdoc": "^0.0.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vuepress": "^1.9.10",
+    "vuepress-theme-antdocs": "^1.4.6"
   }
 }
