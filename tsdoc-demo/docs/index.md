@@ -1,7 +1,7 @@
 ---
 home: true
 heroText: TSDOC-DEMO
-heroImage: /hero1.jpg
+heroImage: /hero.jpg
 actionText: 快速上手->
 actionLink: /guide/
 footer: MIT Licensed | Copyright © 2023-present JohnieXu
