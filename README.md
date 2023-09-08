@@ -1,6 +1,6 @@
 <div align="center">
-<img src="./assets/demo.png" style="max-width: 200px; margin: auto;">
-<p style="color: #666; margin: 0 auto 40px;">包含一系列用于测试或者原理分析的 demo</p>
+<img src="./assets/demo.png" style="max-width: 160px; margin: auto;">
+<p style="color: #666; margin: 0 auto 40px;">包含一系列用于测试、原理分析、方案验证的 demo，持续更新</p>
 </div>
 
 ## 项目列表
