@@ -1,6 +1,6 @@
 # 使用指南
 
-::: warning
+::: warning 提示
 这是一个 TSDoc + Vuepress 自动生成项目文档的示例项目
 :::
 
@@ -16,7 +16,7 @@ yarn docs:dev // 或者 npm run docs:dev
 
 - `docs/api/` 下面所有的文件都是由 TSDoc 生成的 API 文档
 
-  ::: warning
+  ::: warning 提示
   1. 请不要手动修改此目录下任何文件
   2. 此目录下的文件是否由 git 管理可自行选择
   :::
@@ -29,6 +29,6 @@ yarn docs:dev // 或者 npm run docs:dev
 
 - `guide` 目录为手动编写
   
-  ::: warning
+  ::: warning 提示
   此目录下文件可自由修改，可参考 [Vuepress](https://vuepress.vuejs.org/zh/) 文档
   :::
