@@ -1,0 +1,14 @@
+[Unit]
+Description=Beego-demo service
+After=network.target
+
+[Service]
+ExecStart=/var/beego-demo/beego-demo
+LimitNOFILE=65535
+Restart=on-failure
+#User=bdemo
+#Group=bdemo
+
+[Install]
+WantedBy=multi-user.target
+
