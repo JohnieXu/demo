@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./build/wasm_exec.js"></script>
+  <script>
+    if (!WebAssembly.instantiateStreaming) { // polyfill
+			WebAssembly.instantiateStreaming = async (resp, importObject) => {
+				const source = await (await resp).arrayBuffer();
+				return await WebAssembly.instantiate(source, importObject);
+			};
+		}
+    const go = new Go();
+    WebAssembly.instantiateStreaming(fetch("./build/release.wasm"), go.importObject).then((result) => {
+      // go.run 相当于执行 Go 里面的入口函数 main，
+      // 执行完成后会在 window 上挂载方法：hello
+      go.run(result.instance);
+
+      // 执行 wasm 中挂载的 hello 方法
+      document.body.innerHTML = window.hello('World');
+    })
+  </script>
+</head>
+<body></body>
+</html>
