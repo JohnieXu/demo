@@ -1,7 +1,13 @@
+// 基于 Gorm 的 MySQL 数据库基本 CRUD 实现
 package main
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -16,7 +22,45 @@ func openDb() *gorm.DB {
 	if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 		log.Fatal(err)
 	}
+	// TODO: 使用现有 mysql 连接创建
 	return db
+}
+
+func struct2byte(data interface{}) (res []byte, err error) {
+	return json.Marshal(data)
+}
+
+type AppList []AppChannel
+
+type BaseResponse struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
+type ResponseWriteWrapper struct {
+	http.ResponseWriter
+}
+
+func (w ResponseWriteWrapper) WriteSuccess(data interface{}) {
+	w.ResponseWriter.Header().Add("Content-Type", "application/json")
+	res, _ := struct2byte(BaseResponse{
+		Code: 0,
+		Msg:  "ok",
+		Data: data,
+	})
+	w.ResponseWriter.Write(res)
+}
+
+func (w ResponseWriteWrapper) WriteError(err error) {
+	w.ResponseWriter.Header().Add("Content-Type", "application/json")
+	log.Println(err)
+	res, _ := struct2byte(BaseResponse{
+		Code: 1,
+		Msg:  err.Error(),
+		Data: nil,
+	})
+	w.ResponseWriter.Write(res)
 }
 
 type AppChannel struct {
@@ -30,7 +74,7 @@ type AppChannel struct {
 	CreatedAt time.Time `json:"createTime" gorm:"column:create_time"`
 	UpdatedAt time.Time `json:"updateTime" gorm:"column:update_time"`
 	DelFlag   string    `json:"delFlag"`
-	Remarks   string    `json:"remarks,omit"`
+	Remarks   string    `json:"remarks"`
 	// DeletedAt gorm.DeletedAt `json:"omit" gorm:"index"`
 	// Name string `json:"ommit"`
 }
@@ -40,19 +84,266 @@ func (AppChannel) TableName() string {
 }
 
 func httpServe(db *gorm.DB) {
-	appChannel := AppChannel{
-		MerNo:   "test001",
-		AppId:   "test001001",
-		AppName: "测试001",
-		DelFlag: "0",
-	}
 
-	result := db.Create(&appChannel)
-	log.Printf("%d %v", appChannel.ID, result)
+	// 列表
+	http.HandleFunc("/app_channel/list", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+		result := &AppList{}
+		// TODO: 根据 del_flag 过滤
+		// 查询所有记录
+		db.Find(result)
+		rw.WriteSuccess(result)
+	})
+
+	// 新增
+	http.HandleFunc("/app_channel/save", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		var appChannel AppChannel
+
+		json.Unmarshal(body, &appChannel)
+
+		appChannel.DelFlag = "0"
+
+		res := db.Create(appChannel)
+
+		// TODO: 如何判断新增成功
+		// FIXME: 报错
+
+		if res.Error != nil {
+			rw.WriteError(res.Error)
+			return
+		}
+
+		if res.RowsAffected != 1 {
+			rw.WriteError(errors.New("error occurred"))
+			return
+		}
+
+		rw.WriteSuccess(appChannel)
+	})
+
+	// 物理删除
+	http.HandleFunc("/app_channel/remove", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		type RequestParam struct {
+			Id uint `json:"id"`
+		}
+
+		var requestParam = RequestParam{}
+		if err := json.Unmarshal(body, &requestParam); err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		var appChannel = AppChannel{
+			ID: requestParam.Id,
+		}
+
+		// 根据 appChannel 的 ID 进行删除
+		res := db.Delete(&appChannel)
+
+		// 或者，根据主键删除
+		// db.Delete(&appChannel, requestParam.Id)
+
+		// TODO: 如何判断删除成功
+
+		if res.Error != nil {
+			rw.WriteError(res.Error)
+			return
+		}
+
+		rw.WriteSuccess(nil)
+
+	})
+
+	// 逻辑删除
+	http.HandleFunc("/app_channel/delete", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		type RequestParam struct {
+			Id uint `json:"id"`
+		}
+
+		var requestParam = RequestParam{}
+		err = json.Unmarshal(body, &requestParam)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		var appChannel = AppChannel{ID: requestParam.Id}
+
+		// 更新 ID 登录 appChannel.ID 记录的 del_flag 字段值为 1
+		res := db.Model(&appChannel).Update("del_flag", "1")
+
+		// TODO: 如何判断标记删除成功
+		if res.Error != nil {
+			rw.WriteError(res.Error)
+			return
+		}
+
+		rw.WriteSuccess(nil)
+
+	})
+
+	// 更新
+	http.HandleFunc("/app_channel/update", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		type RequestParam struct {
+			Id      int    `json:"id"`
+			MerNo   string `json:"merNo"`
+			AppId   string `json:"appId"`
+			AppName string `json:"appName"`
+			Remarks string `json:"remarks"`
+		}
+
+		requestParam := RequestParam{}
+
+		err = json.Unmarshal(body, &requestParam)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		var appChannel = AppChannel{
+			ID:      uint(requestParam.Id),
+			MerNo:   requestParam.MerNo,
+			AppId:   requestParam.AppId,
+			AppName: requestParam.AppName,
+			Remarks: requestParam.Remarks,
+		}
+
+		// 更新 Id 为 appChannel.ID 的记录的 ("mer_no", "app_id", "app_name", "remarks") 字段值
+		res := db.Model(&appChannel).Select("mer_no", "app_id", "app_name", "remarks").Updates(&appChannel)
+
+		// TODO: 如何判断更新成功
+
+		if res.Error != nil {
+			rw.WriteError(res.Error)
+			return
+		}
+
+		rw.WriteSuccess(nil)
+	})
+
+	// 详情
+	http.HandleFunc("/app_channel/detail", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		type RequestParam struct {
+			Id int `json:"id"`
+		}
+
+		requestParam := RequestParam{}
+
+		err = json.Unmarshal(body, &requestParam)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		var appChannel = AppChannel{
+			ID: uint(requestParam.Id),
+		}
+
+		res := db.First(&appChannel)
+
+		if res.Error != nil {
+			rw.WriteError(res.Error)
+			return
+		}
+
+		// TODO: 返回值隐藏 del_flag 字段
+		// TODO:: del_flag 为 1 的记录不应该被返回
+		rw.WriteSuccess(appChannel)
+
+	})
+
+	// 批量逻辑删除（事务）
+	http.HandleFunc("/app_channel/delete_batch", func(w http.ResponseWriter, r *http.Request) {
+		rw := ResponseWriteWrapper{ResponseWriter: w}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		type RequestParam struct {
+			Ids []uint `json:"ids"`
+		}
+		requestParam := RequestParam{}
+		err = json.Unmarshal(body, &requestParam)
+		if err != nil {
+			rw.WriteError(err)
+			return
+		}
+
+		if len(requestParam.Ids) == 0 {
+			rw.WriteError(errors.New("参数错误"))
+			return
+		}
+
+		db.Transaction(func(tx *gorm.DB) error {
+			var err error
+			for _, id := range requestParam.Ids {
+				var appChannel = AppChannel{ID: id, DelFlag: "1"}
+				// 更新 Id 为 appChannel.ID 的记录的字段 ("del_flag") 值为 1
+				res := tx.Model(&appChannel).Select("del_flag").Updates(appChannel)
+				if res.Error != nil {
+					// 任一记录操作失败会终止循环，返回 err 来回滚事物
+					err = res.Error
+					break
+				}
+			}
+			// 返回错误让事务自动回滚
+			return err
+		})
+
+		rw.WriteSuccess(nil)
+
+	})
+
+	port := ":3031"
+	fmt.Printf("server is running at http://localhost%s\n", port)
+	http.ListenAndServe(port, nil)
 }
 
 func main() {
 	db := openDb()
 	httpServe(db)
-
 }

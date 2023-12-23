@@ -1,3 +1,4 @@
+// 基于原生 SQL 的 MySQL数据库基本 CRUD 实现
 package main
 
 import (
