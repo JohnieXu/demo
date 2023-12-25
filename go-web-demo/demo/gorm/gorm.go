@@ -2,6 +2,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -19,18 +20,27 @@ func openDb() *gorm.DB {
 
 	var db *gorm.DB
 	var err error
-	if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
+	var sqlDb *sql.DB
+	// if db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// 使用现有 mysql 连接来初始化
+	sqlDb, err = sql.Open("mysql", dsn)
+	if err != nil {
 		log.Fatal(err)
 	}
-	// TODO: 使用现有 mysql 连接创建
+	if db, err = gorm.Open(mysql.New(mysql.Config{
+		Conn: sqlDb,
+	})); err != nil {
+		log.Fatal(err)
+	}
 	return db
 }
 
 func struct2byte(data interface{}) (res []byte, err error) {
 	return json.Marshal(data)
 }
-
-type AppList []AppChannel
 
 type BaseResponse struct {
 	Code int         `json:"code"`
@@ -73,11 +83,13 @@ type AppChannel struct {
 	Reserved3 string    `json:"reserved3"`
 	CreatedAt time.Time `json:"createTime" gorm:"column:create_time"`
 	UpdatedAt time.Time `json:"updateTime" gorm:"column:update_time"`
-	DelFlag   string    `json:"delFlag"`
+	DelFlag   string    `json:"-"`
 	Remarks   string    `json:"remarks"`
 	// DeletedAt gorm.DeletedAt `json:"omit" gorm:"index"`
 	// Name string `json:"ommit"`
 }
+
+type AppList []AppChannel
 
 func (AppChannel) TableName() string {
 	return "c2b_app_channel"
@@ -89,9 +101,9 @@ func httpServe(db *gorm.DB) {
 	http.HandleFunc("/app_channel/list", func(w http.ResponseWriter, r *http.Request) {
 		rw := ResponseWriteWrapper{ResponseWriter: w}
 		result := &AppList{}
-		// TODO: 根据 del_flag 过滤
+		// Find 后面为内联过滤条件，不传递则表示查询所有
 		// 查询所有记录
-		db.Find(result)
+		db.Find(result, "del_flag != ?", "1")
 		rw.WriteSuccess(result)
 	})
 
@@ -112,10 +124,8 @@ func httpServe(db *gorm.DB) {
 
 		appChannel.DelFlag = "0"
 
-		res := db.Create(appChannel)
-
-		// TODO: 如何判断新增成功
-		// FIXME: 报错
+		// 注意: 必须传递指针，不然会报错
+		res := db.Create(&appChannel)
 
 		if res.Error != nil {
 			rw.WriteError(res.Error)
@@ -123,7 +133,7 @@ func httpServe(db *gorm.DB) {
 		}
 
 		if res.RowsAffected != 1 {
-			rw.WriteError(errors.New("error occurred"))
+			rw.WriteError(errors.New("新增失败"))
 			return
 		}
 
@@ -160,10 +170,13 @@ func httpServe(db *gorm.DB) {
 		// 或者，根据主键删除
 		// db.Delete(&appChannel, requestParam.Id)
 
-		// TODO: 如何判断删除成功
-
 		if res.Error != nil {
 			rw.WriteError(res.Error)
+			return
+		}
+
+		if res.RowsAffected != 1 {
+			rw.WriteError(errors.New("删除失败"))
 			return
 		}
 
@@ -197,9 +210,13 @@ func httpServe(db *gorm.DB) {
 		// 更新 ID 登录 appChannel.ID 记录的 del_flag 字段值为 1
 		res := db.Model(&appChannel).Update("del_flag", "1")
 
-		// TODO: 如何判断标记删除成功
 		if res.Error != nil {
 			rw.WriteError(res.Error)
+			return
+		}
+
+		if res.RowsAffected != 1 {
+			rw.WriteError(errors.New("标记删除失败：记录不存在或已被标记删除"))
 			return
 		}
 
@@ -244,10 +261,13 @@ func httpServe(db *gorm.DB) {
 		// 更新 Id 为 appChannel.ID 的记录的 ("mer_no", "app_id", "app_name", "remarks") 字段值
 		res := db.Model(&appChannel).Select("mer_no", "app_id", "app_name", "remarks").Updates(&appChannel)
 
-		// TODO: 如何判断更新成功
-
 		if res.Error != nil {
 			rw.WriteError(res.Error)
+			return
+		}
+
+		if res.RowsAffected != 1 {
+			rw.WriteError(errors.New("更新失败"))
 			return
 		}
 
@@ -280,15 +300,14 @@ func httpServe(db *gorm.DB) {
 			ID: uint(requestParam.Id),
 		}
 
-		res := db.First(&appChannel)
+		// First 后面为内联过滤条件
+		res := db.First(&appChannel, "del_flag != 1")
 
 		if res.Error != nil {
 			rw.WriteError(res.Error)
 			return
 		}
 
-		// TODO: 返回值隐藏 del_flag 字段
-		// TODO:: del_flag 为 1 的记录不应该被返回
 		rw.WriteSuccess(appChannel)
 
 	})
