@@ -104,6 +104,16 @@ func httpServe(db *gorm.DB) {
 		// Find 后面为内联过滤条件，不传递则表示查询所有
 		// 查询所有记录
 		db.Find(result, "del_flag != ?", "1")
+
+		// stmt := db.Session(&gorm.Session{DryRun: true}).Find(result, "del_flag != ?", "1").Statement
+		// println(stmt.SQL.String())
+		// println(stmt.Vars)
+
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Find(result, "del_flag != ?", "1")
+		})
+		println(sql)
+
 		rw.WriteSuccess(result)
 	})
 
@@ -126,6 +136,11 @@ func httpServe(db *gorm.DB) {
 
 		// 注意: 必须传递指针，不然会报错
 		res := db.Create(&appChannel)
+
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Create(&appChannel)
+		})
+		println(sql)
 
 		if res.Error != nil {
 			rw.WriteError(res.Error)
@@ -166,6 +181,11 @@ func httpServe(db *gorm.DB) {
 
 		// 根据 appChannel 的 ID 进行删除
 		res := db.Delete(&appChannel)
+
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Delete(&appChannel)
+		})
+		println(sql)
 
 		// 或者，根据主键删除
 		// db.Delete(&appChannel, requestParam.Id)
@@ -209,6 +229,11 @@ func httpServe(db *gorm.DB) {
 
 		// 更新 ID 登录 appChannel.ID 记录的 del_flag 字段值为 1
 		res := db.Model(&appChannel).Update("del_flag", "1")
+
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Model(&appChannel).Update("del_flag", "1")
+		})
+		println(sql)
 
 		if res.Error != nil {
 			rw.WriteError(res.Error)
@@ -261,6 +286,11 @@ func httpServe(db *gorm.DB) {
 		// 更新 Id 为 appChannel.ID 的记录的 ("mer_no", "app_id", "app_name", "remarks") 字段值
 		res := db.Model(&appChannel).Select("mer_no", "app_id", "app_name", "remarks").Updates(&appChannel)
 
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Model(&appChannel).Select("mer_no", "app_id", "app_name", "remarks").Updates(&appChannel)
+		})
+		println(sql)
+
 		if res.Error != nil {
 			rw.WriteError(res.Error)
 			return
@@ -301,7 +331,12 @@ func httpServe(db *gorm.DB) {
 		}
 
 		// First 后面为内联过滤条件
-		res := db.First(&appChannel, "del_flag != 1")
+		res := db.First(&appChannel, "del_flag != ?", "1")
+
+		sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.First(&appChannel, "del_flag != ?", "1")
+		})
+		println(sql)
 
 		if res.Error != nil {
 			rw.WriteError(res.Error)
@@ -353,6 +388,7 @@ func httpServe(db *gorm.DB) {
 			return err
 		})
 
+		// TODO: 怎么打印 SQL 语句
 		rw.WriteSuccess(nil)
 
 	})
