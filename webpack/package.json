@@ -5,6 +5,7 @@
   "author": "JohnieXu <281910378@qq.com>",
   "license": "MIT",
   "scripts": {
+    "start": "webpack",
     "build": "webpack --config webpack.config.prod.js",
     "build:watch": "webpack --config webpack.config.prod.js --watch",
     "dev": "webpack-dev-server --config webpack.config.dev.js --open"
@@ -38,5 +39,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "vue": "^2.6.11"
-  }
+  },
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
 }
