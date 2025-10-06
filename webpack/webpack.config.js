@@ -4,8 +4,8 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    index: './src/index.js',
-    search: './src/search.js'
+    index: './src/base/index.js',
+    search: './src/base/search.js'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -57,5 +57,14 @@ module.exports = {
   devServer: {
     contentBase: './dist',
     hot: true
+  },
+  resolve: {
+    alias: {
+      core: path.resolve(__dirname, "src/core")
+    }
+  },
+  optimization: {
+    // https://webpack.js.org/plugins/split-chunks-plugin/
+    // splitChunks: 
   }
 }

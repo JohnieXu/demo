@@ -1,0 +1,8 @@
+{
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "paths": {
+      "core/*": ["./src/core/*"]
+    }
+  }
+}
