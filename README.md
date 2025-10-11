@@ -20,3 +20,4 @@
 [dominantcolor_demo](./dominantcolor_demo)|Go实现获取图片主色调的 Wasm 模块|无
 [tsdoc-demo](./tsdoc-demo)|TSDoc注释生成项目文档|无
 [go-web-demo](./go-web-demo/)|go开发web项目的demo|无
+[tsconfig-paths](./tsconfig-paths/)|测试tsconfig-paths模块|无
