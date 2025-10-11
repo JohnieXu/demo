@@ -8,17 +8,23 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node pages/home.js",
-    "start-with-paths": "node -r tsconfig-paths/register pages/home.js"
+    "start-with-paths": "node -r tsconfig-paths/register pages/home.js",
+    "start-with-alias": "node -r module-alias/register pages/home.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
+    "module-alias": "^2.2.3",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@types/node": "^24.7.1"
+  },
+  "_moduleAliases": {
+    "@@root"      : ".",
+    "@@utils"  : "utils"
   }
 }

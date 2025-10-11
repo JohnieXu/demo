@@ -7,7 +7,24 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "pages/home.js",
+      "name": "pages/home.js with alias",
+      "skipFiles": [
+        // "<node_internals>/**"
+      ],
+      "runtimeArgs": [
+        "-r",
+        "module-alias/register"
+      ],
+      "program": "${workspaceFolder}/pages/home.js",
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ],
+      "stopOnEntry": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "pages/home.js with paths",
       "skipFiles": [
         // "<node_internals>/**"
       ],
