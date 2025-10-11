@@ -9,3 +9,7 @@ https://github.com/jonaskello/tsconfig-paths/issues/276
 - https://stackoverflow.com/questions/58809944/cannot-find-module-typescript-path-alias-error
 - https://www.typescriptlang.org/tsconfig/#paths
 - https://www.npmjs.com/package/tsconfig-paths
+- https://github.com/ilearnio/module-alias/issues/113
+- https://nodejs.org/api/packages.html#packages_imports
+- https://github.com/nestjs/nest-cli/issues/2858 (not support esm)
+- https://github.com/justkey007/tsc-alias (another solution)
