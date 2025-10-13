@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+  },
+  "tsc-alias": {
+    "verbose": true,
+    "debug": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "verbatimModuleSyntax": false,
+    "outDir": "./temp-esm"
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["temp-esm/**/*"]
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+  },
+  "tsc-alias": {
+    "verbose": true,
+    "debug": true
+  }
+}

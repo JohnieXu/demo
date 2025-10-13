@@ -1,3 +1,33 @@
+## run
+
+- build project
+
+```bash
+pnpm build
+```
+
+- run project without an alias config
+
+```bash
+pnpm start
+```
+
+- run project with tsconfig-paths config
+
+```bash
+pnpm start-with-paths
+```
+
+- run project with module-alias config
+
+```bash
+pnpm start-with-alias
+```
+
+- result
+
+![](result.png)
+
 ## issue
 
 https://github.com/jonaskello/tsconfig-paths/issues/276
