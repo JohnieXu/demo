@@ -1,0 +1,19 @@
+{
+  "name": "tsc-alias-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc-alias -p tsconfig.json --debug",
+    "start": "node pages/home.js && node pages/order.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "tsc-alias": "^1.8.16"
+  }
+}
