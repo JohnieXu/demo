@@ -37,6 +37,19 @@
         "${workspaceFolder}/**/*.js"
       ],
       "stopOnEntry": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "a.js",
+      "skipFiles": [
+        // "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/a.js",
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ],
+      "stopOnEntry": true
     }
   ]
 }
