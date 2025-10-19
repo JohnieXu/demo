@@ -21,4 +21,4 @@
 [tsdoc-demo](./tsdoc-demo)|TSDoc注释生成项目文档|无
 [go-web-demo](./go-web-demo/)|go开发web项目的demo|无
 [tsconfig-paths](./tsconfig-paths/)|测试tsconfig-paths模块|无
-[lit-demo](./lit-demo/)|测试lit开发组件|[lit](https://lit.dev/ [参考这个组件库](https://github.com/adobe/spectrum-web-components))
+[lit-demo](./lit-demo/)|测试lit开发组件|[lit](https://lit.dev/) [参考这个组件库](https://github.com/adobe/spectrum-web-components)
