@@ -9,6 +9,7 @@ export default class MyExample extends LitElement {
     return html`
       <div>
         <x-accordion>
+          <p>single</p>
           <x-accordion-item label="Option 1" @toggle=${(e: CustomEvent) =>
             console.log(e)
           }>
@@ -20,8 +21,21 @@ export default class MyExample extends LitElement {
           <x-accordion-item label="Option 3" disabled>
             Hello World!
           </x-accordion-item>
-          <p style="color: red;">hello shl</p>
-          <p style="color: red;">hello shl 2</p>
+        </x-accordion>
+        <x-accordion multiple>
+          <p>multiple</p>
+          <x-accordion-item label="Option 1" @toggle=${(e: CustomEvent) =>
+            console.log(e)
+          }>
+            My World!
+          </x-accordion-item>
+          <x-accordion-item label="Option 2">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+            voluptatum.
+          </x-accordion-item>
+          <x-accordion-item label="Option 3">
+            Hello World!
+          </x-accordion-item>
         </x-accordion>
       </div>
     `;

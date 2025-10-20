@@ -1,11 +1,12 @@
 ## feature
 
-- [ ] disabled
-- [ ] multiple open
-- [ ] single open
-- [ ] content slot
+- [x] disabled
+- [x] multiple open
+- [x] single open
+- [x] content slot
 - [ ] header slot
 - [ ] icon & animation
+- [ ] icon slot
 - [ ] style: line between each child items
 
 ## implementation
@@ -28,4 +29,7 @@ how to implement only one item open at initial state?
 ### style
 
 line between each child items?
-  `Accordion` controls
+  `AccordionItem` add `:host`, use `:host(:not(:first-child))` to set border-top to transparent
+
+### icon & animation
+

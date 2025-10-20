@@ -1,12 +1,13 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import "../Icon/Icon.js";
 
 @customElement('x-accordion-item')
 export default class AccordionItem extends LitElement {
 
   @property({ type: Boolean })
-  open = true;
+  open = false;
 
   @property({ type: Boolean })
   disabled = false;
@@ -16,32 +17,53 @@ export default class AccordionItem extends LitElement {
 
   static styles = [
     css`
-    .disabled {
+      :host {
+        display: block;
+        border-block-start: 1px solid #ccc;
+        border-block-end: 1px solid #ccc;
+        border-color: #ccc;
+      }
+      :host(:not(:first-child)) {
+        border-block-start-color: rgba(0,0,0,0);
+      }
+      .header .header__icon{
+        transition: transform 0.2s ease-in-out;
+      }
+      .open .header .header__icon{
+        transform: rotate(90deg);
+      }
+      .disabled {
+        .header {
+          cursor: initial;
+          opacity: 0.5;
+        }
+        .header:hover {
+          background-color: initial;
+        }
+      }
       .header {
-        cursor: initial;
-        opacity: 0.5;
+        cursor: pointer;
+        margin: 0;
+        padding: 0.5rem;
+        font-size: 20px;
+        font-weight: bold;
+        user-select: none;
+        display: flex;
+        align-items: center;
       }
       .header:hover {
-        background-color: initial;
+        background-color: rgba(200,200,200,0.5);
       }
-    }
-    .header {
-      cursor: pointer;
-      margin: 0;
-      padding: 0.5rem;
-      font-size: 20px;
-      font-weight: bold;
-      user-select: none;
-    }
-    .header:hover {
-      background-color: rgba(200,200,200,0.5);
-    }
-    .content {
-      padding: 0.5rem;
-    }
-    .content.closed {
-      display: none;
-    }
+      .header__label {
+        margin: 0;
+        margin-left: 0.5rem;
+      }
+      .content {
+        padding: 0.5rem;
+      }
+      .content.closed {
+        display: none;
+      }
     `
   ]
   
@@ -52,7 +74,10 @@ export default class AccordionItem extends LitElement {
     }
       return html`
         <div class="${classMap(classes)}">
-          <h2 class="header" @click="${this.onClick}">${this.label}</h2>
+          <h2 class="header" @click="${this.onClick}">
+            <x-icon class="header__icon" name="chevron" size="12px"></x-icon>
+            <div class="header__label">${this.label}</div>
+          </h2>
           <div class="content ${classMap({'closed': !this.open || this.disabled})}">
             <slot></slot>
           </div>
