@@ -9,10 +9,10 @@ export default class Accordion extends LitElement {
   multiple = false;
 
   @queryAssignedNodes()
-  private listItems: NodeListOf<AccordionItem>;
+  private listItems: NodeListOf<AccordionItem> | undefined;
 
   public get items() {
-    return this.listItems
+    return this.listItems || [];
   }
 
   connectedCallback() {
@@ -26,15 +26,17 @@ export default class Accordion extends LitElement {
 
   onToggle (e: CustomEvent) {
     const target = e.target as AccordionItem;
-    console.log('accordion onToggle', e, target);
+    const open = e.detail.open; // open is child's open state after toggle
+    // console.log('accordion onToggle', e, target);
     if (this.multiple || !this.items || !this.items.length) {
       return;
     }
+    debugger
     this.items.forEach(item => {
       if (item !== target) {
         item.open = false;
       } else {
-        item.open = true;
+        item.open = open;
       }
     })
   }
@@ -45,5 +47,11 @@ export default class Accordion extends LitElement {
         <slot @toggle="${this.onToggle}"></slot>
       </div>
     `
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'x-accordion': Accordion;
   }
 }

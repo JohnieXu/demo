@@ -19,12 +19,12 @@ export default class AccordionItem extends LitElement {
     css`
       :host {
         display: block;
-        border-block-start: 1px solid #ccc;
         border-block-end: 1px solid #ccc;
         border-color: #ccc;
       }
-      :host(:not(:first-child)) {
-        border-block-start-color: rgba(0,0,0,0);
+      :host(:first-of-type) {
+        border-block-start: 1px solid #ccc;
+        border-color: #ccc;
       }
       .header .header__icon{
         transition: transform 0.2s ease-in-out;
@@ -97,5 +97,11 @@ export default class AccordionItem extends LitElement {
         open: this.open,
       }
     }))
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'x-accordion-item': AccordionItem;
   }
 }
