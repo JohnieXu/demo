@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 // const { VueLoaderPlugin } = require('vue-loader');
+const { FileListPlugin } = require('./src/plugins/file-list-plugin.js')
 
 module.exports = {
   entry: {
@@ -63,6 +64,9 @@ module.exports = {
   },
   plugins: [
     // new VueLoaderPlugin()
+    new FileListPlugin({
+      fileName: 'assets.md'
+    }),
     new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
