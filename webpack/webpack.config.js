@@ -47,6 +47,17 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.jsonc$/,
+        use: [
+          {
+            loader: path.resolve(__dirname, 'src/loaders/jsonc-loader.js'),
+            options: {
+              aaa: 'bbb',
+            }
+          }
+        ]
       }
     ]
   },
@@ -54,10 +65,6 @@ module.exports = {
     // new VueLoaderPlugin()
     new webpack.HotModuleReplacementPlugin()
   ],
-  devServer: {
-    contentBase: './dist',
-    hot: true
-  },
   resolve: {
     alias: {
       core: path.resolve(__dirname, "src/core")
