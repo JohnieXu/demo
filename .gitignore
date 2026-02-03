@@ -1,1 +1,3 @@
 algorithm
+lynx-android-demo/.idea/**/*
+lynx-android-demo/gradle/wrapper/gradle-wrapper.jar
