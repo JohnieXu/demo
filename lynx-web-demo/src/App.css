@@ -1,0 +1,128 @@
+body {
+  margin: 0;
+  color: #fff;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  background-image: linear-gradient(to bottom, #020917, #101725);
+}
+
+.content {
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.1;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
+}
+
+.content p {
+  font-size: 1.2rem;
+  font-weight: 400;
+  opacity: 0.5;
+}
+
+.entry-switcher {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(9, 14, 28, 0.7);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.entry-switcher--dragging {
+  cursor: grabbing;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+}
+
+.entry-switcher--docked-left,
+.entry-switcher--docked-right,
+.entry-switcher--docked-top,
+.entry-switcher--docked-bottom {
+  transform: scale(0.5);
+  opacity: 0.8;
+}
+
+.entry-switcher--docked-left {
+  transform-origin: left center;
+}
+
+.entry-switcher--docked-right {
+  transform-origin: right center;
+}
+
+.entry-switcher--docked-top {
+  transform-origin: center top;
+}
+
+.entry-switcher--docked-bottom {
+  transform-origin: center bottom;
+}
+
+.entry-switcher__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.entry-switcher__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.entry-switcher__select {
+  appearance: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 10px 34px 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 180px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.entry-switcher__select option {
+  color: #333;
+}
+
+.entry-switcher__select:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.entry-switcher__select:focus-visible {
+  border-color: rgba(99, 102, 241, 0.9);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+}
+
+.entry-switcher__chevron {
+  position: absolute;
+  right: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  font-size: 12px;
+}
