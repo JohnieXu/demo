@@ -11,6 +11,9 @@ importers:
       '@lynx-js/react':
         specifier: ^0.114.3
         version: 0.114.3(@lynx-js/types@3.4.11)(@types/react@18.3.26)
+      '@react-spring/types':
+        specifier: ^10.0.3
+        version: 10.0.3
       '@react-spring/web':
         specifier: ^10.0.3
         version: 10.0.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -20,6 +23,12 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      lynx-ui:
+        specifier: workspace:*
+        version: link:packages/lynx-ui
+      react-spring-lynx:
+        specifier: workspace:*
+        version: link:packages/react-spring-lynx
       url-search-params-polyfill:
         specifier: ^8.2.5
         version: 8.2.5
@@ -87,6 +96,30 @@ importers:
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.10.0)(jiti@2.6.1)(jsdom@26.1.0)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.20.6)
+
+  packages/lynx-ui:
+    dependencies:
+      '@lynx-js/react':
+        specifier: ^0.114.3
+        version: 0.114.3(@lynx-js/types@3.4.11)(@types/react@18.3.26)
+      '@lynx-js/types':
+        specifier: 3.4.11
+        version: 3.4.11
+
+  packages/react-spring-lynx:
+    dependencies:
+      '@react-spring/animated':
+        specifier: ^10.0.3
+        version: 10.0.3(react@19.2.0)
+      '@react-spring/core':
+        specifier: ^10.0.3
+        version: 10.0.3(react@19.2.0)
+      '@react-spring/shared':
+        specifier: ^10.0.3
+        version: 10.0.3(react@19.2.0)
+      '@react-spring/web':
+        specifier: ^10.0.3
+        version: 10.0.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
 
 packages:
 

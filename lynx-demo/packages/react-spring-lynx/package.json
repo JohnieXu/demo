@@ -1,0 +1,15 @@
+{
+  "name": "react-spring-lynx",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@react-spring/core": "^10.0.3",
+    "@react-spring/animated": "^10.0.3",
+    "@react-spring/shared": "^10.0.3",
+    "@react-spring/web": "^10.0.3"
+  }
+}

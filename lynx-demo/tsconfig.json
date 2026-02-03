@@ -2,16 +2,19 @@
   "compilerOptions": {
     "strict": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
 
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "lib": ["dom", "dom.iterable", "es2015", "scripthost"],
 
     "noEmit": true,
   },
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "./src" },
+    { "path": "./packages/react-spring-lynx" },
+    { "path": "./packages/lynx-ui" },
   ],
   "files": [],
 }
