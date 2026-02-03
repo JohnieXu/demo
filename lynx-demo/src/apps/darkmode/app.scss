@@ -1,0 +1,22 @@
+.theme-light.darkmode {
+  --bg-color: #fff;
+  --text-color: #000;
+}
+
+.theme-dark.darkmode {
+  --bg-color: #000;
+  --text-color: #fff;
+}
+
+.darkmode {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  padding: 12px;
+  .text {
+    color: var(--text-color);
+  }
+}

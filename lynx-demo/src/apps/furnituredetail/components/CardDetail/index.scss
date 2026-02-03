@@ -1,0 +1,23 @@
+.card-detail {
+  background-color: rgb(38, 38, 38);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 20px;
+  margin-bottom: 0;
+  &__price {
+    color: var(--primary-color);
+    font-size: 16px;
+  }
+  &__sold {
+    color: var(--text-color);
+    font-size: 12px;
+  }
+  &__description {
+    color: var(--text-color);
+    font-size: 12px;
+  }
+  &__like-icon {
+    width: 20px;
+    height: 20px;
+  }
+}

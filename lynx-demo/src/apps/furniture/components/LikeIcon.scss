@@ -1,0 +1,44 @@
+
+.like-icon {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  top: 0px;
+  right: 0px;
+  width: 48px;
+  height: 48px;
+  
+  .circle {
+    position: absolute;
+    top: calc(50% - 8px);
+    left: calc(50% - 8px);
+    height: 16px;
+    width: 16px;
+    border: 2px solid red;
+    border-radius: 50%;
+    transform: scale(0);
+    opacity: 1;
+    animation: ripple 1s 1 ease-out;
+  }
+
+  .circleAfter {
+    animation-delay: 0.5s;
+  }
+
+  .heart-love {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

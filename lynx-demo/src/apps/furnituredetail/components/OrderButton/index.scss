@@ -1,0 +1,13 @@
+.order-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  padding: 10px 0;
+  background-color: var(--primary-color);
+  margin: 20px;
+  &__text {
+    color: var(--text-color);
+  }
+}

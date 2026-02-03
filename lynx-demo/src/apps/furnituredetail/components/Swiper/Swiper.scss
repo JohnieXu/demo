@@ -1,0 +1,11 @@
+.swiper {
+  height: 100%;
+  width: 100%;
+  &-container {
+    display: linear;
+    linear-orientation: horizontal;
+    height: 100%;
+    // transform: translate3d(-150px, 0, 0);
+    // transition: transform 0.1s ease-in-out;
+  }
+}
