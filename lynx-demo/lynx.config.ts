@@ -55,6 +55,9 @@ if (!host) {
 const entries = generateEntries()
 
 export default defineConfig({
+  server: {
+    port: 3001,
+  },
   dev: {
     assetPrefix: host ? `http://${host}:<port>/` : true,
   },

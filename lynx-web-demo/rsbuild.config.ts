@@ -16,7 +16,7 @@ export default defineConfig({
     ],
     proxy: {
       '/bundle': {
-        target: 'http://192.168.124.5:3001',
+        target: 'http://localhost:3001',
         pathRewrite: {
           '^/bundle': '',
         },
