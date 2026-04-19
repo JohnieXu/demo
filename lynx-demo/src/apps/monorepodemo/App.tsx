@@ -1,12 +1,41 @@
-import { useState } from '@lynx-js/react'
+import { useState, useEffect } from '@lynx-js/react'
 import { animated, useSpring } from 'react-spring-lynx'
 import { Button } from 'lynx-ui'
 import { CSSProperties } from '@lynx-js/types'
+import './index.scss'
 
 const AnimatedView = animated.view
 const AnimatedText = animated.text
 
 export default function App() {
+  const [toggle, setToggle] = useState(false)
+  const [rendered, setRendered] = useState(false)
+  const springs = useSpring({
+    opacity: toggle ? 0.3 : 1,
+    borderRadius: toggle ? '0px' : '30px',
+  })
+  const handleClick = () => {
+    setToggle(!toggle)
+    console.log(springs)
+  }
+  useEffect(() => {
+    setTimeout(() => {
+      setRendered(true)
+    }, 500)
+  }, [])
+  return (
+    <view style={containerStyle}>
+      <text>点击切换动画状态</text>
+      <text>{toggle ? 'ACTIVE' : 'IDLE'}</text>
+      {
+        rendered ? <animated.view className='box' style={{...(springs as unknown as CSSProperties)}} bindtap={handleClick}></animated.view> : null
+      }
+      
+    </view>
+  )
+}
+
+export function App1() {
   const [toggle, setToggle] = useState(false)
 
   const styles = useSpring({
@@ -35,6 +64,8 @@ export default function App() {
 }
 
 const containerStyle: CSSProperties = {
+  width: '100%',
+  height: '100%',
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
