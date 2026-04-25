@@ -67,3 +67,34 @@ Apps consume `lynx-ui` and `react-spring-lynx` via `workspace:*` protocol in pac
 - The dev server displays a QR code; scan with LynxExplorer app on mobile to preview
 - CSS uses Lynx-specific properties; avoid standard CSS properties that Lynx doesn't support
 - Animation callbacks use `'main thread'` directive for touch/gesture handlers to avoid thread-switch latency
+
+## Responsive Adaptation
+
+Apps can opt-in to viewport-based responsive scaling via PostCSS configuration.
+
+### How It Works
+
+`postcss.config.js` uses `postcss-px-to-viewport-8-plugin` to convert `px` to `vw` units for apps that need responsive scaling. The `include` pattern scopes the transformation to specific apps only.
+
+### Enabling Responsive Scaling for an App
+
+Edit `postcss.config.js` and add the app name to `RESPONSIVE_APPS`:
+
+```js
+const RESPONSIVE_APPS = ['flight', 'furniture'] // Add app names here
+```
+
+### Key Configuration Points
+
+| Option | Value | Description |
+|--------|-------|-------------|
+| `viewportWidth` | `375` | Design baseline (iPhone SE width) |
+| `viewportUnit` | `vw` | Output unit |
+| `include` | Regex pattern | Scopes transformation to specific apps |
+| `selectorBlackList` | `['.ignore', '.hairlines']` | Selectors to exclude from conversion |
+
+### Design Principle
+
+- **Low Coupling**: Apps don't need code changes to opt-in; just add to `RESPONSIVE_APPS`
+- **High Reusability**: The PostCSS config is reusable across all apps
+- **Non-invasive**: No changes to app module files required
