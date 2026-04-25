@@ -12,8 +12,11 @@
   left: 0;
   top: 0;
   width: 375px;
-  height: 377px;
-  background: linear-gradient(180deg, #d8d8d8 0%, rgba(216, 216, 216, 0.09) 100%);
+  height: 180px;
+  // background: linear-gradient(180deg, #d8d8d8 0%, rgba(216, 216, 216, 0.09) 100%);
+  background-image: url('../../assets/flight/images/header_bg.png');
+  background-size: cover;
+  background-position: center;
 
   &::before {
     content: '';
@@ -21,8 +24,8 @@
     left: 0;
     top: 0;
     width: 375px;
-    height: 377px;
-    background: linear-gradient(180deg, #d5edff 0%, rgba(213, 237, 255, 0) 100%);
+    height: 180px;
+    // background: linear-gradient(180deg, #d5edff 0%, rgba(213, 237, 255, 0) 100%);
   }
 }
 
@@ -67,14 +70,16 @@
 
 /* Tabs */
 .tabs {
+  width: 375px;
+  height: 44px;
   position: absolute;
-  left: 71px;
+  left: 0;
   top: 158px;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 200px;
+  justify-content: space-around;
 
   .tab-item {
     display: flex;
@@ -109,7 +114,7 @@
   left: 0;
   top: 194px;
   width: 375px;
-  padding: 0 16px;
+  // padding: 0 16px;
 
   .booking-card {
     background-color: white;
@@ -118,6 +123,87 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  /* Recent Searches */
+  .recent-searches {
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 8px;
+
+    .recent-label {
+      width: 33px;
+      height: 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 36px;
+        height: 56px;
+        background-color: white;
+        box-shadow: 6px 0 4px 0 rgba(0, 0, 0, 0.05);
+      }
+
+      &-line1,
+      &-line2 {
+        font-size: 12px;
+        color: #666;
+        line-height: 15px;
+        letter-spacing: 0.24px;
+      }
+    }
+
+    .tags-scroll {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      .tag {
+        background-color: #f7f7f7;
+        height: 32px;
+        border-radius: 4px;
+        padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &-clear {
+          background-color: white;
+          margin-left: auto;
+        }
+
+        .tag-text {
+          font-size: 12px;
+          color: #666;
+          line-height: 20px;
+          letter-spacing: 0.24px;
+
+          &-dark {
+            color: #666;
+          }
+
+          &-light {
+            color: #333;
+          }
+
+          &-clear {
+            color: #333;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -154,21 +240,24 @@
   border-bottom: 0.5px solid #e7e7e7;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   gap: 40px;
 
-  .date-content {
+  .date-selection {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
     gap: 6px;
 
-    .date-main {
+    .date-text {
       font-size: 18px;
       color: #333;
       line-height: 26px;
     }
 
-    .date-sub {
+    .weekday-text {
       font-size: 14px;
       color: #333;
       line-height: 22px;
@@ -235,94 +324,13 @@
   }
 }
 
-/* Recent Searches */
-.recent-searches {
-  background-color: white;
-  border-radius: 0 0 12px 12px;
-  height: 56px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 8px;
-
-  .recent-label {
-    width: 33px;
-    height: 56px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 36px;
-      height: 56px;
-      background-color: white;
-      box-shadow: 6px 0 4px 0 rgba(0, 0, 0, 0.05);
-    }
-
-    &-line1,
-    &-line2 {
-      font-size: 12px;
-      color: #666;
-      line-height: 15px;
-      letter-spacing: 0.24px;
-    }
-  }
-
-  .tags-scroll {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-
-    .tag {
-      background-color: #f7f7f7;
-      height: 32px;
-      border-radius: 4px;
-      padding: 4px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &-clear {
-        background-color: white;
-        margin-left: auto;
-      }
-
-      .tag-text {
-        font-size: 12px;
-        color: #666;
-        line-height: 20px;
-        letter-spacing: 0.24px;
-
-        &-dark {
-          color: #666;
-        }
-
-        &-light {
-          color: #333;
-        }
-
-        &-clear {
-          color: #333;
-        }
-      }
-    }
-  }
-}
-
 /* Bottom Bar */
-.bottom-bar {
+.bottom-tab-bar {
   position: absolute;
   left: 0;
   bottom: 0;
   width: 375px;
-  height: 72px;
+  height: 41px;
   display: flex;
   flex-direction: column;
 
@@ -392,16 +400,5 @@
         }
       }
     }
-  }
-
-  .home-indicator {
-    position: absolute;
-    left: 50%;
-    bottom: 8px;
-    width: 130px;
-    height: 5px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 100px;
-    transform: translateX(-50%);
   }
 }
