@@ -4,6 +4,7 @@ import '@lynx-js/web-elements/index.css';
 import '@lynx-js/web-core';
 import '@lynx-js/web-elements/all';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const baseUrl = '/bundle';
 const entryOptions = [
@@ -19,6 +20,7 @@ const entryOptions = [
     key: 'furnituredetail',
     entry: 'furnituredetail.web.bundle?fullscreen=true',
   },
+  { key: 'flight', entry: 'flight.web.bundle?fullscreen=true' },
 ];
 
 type EntryOption = {
@@ -192,8 +194,14 @@ const EntrySwitcher = ({ entry, options, onChange }: EntrySwitcherProps) => {
   );
 };
 
+const DEFAULT_ENTRY = entryOptions[0]?.key ?? 'main';
+
 const App = () => {
-  const [entry, setEntry] = useState(entryOptions[0]?.key ?? '');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const entryParam = searchParams.get('entry');
+  const isValidEntry = entryOptions.some((item) => item.key === entryParam);
+  const [entry, setEntry] = useState(isValidEntry && entryParam ? entryParam : DEFAULT_ENTRY);
+
   const entryUrl = useMemo(() => {
     const selectedEntry = entryOptions.find(
       (item) => item.key === entry,
@@ -205,9 +213,10 @@ const App = () => {
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       if (e.target.value) {
         setEntry(e.target.value);
+        setSearchParams({ entry: e.target.value });
       }
     },
-    [],
+    [setSearchParams],
   );
 
   return (

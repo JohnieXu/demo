@@ -14,7 +14,8 @@
     "@lynx-js/web-core": "^0.18.3",
     "@lynx-js/web-elements": "^0.8.10",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
