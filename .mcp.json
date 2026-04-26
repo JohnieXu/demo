@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "新旅行API文档": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "apifox-mcp-server@latest",
+        "--project=6446390"
+      ],
+      "env": {
+        "APIFOX_ACCESS_TOKEN": "afxp_71c046UzX8zLOJceDUe7ossXR8ZttyVMbQR7"
+      }
+    },
+    "Framelink MCP for Figma": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "figma-developer-mcp", "--figma-api-key=YOUR-KEY", "--stdio"]
+    }
+  }
+}
