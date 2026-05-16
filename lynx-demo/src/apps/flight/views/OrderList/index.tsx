@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router'
-import { useFlightStore } from '../store'
+import { useFlightStore } from '../../store'
+import { NavBar } from '../../components/NavBar'
 
-import './orderList.scss'
+import './index.scss'
 
 export interface Order {
   id: string
@@ -12,11 +13,12 @@ export interface Order {
 }
 
 export function OrderList() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { selectedFlight } = useFlightStore()
   const navigate = useNavigate()
 
   function handleOrderTap(order: Order) {
-    navigate(`/order/${order.id}`)
+    navigate(`/orderDetail/${order.id}`)
   }
 
   // Mock orders
@@ -38,13 +40,8 @@ export function OrderList() {
   ]
 
   return (
-    <>
-      <view className="background-layer" />
-
-      {/* Header */}
-      <view className="orders-header">
-        <text className="orders-title">我的订单</text>
-      </view>
+    <view className="page-order-list">
+      <NavBar title="我的订单"></NavBar>
 
       {/* Orders List */}
       <view className="orders-list">
@@ -70,6 +67,6 @@ export function OrderList() {
           <text className="orders-empty-text">暂无订单</text>
         </view>
       )}
-    </>
+    </view>
   )
 }

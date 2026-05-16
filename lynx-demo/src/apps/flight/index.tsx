@@ -3,18 +3,21 @@ import '@lynx-js/react/debug'
 import { root } from '@lynx-js/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 
-import { App, Query } from './views/query'
-import { Booking } from './views/booking'
-import { OrderList } from './views/orderList'
-import { OrderDetail } from './views/orderDetail'
+import { App } from './App'
+import { Query } from './views/Query/index'
+import { Booking } from './views/Booking/index'
+import { OrderList } from './views/OrderList/index'
+import { OrderDetail } from './views/OrderDetail/index'
 
 root.render(<MemoryRouter>
   <Routes>
-    <Route path='/' element={<App />}></Route>
-    <Route path='/query' element={<Query />}></Route>
-    <Route path='/order' element={<OrderList />}></Route>
-    <Route path='/order/:id' element={<OrderDetail />}></Route>
-    <Route path='/booking' element={<Booking />}></Route>
+    <Route element={<App />}>
+      <Route path='/' element={<Query />}></Route>
+      <Route path='/query' element={<Query />}></Route>
+      <Route path='/orderList' element={<OrderList />}></Route>
+      <Route path='/orderDetail/:id' element={<OrderDetail />}></Route>
+      <Route path='/booking' element={<Booking />}></Route>
+    </Route>
   </Routes>
 </MemoryRouter>)
 

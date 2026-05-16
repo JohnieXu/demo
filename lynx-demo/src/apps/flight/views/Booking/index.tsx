@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router'
-import { useFlightStore } from '../store'
+import { useFlightStore } from '../../store'
 
 export function Booking() {
   const { selectedFlight, searchParams } = useFlightStore()

@@ -1,16 +1,13 @@
-import { useNavigate, useParams } from 'react-router'
-import { useFlightStore } from '../store'
+import { useParams } from 'react-router'
+import { useFlightStore } from '../../store'
+import { NavBar } from '../../components/NavBar'
 
-import './orderDetail.scss'
+import './index.scss'
 
 export function OrderDetail() {
   const { id } = useParams()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { selectedFlight, searchParams } = useFlightStore()
-  const navigate = useNavigate()
-
-  function hanndleBackTap() {
-    navigate('/order', { replace: true, })
-  }
   
   // Mock order detail - in real app would fetch by id
   const order = {
@@ -28,16 +25,8 @@ export function OrderDetail() {
   }
 
   return (
-    <>
-      <view className="background-layer" />
-
-      {/* Header */}
-      <view className="detail-header">
-        <view className="detail-back-btn" bindtap={hanndleBackTap}>
-          <text className="detail-back-text">← 返回</text>
-        </view>
-        <text className="detail-title">订单详情</text>
-      </view>
+    <view className="page-order-detail">
+      <NavBar title="订单详情"></NavBar>
 
       {/* Order Info */}
       <view className="detail-section">
@@ -82,6 +71,6 @@ export function OrderDetail() {
           </view>
         </view>
       </view>
-    </>
+    </view>
   )
 }

@@ -1,0 +1,38 @@
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 6px;
+  background: #fff;
+  // fixme: Safe Area Padding not working, should use native pass to GlobalProps?
+  padding-top: calc(env(safe-area-inset-top) + 16px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 16px);
+  padding-left: calc(env(safe-area-inset-left) + 6px);
+  padding-right: calc(env(safe-area-inset-right) + 6px);
+  .nav-bar__left {
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+    .text {
+      color: #333333;
+      font-size: 18px;
+      line-height: 26px;
+    }
+  }
+  .nav-bar__center {
+    .text {
+      color: #333333;
+      font-size: 18px;
+      line-height: 26px;
+    }
+  }
+  .nav-bar__right {
+    .text {
+      color: #333333;
+      font-size: 18px;
+      line-height: 26px;
+    }
+  }
+}

@@ -10,6 +10,11 @@
     "moduleResolution": "Bundler",
 
     "noEmit": true,
+
+    "paths": {
+      "@": ["./src"],
+      "@assets": ["./assets/"]
+    }
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
 }

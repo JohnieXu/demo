@@ -1,0 +1,70 @@
+// TabBar Variables
+$container-width: 375px;
+$tab-wrapper-height: 80px;
+$tab-height: 40px;
+$primary-color: #ff5712;
+
+.bottom-tab-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: $container-width;
+  height: $tab-wrapper-height;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: -6px 12px #0000000f;
+  border-radius: 16px 16px 0 0;
+  background: #fff;
+
+  .bottom-content {
+    width: $container-width;
+    height: $tab-height;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+
+    .bottom-tab {
+      width: 30px;
+      height: $tab-height;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+
+      .bottom-tab-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+
+        &.bottom-icon-booking {
+          background-color: #ccc;
+        }
+
+        &.bottom-icon-order {
+          background-color: #ccc;
+          border-radius: 4px;
+        }
+      }
+
+      .bottom-tab-label {
+        font-size: 12px;
+        color: #bdbdbd;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+
+        &.active {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+.bottom-tab.active {
+  .bottom-tab-icon {
+    background-color: $primary-color !important;
+  }
+}
