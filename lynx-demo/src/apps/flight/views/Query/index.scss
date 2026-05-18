@@ -70,19 +70,21 @@
         font-size: 16px;
         color: #666;
         line-height: 24px;
+        font-weight: 600;
   
         &-active {
-          font-size: 18px;
           color: #333;
-          font-weight: 500;
         }
       }
   
       .tab-indicator {
         width: 40px;
         height: 4px;
-        background-color: #ff5712;
         margin-top: 4px;
+        background-color: transparent;
+        &-active {
+          background-color: #ff5712;
+        }
       }
     }
   }
@@ -146,7 +148,7 @@
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
-      align-items: flex-end;
+      align-items: center;
       gap: 6px;
   
       .date-text {

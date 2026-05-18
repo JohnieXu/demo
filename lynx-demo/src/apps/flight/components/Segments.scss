@@ -1,0 +1,80 @@
+// Segments Variables
+$bg-color: #ececec;
+$active-bg-color: #ffffff;
+$text-color: #333333;
+$text-inactive-color: #333333;
+$text-weight: 600;
+$text-inactive-weight: 400;
+$border-radius: 4px;
+$item-padding-y: 6px;
+$item-min-width: 63px;
+
+.segments {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  background: $bg-color;
+  border-radius: $border-radius;
+
+  .segments-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    .segments-indicator {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      height: calc(100% - 8px);
+      background: $active-bg-color;
+      border-radius: $border-radius;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.05);
+      // z-index: 0;
+    }
+
+    .segments-content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      position: relative;
+      // z-index: 1;
+
+      .segment-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: $item-padding-y 12px;
+        min-width: $item-min-width;
+        border-radius: $border-radius;
+        background: transparent;
+        transition: background 0.2s ease;
+
+        .segment-label {
+          font-size: 14px;
+          color: $text-inactive-color;
+          line-height: 22px;
+          font-weight: $text-inactive-weight;
+          letter-spacing: 0.28px;
+          white-space: nowrap;
+
+          &.active {
+            color: $text-color;
+            font-weight: $text-weight;
+          }
+        }
+
+        &.active {
+          background: transparent;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}

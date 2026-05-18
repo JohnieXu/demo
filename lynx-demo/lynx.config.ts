@@ -68,7 +68,9 @@ export default defineConfig({
         return `${url}?fullscreen=true`
       },
     }),
-    pluginReactLynx(),
+    pluginReactLynx({
+      engineVersion: '3.7'
+    }),
     pluginTypeCheck(),
     pluginSass(),
   ],

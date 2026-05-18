@@ -1,8 +1,13 @@
 import { Outlet } from 'react-router'
-import "./App.scss"
+import { DialogProvider } from './components/dialog/index';
+import './App.scss';
 
 export function App() {
-  return <view className="app">
-    <Outlet />
-  </view>
+  return (
+    <DialogProvider>
+      <view className="app">
+        <Outlet />
+      </view>
+    </DialogProvider>
+  );
 }

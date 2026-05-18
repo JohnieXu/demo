@@ -1,8 +1,10 @@
 import { useState } from '@lynx-js/react'
+import { clsx } from 'clsx'
 import { useNavigate } from 'react-router'
 import { TabBar } from '../../components/TabBar'
 import { RecentSearches } from './components/RecentSearches'
 import "./index.scss"
+import { Segments } from '../../components/Segments'
 
 type TabType = 'flight' | 'train'
 
@@ -42,12 +44,12 @@ export function Query() {
       {/* Tabs */}
       <view className="tabs">
         <view className="tab-item" bindtap={() => handleTabChange('flight')}>
-          <text className={`tab-text ${activeTab === 'flight' ? 'tab-text-active' : ''}`}>机票</text>
-          {activeTab === 'flight' && <view className="tab-indicator" />}
+          <text className={clsx('tab-text', activeTab === 'flight' && 'tab-text-active')}>机票</text>
+          <view className={clsx('tab-indicator', activeTab === 'flight' && 'tab-indicator-active')} />
         </view>
         <view className="tab-item" bindtap={() => handleTabChange('train')}>
-          <text className={`tab-text ${activeTab === 'train' ? 'tab-text-active' : ''}`}>火车票</text>
-          {activeTab === 'train' && <view className="tab-indicator" />}
+          <text className={clsx('tab-text', activeTab === 'train' && 'tab-text-active')}>火车票</text>
+          <view className={clsx('tab-indicator', activeTab === 'train' && 'tab-indicator-active')} />
         </view>
       </view>
 
@@ -77,19 +79,24 @@ export function Query() {
           <view className="cabin-row">
             <view className="cabin-selector">
               <view
-                className={`cabin-btn ${selectedCabin === 'economy' ? 'cabin-btn-active' : ''}`}
+                className={clsx('cabin-btn', selectedCabin === 'economy' && 'cabin-btn-active')}
                 bindtap={() => handleCabinChange('economy')}
               >
                 <text className="cabin-text">经济舱</text>
               </view>
               <view
-                className={`cabin-btn ${selectedCabin === 'business' ? 'cabin-btn-active' : ''}`}
+                className={clsx('cabin-btn', selectedCabin === 'business' && 'cabin-btn-active')}
                 bindtap={() => handleCabinChange('business')}
               >
                 <text className="cabin-text">公务/头等舱</text>
               </view>
             </view>
           </view>
+
+          <Segments segments={[
+            { id: 'economy', label: '经济舱' },
+            { id: 'business', label: '公务/头等舱' },
+          ]}></Segments>
 
           {/* Search Button */}
           <view className="search-btn" bindtap={handleSearch}>
