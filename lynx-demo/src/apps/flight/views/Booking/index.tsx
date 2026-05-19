@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router'
 import { useFlightStore } from '../../store'
+import { FocusableInput } from '../../components/input/FocusableInput'
+import "./index.scss"
 
 export function Booking() {
   const { selectedFlight, searchParams } = useFlightStore()
@@ -13,6 +15,13 @@ export function Booking() {
   if (!selectedFlight) {
     return (
       <view className="booking-section">
+        <view>
+          <FocusableInput
+            placeholder="请输入日期"
+            value={searchParams.date}
+            autofocus
+          />
+        </view>
         <text className="booking-empty">请先选择航班</text>
         <text>返回首页</text>
       </view>
@@ -26,6 +35,14 @@ export function Booking() {
       {/* Header */}
       <view className="booking-header">
         <text className="booking-title">确认订单</text>
+      </view>
+
+      <view>
+        <FocusableInput
+          placeholder="请输入日期"
+          value={searchParams.date}
+          autofocus
+        />
       </view>
 
       {/* Flight Info */}

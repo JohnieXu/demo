@@ -27,6 +27,7 @@ export function Query() {
     console.log('Search flights', {
       cabin: selectedCabin,
     });
+    navigate('/booking');
   };
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
