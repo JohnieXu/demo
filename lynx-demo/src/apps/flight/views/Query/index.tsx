@@ -8,33 +8,32 @@ import { Segments } from '../../components/Segments'
 
 type TabType = 'flight' | 'train'
 
-type CabinClass = 'economy' | 'business'
-
+type CabinClass = 'nolimit' | 'business';
 
 export function Query() {
-  const [activeTab, setActiveTab] = useState<TabType>('flight')
-  const [selectedCabin, setSelectedCabin] = useState<CabinClass>('economy')
-  const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState<TabType>('flight');
+  const [selectedCabin, setSelectedCabin] = useState<CabinClass>('nolimit');
+  const navigate = useNavigate();
 
   const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab)
-  }
+    setActiveTab(tab);
+  };
 
   const handleCabinChange = (cabin: CabinClass) => {
-    setSelectedCabin(cabin)
-  }
+    setSelectedCabin(cabin);
+  };
 
   const handleSearch = () => {
     console.log('Search flights', {
-      cabin: selectedCabin
-    })
-  }
+      cabin: selectedCabin,
+    });
+  };
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
     if (tab === 'order') {
-      navigate("/orderList")
+      navigate('/orderList');
     }
-  }
+  };
 
   return (
     <view className="page-query">
@@ -44,12 +43,36 @@ export function Query() {
       {/* Tabs */}
       <view className="tabs">
         <view className="tab-item" bindtap={() => handleTabChange('flight')}>
-          <text className={clsx('tab-text', activeTab === 'flight' && 'tab-text-active')}>机票</text>
-          <view className={clsx('tab-indicator', activeTab === 'flight' && 'tab-indicator-active')} />
+          <text
+            className={clsx(
+              'tab-text',
+              activeTab === 'flight' && 'tab-text-active',
+            )}
+          >
+            机票
+          </text>
+          <view
+            className={clsx(
+              'tab-indicator',
+              activeTab === 'flight' && 'tab-indicator-active',
+            )}
+          />
         </view>
         <view className="tab-item" bindtap={() => handleTabChange('train')}>
-          <text className={clsx('tab-text', activeTab === 'train' && 'tab-text-active')}>火车票</text>
-          <view className={clsx('tab-indicator', activeTab === 'train' && 'tab-indicator-active')} />
+          <text
+            className={clsx(
+              'tab-text',
+              activeTab === 'train' && 'tab-text-active',
+            )}
+          >
+            火车票
+          </text>
+          <view
+            className={clsx(
+              'tab-indicator',
+              activeTab === 'train' && 'tab-indicator-active',
+            )}
+          />
         </view>
       </view>
 
@@ -76,31 +99,17 @@ export function Query() {
           </view>
 
           {/* Cabin Class Selection */}
-          <view className="cabin-row">
-            <view className="cabin-selector">
-              <view
-                className={clsx('cabin-btn', selectedCabin === 'economy' && 'cabin-btn-active')}
-                bindtap={() => handleCabinChange('economy')}
-              >
-                <text className="cabin-text">经济舱</text>
-              </view>
-              <view
-                className={clsx('cabin-btn', selectedCabin === 'business' && 'cabin-btn-active')}
-                bindtap={() => handleCabinChange('business')}
-              >
-                <text className="cabin-text">公务/头等舱</text>
-              </view>
-            </view>
-          </view>
-
-          <Segments segments={[
-            { id: 'economy', label: '经济舱' },
-            { id: 'business', label: '公务/头等舱' },
-          ]}></Segments>
+          <Segments
+            segments={[
+              { id: 'nolimit', label: '不限舱位' },
+              { id: 'business', label: '公务/头等舱' },
+            ]}
+            onSegmentChange={handleCabinChange}
+          ></Segments>
 
           {/* Search Button */}
           <view className="search-btn" bindtap={handleSearch}>
-            <text className="search-btn-text">查  询</text>
+            <text className="search-btn-text">查 询</text>
           </view>
         </view>
 
@@ -113,9 +122,9 @@ export function Query() {
           ]}
         />
       </view>
-      
+
       {/* Bottom tabbar */}
       <TabBar onTabChange={handleBottomTabChange}></TabBar>
     </view>
-  )
+  );
 }

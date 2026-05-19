@@ -6,24 +6,23 @@ $text-inactive-color: #333333;
 $text-weight: 600;
 $text-inactive-weight: 400;
 $border-radius: 4px;
-$item-padding-y: 6px;
-$item-min-width: 63px;
+$item-padding-y: 2px;
+$item-min-width: 64px;
 
 .segments {
-  width: 100%;
+  // width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  padding: 4px;
-  background: $bg-color;
-  border-radius: $border-radius;
-
+  
   .segments-wrapper {
     position: relative;
-    width: 100%;
+    // width: 100%;
     height: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    background: $bg-color;
+    border-radius: $border-radius;
 
     .segments-indicator {
       position: absolute;
@@ -33,7 +32,6 @@ $item-min-width: 63px;
       background: $active-bg-color;
       border-radius: $border-radius;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.05);
-      // z-index: 0;
     }
 
     .segments-content {
@@ -41,16 +39,15 @@ $item-min-width: 63px;
       flex-direction: row;
       align-items: center;
       gap: 0;
-      padding: 0;
+      padding: 4px;
       position: relative;
-      // z-index: 1;
 
       .segment-item {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: $item-padding-y 12px;
+        padding: $item-padding-y 8px;
         min-width: $item-min-width;
         border-radius: $border-radius;
         background: transparent;

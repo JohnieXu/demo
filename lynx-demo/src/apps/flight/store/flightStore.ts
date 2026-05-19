@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export type TabType = 'flight' | 'train'
-export type CabinClass = 'economy' | 'business'
+export type CabinClass = 'nolimit' | 'business'
 
 export type CityInfo = {
   departure: string
@@ -64,7 +64,7 @@ const initialSearchParams: FlightSearchParams = {
   arrival: '上海',
   date: '8月31日',
   weekday: '周五',
-  cabin: 'economy',
+  cabin: 'nolimit',
 }
 
 export const useFlightStore = create<FlightState>((set) => ({

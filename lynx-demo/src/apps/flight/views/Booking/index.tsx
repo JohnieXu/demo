@@ -50,7 +50,7 @@ export function Booking() {
           <view className="flight-detail-row">
             <text className="flight-detail-label">舱位</text>
             <text className="flight-detail-value">
-              {searchParams.cabin === 'economy' ? '经济舱' : '公务/头等舱'}
+              {searchParams.cabin === 'nolimit' ? '无舱位' : '公务/头等舱'}
             </text>
           </view>
           <view className="flight-detail-row">

@@ -3,18 +3,18 @@ import { clsx } from "clsx"
 import { useState, useEffect, useMainThreadRef, runOnMainThread, useCallback } from "@lynx-js/react"
 import type { Element } from "@lynx-js/types/main-thread"
 import type { MainThread, NodesRef, SelectorQuery, TouchEvent } from "@lynx-js/types"
-import { useDialog } from "./dialog/index"
+// import { useDialog } from "./dialog/index"
 import "./Segments.scss"
 
-export interface Segment {
-  id: string
-  label: string
+export interface Segment<T extends string = string> {
+  id: T;
+  label: string;
 }
 
-export interface SegmentsProps {
-  segments: Segment[]
-  activeId?: string
-  onSegmentChange?: (id: string) => void
+export interface SegmentsProps<T extends string = string> {
+  segments: Segment<T>[];
+  activeId?: T;
+  onSegmentChange?: (id: T) => void;
 }
 
 interface IndicatorStyle {
@@ -22,13 +22,22 @@ interface IndicatorStyle {
   width: number
 }
 
-export function Segments({ segments, activeId, onSegmentChange }: SegmentsProps) {
-  const { showDialog } = useDialog()
-  const [innerActiveId, setInnerActiveId] = useState<string | undefined>(activeId)
-  const containerRef = useMainThreadRef<Element>(null)
-  const indicatorRef = useMainThreadRef<Element>(null)
-   
-  const [indicatorStyle, setIndicatorStyle] = useState<IndicatorStyle>({ left: 0, width: 0 })
+export function Segments<T extends string = string>({
+  segments,
+  activeId,
+  onSegmentChange,
+}: SegmentsProps<T>) {
+  // const { showDialog } = useDialog()
+  const [innerActiveId, setInnerActiveId] = useState<string | undefined>(
+    activeId,
+  );
+  const containerRef = useMainThreadRef<Element>(null);
+  const indicatorRef = useMainThreadRef<Element>(null);
+
+  const [indicatorStyle, setIndicatorStyle] = useState<IndicatorStyle>({
+    left: 0,
+    width: 0,
+  });
 
   // const updateIndicator = (id: string) => {
   //   'main thread'
@@ -63,96 +72,189 @@ export function Segments({ segments, activeId, onSegmentChange }: SegmentsProps)
   //   indicator.setStyleProperty("transition", `transform 220ms cubic-bezier(0.22, 1, 0.36, 1), width 220ms cubic-bezier(0.22, 1, 0.36, 1)`)
   // }
 
-  const updateIndicator = useCallback(({ left, width }: IndicatorStyle) => {
-    'main thread'
-    const indicator = indicatorRef.current
-    if (!indicator) return
-    indicator.setStyleProperty("transform", `translate3d(${left}px, 0, 0)`)
-    indicator.setStyleProperty("width", `${width}px`)
-    indicator.setStyleProperty("transition", `transform 220ms cubic-bezier(0.22, 1, 0.36, 1), width 220ms cubic-bezier(0.22, 1, 0.36, 1)`)
-    
-  }, [indicatorRef])
+  const updateIndicator = useCallback(
+    ({ left, width }: IndicatorStyle) => {
+      'main thread';
+      const indicator = indicatorRef.current;
+      if (!indicator) return;
+      indicator.setStyleProperty('transform', `translate3d(${left}px, 0, 0)`);
+      indicator.setStyleProperty('width', `${width}px`);
+      indicator.setStyleProperty(
+        'transition',
+        `transform 220ms cubic-bezier(0.22, 1, 0.36, 1), width 220ms cubic-bezier(0.22, 1, 0.36, 1)`,
+      );
+    },
+    [indicatorRef],
+  );
 
   useEffect(() => {
     if (activeId) {
-      setInnerActiveId(activeId)
-      runOnMainThread(updateIndicator)(indicatorStyle)
+      setInnerActiveId(activeId);
+      runOnMainThread(updateIndicator)(indicatorStyle);
     }
-  }, [activeId, indicatorStyle, segments, updateIndicator])
+  }, [activeId, indicatorStyle, segments, updateIndicator]);
+
+  useEffect(() => {
+    if (!innerActiveId && segments.length > 0) {
+      const firstId = segments[0].id;
+      setInnerActiveId(firstId);
+      onSegmentChange?.(firstId);
+
+      setTimeout(() => {
+        // 等待 DOM 更新完成
+        let wrapperRect: IndicatorStyle | null = null;
+        let firstItemRect: IndicatorStyle | null = null;
+
+        const updateIndicatorStyle = () => {
+          if (!firstItemRect || !wrapperRect) return;
+          const left = firstItemRect.left - wrapperRect.left;
+          const width = firstItemRect.width;
+          setIndicatorStyle({ left, width });
+          runOnMainThread(updateIndicator)({ left, width });
+        };
+
+        lynx
+          .createSelectorQuery()
+          .select('#segments-wrapper')
+          .invoke({
+            method: 'boundingClientRect',
+            success: (rect: IndicatorStyle) => {
+              wrapperRect = rect;
+              if (firstItemRect) updateIndicatorStyle();
+            },
+            fail: (err) => {
+              console.log('boundingClientRect fail', err);
+            },
+          })
+          .exec();
+
+        lynx
+          .createSelectorQuery()
+          .select('.segment-item')
+          .invoke({
+            method: 'boundingClientRect',
+            success: (rect: IndicatorStyle) => {
+              firstItemRect = rect;
+              if (wrapperRect) updateIndicatorStyle();
+            },
+            fail: (err) => {
+              console.log('boundingClientRect fail', err);
+            },
+          })
+          .exec();
+      }, 0);
+    }
+  }, [segments, innerActiveId, onSegmentChange, updateIndicator]);
 
   const handleSegmentChangeMTS = (e: MainThread.TouchEvent) => {
-    'main thread'
-    return
-    const id = e.currentTarget.getAttribute('data-id') as string
-    console.log('handleSegmentChange', id)
-    if (!id) return
-    onSegmentChange?.(id)
-    updateIndicator(indicatorStyle)
-  }
+    'main thread';
+    return;
+    const id = e.currentTarget.getAttribute('data-id') as T;
+    console.log('handleSegmentChange', id);
+    if (!id) return;
+    onSegmentChange?.(id as T);
+    updateIndicator(indicatorStyle);
+  };
 
-  const handleSegmentChange = useCallback((e: TouchEvent) => {
-    console.log(e.currentTarget, e.currentTarget?.uid, SystemInfo.engineVersion, SystemInfo.platform, SystemInfo);
-    const uid = e.currentTarget.uid || (e.currentTarget as unknown as { uniqueId: number }).uniqueId
-    const id = e.currentTarget.dataset.id as string
-    console.log('handleSegmentChange', id)
-    // showDialog(`id=${id} uid=${uid}`)
-    if (!id) return
-    setInnerActiveId(id)
-    onSegmentChange?.(id)
-    if (!uid) return
-    let currentItemRect: IndicatorStyle | null = null
-    let wrapperRect: IndicatorStyle | null = null
+  const handleSegmentChange = useCallback(
+    (e: TouchEvent) => {
+      console.log(
+        e.currentTarget,
+        e.currentTarget?.uid,
+        SystemInfo.engineVersion,
+        SystemInfo.platform,
+        SystemInfo,
+      );
+      const uid =
+        e.currentTarget.uid ||
+        (e.currentTarget as unknown as { uniqueId: number }).uniqueId;
+      const id = e.currentTarget.dataset.id as string;
+      console.log('handleSegmentChange', id);
+      // showDialog(`id=${id} uid=${uid}`)
+      if (!id) return;
+      setInnerActiveId(id);
+      onSegmentChange?.(id as T);
+      if (!uid) return;
+      let currentItemRect: IndicatorStyle | null = null;
+      let wrapperRect: IndicatorStyle | null = null;
 
-    ;(lynx.createSelectorQuery() as { selectUniqueID(uid: number): NodesRef } & SelectorQuery).selectUniqueID(uid).invoke({
-      method: 'getBoundingClientRect',
-      success: (rect: IndicatorStyle) => {
-        console.log('getBoundingClientRect', rect)
-        currentItemRect = rect
-        updateIndicatorStyle()
-      },
-      fail: (err) => {
-        console.log('getBoundingClientRect fail', err)
+      (
+        lynx.createSelectorQuery() as {
+          selectUniqueID(uid: number): NodesRef;
+        } & SelectorQuery
+      )
+        .selectUniqueID(uid)
+        .invoke({
+          method: 'boundingClientRect',
+          success: (rect: IndicatorStyle) => {
+            console.log('boundingClientRect', rect);
+            currentItemRect = rect;
+            updateIndicatorStyle();
+          },
+          fail: (err) => {
+            console.log('boundingClientRect fail', err);
+          },
+        })
+        .exec();
+
+      lynx
+        .createSelectorQuery()
+        .select('#segments-wrapper')
+        .invoke({
+          method: 'boundingClientRect',
+          success: (rect: IndicatorStyle) => {
+            console.log('boundingClientRect', rect);
+            wrapperRect = rect;
+            updateIndicatorStyle();
+          },
+          fail: (err) => {
+            console.log('boundingClientRect fail', err);
+          },
+        })
+        .exec();
+
+      function updateIndicatorStyle() {
+        if (!currentItemRect || !wrapperRect) return;
+        const left = currentItemRect.left - wrapperRect.left;
+        const width = currentItemRect.width;
+        setIndicatorStyle({ left, width });
+        runOnMainThread(updateIndicator)({ left, width });
       }
-    }).exec()
-
-    lynx.createSelectorQuery().select('#segments-wrapper').invoke({
-      method: 'getBoundingClientRect',
-      success: (rect: IndicatorStyle) => {
-        console.log('getBoundingClientRect', rect)
-        wrapperRect = rect
-        updateIndicatorStyle()
-      },
-      fail: (err) => {
-        console.log('getBoundingClientRect fail', err)
-      }
-    }).exec()
-
-    function updateIndicatorStyle() {
-      if (!currentItemRect || !wrapperRect) return
-      const left = currentItemRect.left - wrapperRect.left
-      const width = currentItemRect.width
-      setIndicatorStyle({ left, width })
-      showDialog(`left=${left} width=${width}`)
-      runOnMainThread(updateIndicator)({ left, width })
-    }
-
-  }, [onSegmentChange, updateIndicator, showDialog])
+    },
+    [onSegmentChange, updateIndicator],
+  );
 
   return (
     <>
       <view className="segments">
-        <view className="segments-wrapper" main-thread:ref={containerRef} id="segments-wrapper">
-          <view className="segments-indicator" main-thread:ref={indicatorRef} id="segments-indicator" />
+        <view
+          className="segments-wrapper"
+          main-thread:ref={containerRef}
+          id="segments-wrapper"
+        >
+          <view
+            className="segments-indicator"
+            main-thread:ref={indicatorRef}
+            id="segments-indicator"
+          />
           <view className="segments-content">
             {segments.map((segment) => (
               <view
                 key={segment.id}
-                className={clsx("segment-item", innerActiveId === segment.id && "active")}
+                className={clsx(
+                  'segment-item',
+                  innerActiveId === segment.id && 'active',
+                )}
                 data-id={segment.id}
                 main-thread:bindtap={handleSegmentChangeMTS}
                 bindtap={handleSegmentChange}
               >
-                <text className={clsx("segment-label", innerActiveId === segment.id && "active")}>
+                <text
+                  className={clsx(
+                    'segment-label',
+                    innerActiveId === segment.id && 'active',
+                  )}
+                >
                   {segment.label}
                 </text>
               </view>
@@ -160,9 +262,6 @@ export function Segments({ segments, activeId, onSegmentChange }: SegmentsProps)
           </view>
         </view>
       </view>
-      <view bindtap={() => showDialog('hello dialog')}>
-        <text>open</text>
-      </view>
     </>
-  )
+  );
 }
