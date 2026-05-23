@@ -1,0 +1,381 @@
+.page-flight-list {
+  width: 375px;
+  height: 100%;
+  background-color: #f5f7fa;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== NavBar ========== */
+.flight-nav-bar {
+  width: 375px;
+  height: 44px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+  position: relative;
+
+  &__left {
+    width: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__back {
+    font-size: 20px;
+    color: #333;
+    font-weight: 400;
+  }
+
+  &__center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &__title {
+    font-size: 17px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  &__right {
+    width: 60px;
+  }
+}
+
+/* ========== Date Selector ========== */
+.date-selector {
+  width: 375px;
+  height: 66px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.date-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 48px;
+  margin-left: 4px;
+  border-radius: 8px;
+
+  &:first-child {
+    margin-left: 12px;
+  }
+
+  &:last-child {
+    margin-right: 12px;
+  }
+
+  &-active {
+    background: #ff5712;
+
+    .date-item__label,
+    .date-item__date {
+      color: #fff;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    color: #999;
+    line-height: 16px;
+  }
+
+  &__date {
+    font-size: 14px;
+    color: #333;
+    line-height: 20px;
+    font-weight: 500;
+
+    &-active {
+      color: #fff;
+    }
+  }
+}
+
+/* ========== Filter Bar ========== */
+.filter-bar {
+  width: 375px;
+  height: 40px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 12px;
+  flex-shrink: 0;
+  border-bottom: 0.5px solid #f0f0f0;
+}
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 10px;
+  margin-right: 8px;
+  border: 0.5px solid #e0e0e0;
+  border-radius: 13px;
+  background: #fff;
+  flex-shrink: 0;
+
+  &-active {
+    border-color: #ff5712;
+    background: #fff5f0;
+
+    .filter-tag__text {
+      color: #ff5712;
+    }
+  }
+
+  &__text {
+    font-size: 12px;
+    color: #666;
+    line-height: 18px;
+  }
+}
+
+/* ========== Flight List ========== */
+.flight-list {
+  flex: 1;
+  width: 375px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+/* ========== Flight Card ========== */
+.flight-card {
+  width: 351px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  &__main {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-left: auto;
+  }
+
+  &__departure {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 60px;
+  }
+
+  &__middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 4px;
+    margin: 0 8px;
+  }
+
+  &__duration {
+    font-size: 12px;
+    color: #999;
+    line-height: 16px;
+  }
+
+  &__arrow {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(108, 132, 179, 0.34) 0%, rgba(108, 132, 179, 1) 100%);
+    margin-top: 4px;
+    position: relative;
+    border-radius: 1px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: -3px;
+      width: 0;
+      height: 0;
+      border-left: 5px solid rgba(108, 132, 179, 1);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+  }
+
+  &__arrival {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  &__arrival-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__time {
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+    line-height: 28px;
+  }
+
+  &__airport {
+    font-size: 12px;
+    color: #999;
+    line-height: 18px;
+    margin-top: 4px;
+  }
+
+  &__next-day {
+    font-size: 11px;
+    color: #ff5712;
+    margin-left: 2px;
+    line-height: 16px;
+  }
+
+  &__price-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 8px;
+  }
+
+  &__price-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  &__price-symbol {
+    font-size: 12px;
+    color: #ff5712;
+    line-height: 18px;
+    margin-bottom: 2px;
+  }
+
+  &__price {
+    font-size: 20px;
+    color: #ff5712;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  &__cabin-info {
+    font-size: 12px;
+    color: #999;
+    line-height: 18px;
+    margin-top: 2px;
+  }
+
+  &__airline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__airline-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+    flex-shrink: 0;
+  }
+
+  &__airline-text {
+    font-size: 12px;
+    color: #666;
+    line-height: 18px;
+  }
+
+  &__airline-divider {
+    font-size: 12px;
+    color: #ccc;
+    line-height: 18px;
+    margin: 0 4px;
+  }
+
+  &__meal-icon {
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+/* Airline color classes */
+.airline-ca { background-color: #E60012; }
+.airline-cz { background-color: #0066B3; }
+.airline-mu { background-color: #CE0E2D; }
+.airline-hu { background-color: #D7141A; }
+.airline-ho { background-color: #E60012; }
+.airline-mf { background-color: #00A3E9; }
+.airline-default { background-color: #999; }
+
+/* ========== Bottom Sort Bar ========== */
+.sort-bar {
+  width: 375px;
+  height: 56px;
+  background: #fff;
+  border-top: 0.5px solid #eee;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+
+  &__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    &-active {
+      .sort-bar__icon,
+      .sort-bar__label {
+        color: #ff5712;
+      }
+    }
+  }
+
+  &__icon {
+    font-size: 16px;
+    color: #666;
+    line-height: 22px;
+    margin-bottom: 2px;
+  }
+
+  &__label {
+    font-size: 11px;
+    color: #666;
+    line-height: 16px;
+  }
+}

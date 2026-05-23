@@ -1,0 +1,337 @@
+.page-train-list {
+  width: 375px;
+  height: 100%;
+  background-color: #f5f7fa;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Date Selector */
+.date-selector {
+  width: 375px;
+  height: 66px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #f0f0f0;
+  flex-shrink: 0;
+
+  .date-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    height: 50px;
+    margin-left: 4px;
+    border-radius: 8px;
+
+    &-active {
+      background: #ff5712;
+
+      .date-label,
+      .date-date {
+        color: #fff;
+      }
+    }
+  }
+
+  .date-label {
+    font-size: 12px;
+    color: #999;
+    line-height: 18px;
+  }
+
+  .date-date {
+    font-size: 14px;
+    color: #333;
+    line-height: 20px;
+    font-weight: 500;
+  }
+
+  .date-date-active {
+    color: #fff;
+  }
+
+  .date-picker {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+}
+
+/* Filter Bar */
+.filter-bar {
+  width: 375px;
+  height: 40px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  flex-shrink: 0;
+  border-bottom: 0.5px solid #f0f0f0;
+
+  .filter-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    background: #f5f7fa;
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &-active {
+      background: #fff0e8;
+      border: 0.5px solid #ff5712;
+    }
+  }
+
+  .filter-tag-text {
+    font-size: 12px;
+    color: #666;
+    line-height: 18px;
+  }
+}
+
+/* Train List */
+.train-list {
+  flex: 1;
+  width: 375px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.train-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Train Main Row */
+.train-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.train-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 70px;
+
+  .train-time {
+    font-size: 22px;
+    color: #333;
+    line-height: 30px;
+    font-weight: 600;
+  }
+
+  .train-station {
+    font-size: 12px;
+    color: #999;
+    line-height: 18px;
+  }
+}
+
+.train-time-right {
+  align-items: flex-start;
+  width: 70px;
+}
+
+.train-arrival-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+
+  .train-next-day {
+    font-size: 10px;
+    color: #ff5712;
+    line-height: 14px;
+    border: 0.5px solid #ff5712;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+}
+
+.train-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 4px;
+
+  .train-duration {
+    font-size: 11px;
+    color: #999;
+    line-height: 16px;
+  }
+
+  .train-arrow {
+    width: 60px;
+    height: 1px;
+    background: #ddd;
+    margin: 4px 0;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -2px;
+      width: 0;
+      height: 0;
+      border-left: 4px solid #ddd;
+      border-top: 2.5px solid transparent;
+      border-bottom: 2.5px solid transparent;
+    }
+  }
+
+  .train-tags {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .train-tag {
+    font-size: 10px;
+    color: #999;
+    line-height: 14px;
+    padding: 1px 4px;
+    background: #f5f7fa;
+    border-radius: 2px;
+
+    &-quiet {
+      color: #4a90d9;
+      background: #eaf3fc;
+    }
+  }
+
+  .train-no {
+    font-size: 12px;
+    color: #999;
+    line-height: 18px;
+    margin-top: 2px;
+  }
+}
+
+.train-price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 70px;
+
+  .train-price {
+    font-size: 20px;
+    color: #ff5712;
+    line-height: 28px;
+    font-weight: 600;
+  }
+
+  .train-price-symbol {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .train-discount {
+    font-size: 11px;
+    color: #ff5712;
+    line-height: 16px;
+    background: #fff0e8;
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-top: 2px;
+  }
+}
+
+/* Seat Info Row */
+.train-seats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.seat-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+
+  .seat-name {
+    font-size: 12px;
+    color: #333;
+    line-height: 18px;
+  }
+
+  .seat-status {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .seat-has-ticket {
+    color: #00c853;
+  }
+
+  .seat-no-ticket {
+    color: #ccc;
+  }
+}
+
+/* Sort Bar */
+.sort-bar {
+  width: 375px;
+  height: 56px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 0.5px solid #f0f0f0;
+  flex-shrink: 0;
+
+  .sort-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 100%;
+    flex: 1;
+
+    &-active {
+      .sort-label {
+        color: #ff5712;
+      }
+    }
+  }
+
+  .sort-icon {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .sort-label {
+    font-size: 11px;
+    color: #666;
+    line-height: 16px;
+  }
+}

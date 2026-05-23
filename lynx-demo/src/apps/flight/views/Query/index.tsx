@@ -24,10 +24,11 @@ export function Query() {
   };
 
   const handleSearch = () => {
-    console.log('Search flights', {
-      cabin: selectedCabin,
-    });
-    navigate('/booking');
+    if (activeTab === 'train') {
+      navigate('/trainList');
+    } else {
+      navigate('/flightList');
+    }
   };
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
