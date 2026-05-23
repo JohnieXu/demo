@@ -6,7 +6,7 @@
 
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "lib": ["dom", "dom.iterable", "es2015", "scripthost"],
+    "lib": ["dom", "dom.iterable", "ES2017", "scripthost"],
 
     "noEmit": true,
   },
@@ -15,6 +15,7 @@
     { "path": "./src" },
     { "path": "./packages/react-spring-lynx" },
     { "path": "./packages/lynx-ui" },
+    { "path": "./packages/lynx-shared" }
   ],
   "files": [],
 }

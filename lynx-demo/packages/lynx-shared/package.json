@@ -1,0 +1,13 @@
+{
+  "name": "lynx-shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@lynx-js/react": "^0.120.0",
+    "@lynx-js/types": "^3.8.0"
+  }
+}
