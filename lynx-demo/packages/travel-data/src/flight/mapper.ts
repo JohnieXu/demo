@@ -45,6 +45,10 @@ import type {
   RefundListRequest,
   RefundFlowListRequest,
   UploadRequest,
+  FlightSearchResult,
+  FilterLabel,
+  AirportStatistic,
+  AirlineStatistic,
 } from 'travel-domain'
 import type {
   FlightDetailDto,
@@ -96,6 +100,9 @@ import type {
   OrderPassengerDto,
   RefundItemDto,
   AttachmentFileDto,
+  FilterLabelDto,
+  AirportStatisticDto,
+  AirlineStatisticDto,
 } from './dto.js'
 
 /* ─── entity mappers ────────────────────────────────────── */
@@ -742,6 +749,42 @@ export function toPassengerDeleteRequestDto(id: number): PassengerDeleteRequestD
 }
 
 /* ─── error helper ──────────────────────────────────────── */
+
+export function toFlightSearchResult(dto: import('./dto.js').FlightV2SearchResponseDto): FlightSearchResult {
+  const goFlight = dto.goFlight
+  return {
+    flights: (goFlight?.flights ?? []).map(toFlight),
+    labels: (goFlight?.labels ?? []).map(toFilterLabel),
+    depAirportStatistics: (goFlight?.depAirportStatistics ?? []).map(toAirportStatistic),
+    arrAirportStatistics: (goFlight?.arrAirportStatistics ?? []).map(toAirportStatistic),
+    airlineStatistics: (goFlight?.airlineStatistics ?? []).map(toAirlineStatistic),
+    emptyMessage: dto.emptyMessage,
+  }
+}
+
+function toFilterLabel(dto: FilterLabelDto): FilterLabel {
+  return {
+    label: dto.label ?? '',
+    value: dto.value ?? '',
+    type: dto.type ?? '',
+  }
+}
+
+function toAirportStatistic(dto: AirportStatisticDto): AirportStatistic {
+  return {
+    airportCode: dto.airportCode ?? '',
+    airportName: dto.airportName ?? '',
+    count: dto.count ?? 0,
+  }
+}
+
+function toAirlineStatistic(dto: AirlineStatisticDto): AirlineStatistic {
+  return {
+    airlineCode: dto.airlineCode ?? '',
+    airlineName: dto.airlineName ?? '',
+    count: dto.count ?? 0,
+  }
+}
 
 export function toDomainError(e: unknown): DomainError {
   if (e instanceof Error) {

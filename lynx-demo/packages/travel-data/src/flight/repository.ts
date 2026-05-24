@@ -46,6 +46,7 @@ import {
   type RefundListRequest,
   type RefundFlowListRequest,
   type UploadRequest,
+  type FlightSearchResult,
 } from 'travel-domain'
 import { FlightRemoteDataSource } from './datasource.js'
 import {
@@ -85,6 +86,7 @@ import {
   toPassengerSaveRequestDto,
   toPassengerDeleteRequestDto,
   toDomainError,
+  toFlightSearchResult,
 } from './mapper.js'
 
 /* ─── FlightSearchRepository ────────────────────────────── */
@@ -111,22 +113,11 @@ export class FlightSearchRepository implements IFlightSearchRepository {
     }
   }
 
-  async searchV2(criteria: FlightSearchCriteria): Promise<Result<PageResult<Flight>>> {
+  async searchV2(criteria: FlightSearchCriteria): Promise<Result<FlightSearchResult>> {
     try {
       const dtoReq = toV2SearchRequestDto(criteria)
       const res = await this.ds.searchV2(dtoReq)
-      const body = res.data
-      const goFlights = body.goFlight?.flights ?? []
-      // const backFlights = body.backFlight?.flights ?? []
-      const allFlights = [...goFlights]
-      return ok(
-        createPageResult(
-          allFlights.map(toFlight),
-          allFlights.length,
-          1,
-          allFlights.length
-        )
-      )
+      return ok(toFlightSearchResult(res.data))
     } catch (e) {
       return err(toDomainError(e))
     }

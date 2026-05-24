@@ -1,0 +1,15 @@
+.empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+
+  &__text {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8896b3;
+    line-height: 20px;
+  }
+}

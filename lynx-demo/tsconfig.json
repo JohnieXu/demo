@@ -15,7 +15,9 @@
     { "path": "./src" },
     { "path": "./packages/react-spring-lynx" },
     { "path": "./packages/lynx-ui" },
-    { "path": "./packages/lynx-shared" }
+    { "path": "./packages/lynx-shared" },
+    { "path": "./packages/travel-domain" },
+    { "path": "./packages/travel-data" }
   ],
   "files": [],
 }

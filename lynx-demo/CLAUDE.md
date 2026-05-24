@@ -26,8 +26,11 @@ pnpm run test         # Run vitest tests
 ```
 lynx-demo/                 # Root ReactLynx app
 ├── packages/
+│   ├── lynx-shared/       # Core utilities, hooks, and fetch wrapper (workspace)
 │   ├── lynx-ui/           # UI component library (workspace dependency)
-│   └── react-spring-lynx/ # React Spring adapter for Lynx animations
+│   ├── react-spring-lynx/ # React Spring adapter for Lynx animations (workspace)
+│   ├── travel-domain/     # DDD domain layer: entities, value objects, repository interfaces
+│   └── travel-data/       # DDD data layer: HTTP clients, DTOs, mappers, repository impls
 ├── src/
 │   ├── apps/              # Multiple entry points (auto-discovered by lynx.config.ts)
 │   │   ├── flight/         # Flight booking demo
@@ -36,7 +39,9 @@ lynx-demo/                 # Root ReactLynx app
 │   ├── animations/         # Shared animation hooks (useEnterFade, usePressScale)
 │   ├── components/         # Shared UI components
 │   └── App.tsx             # Main app entry
-└── lynx.config.ts          # Build configuration
+├── lynx.config.ts          # Build configuration
+└── docs/
+    └── travel-api-architecture.md  # DDD architecture reference
 ```
 
 ### Multi-Entry Build System
@@ -53,7 +58,47 @@ Animation presets in `src/animations/presets.ts` define tension/friction configs
 `src/react-shim.ts` maps `react` imports to `@lynx-js/react` for compatibility with libraries like `@react-spring/web` that expect React exports including `version`.
 
 ### Workspace Dependencies
-Apps consume `lynx-ui` and `react-spring-lynx` via `workspace:*` protocol in package.json.
+Apps consume all `packages/*` via `workspace:*` protocol in package.json.
+- `lynx-shared` — Low-level fetch wrapper (`createFetch`), hooks, platform utilities
+- `lynx-ui` — Reusable UI components
+- `react-spring-lynx` — Animation primitives for Lynx
+- `travel-domain` — Pure domain layer (entities, repository interfaces, `Result<T,E>`). **Zero external dependencies.**
+- `travel-data` — Data layer (DTOs, mappers, HTTP datasources, repository implementations). Depends on `travel-domain` + `lynx-shared`.
+
+### API / DDD Architecture
+
+Business API access follows a **Domain-Driven Design** layered approach. See `docs/travel-api-architecture.md` for the full design document.
+
+**Dependency direction:** App → `travel-data` → `travel-domain` (inner layer knows nothing about outer layers)
+
+| Layer | Package | Responsibility |
+|-------|---------|---------------|
+| **App** | `src/apps/*` | UI, state stores (Zustand), orchestration |
+| **Data** | `travel-data` | HTTP calls, DTOs, mappers, repository implementations |
+| **Domain** | `travel-domain` | Entities, value objects, repository interfaces, `Result<T,E>` |
+
+**Key rules for working with APIs:**
+1. App code imports repositories from `travel-data`, never calls `fetch` directly.
+2. Repository methods return `Result<T, DomainError>` — use `isSuccess` / `isFailure` checks, not try/catch.
+3. DTOs live in `travel-data` and are mapped to domain entities before reaching app code.
+4. Adding a new domain (e.g. `hotel`): define `IHotelRepository` in `travel-domain`, implement `HotelRepository` in `travel-data`.
+
+**Example usage in an app:**
+```ts
+import { FlightRepository } from 'travel-data'
+import type { FlightSearchCriteria } from 'travel-domain'
+
+const repo = new FlightRepository()
+const result = await repo.search({ departure: '北京', arrival: '上海', date: '2024-09-01' })
+
+if (result.isSuccess) {
+  result.data.list        // Flight[] — typed domain entities
+  result.data.hasMore     // pagination flag
+} else {
+  result.error.code       // 'NETWORK_ERROR' | 'UNKNOWN_ERROR'
+  result.error.message
+}
+```
 
 ## Key Dependencies
 - `@lynx-js/react` - React implementation for Lynx

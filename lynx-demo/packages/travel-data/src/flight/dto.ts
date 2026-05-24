@@ -92,12 +92,30 @@ export interface FlightV2SearchResponseDto {
 
 export interface FlightInfoDetailDto {
   flights: FlightDetailDto[]
-  depAirportStatistics?: unknown[]
-  arrAirportStatistics?: unknown[]
-  airlineStatistics?: unknown[]
+  depAirportStatistics?: AirportStatisticDto[]
+  arrAirportStatistics?: AirportStatisticDto[]
+  airlineStatistics?: AirlineStatisticDto[]
   bigModelPrice?: number
   mediumModelPrice?: number
-  labels?: unknown[]
+  labels?: FilterLabelDto[]
+}
+
+export interface FilterLabelDto {
+  label?: string
+  value?: string
+  type?: string
+}
+
+export interface AirportStatisticDto {
+  airportCode?: string
+  airportName?: string
+  count?: number
+}
+
+export interface AirlineStatisticDto {
+  airlineCode?: string
+  airlineName?: string
+  count?: number
 }
 
 /* ─── Flight detail (shared) ───────────────────────────── */

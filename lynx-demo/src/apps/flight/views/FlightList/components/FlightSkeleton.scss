@@ -1,0 +1,53 @@
+.flight-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__item {
+    width: 351px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__time {
+    width: 60px;
+    height: 28px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  &__duration {
+    flex: 1;
+    height: 16px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  &__price {
+    width: 80px;
+    height: 24px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  &__text {
+    width: 100px;
+    height: 18px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+}

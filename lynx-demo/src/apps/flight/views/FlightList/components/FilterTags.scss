@@ -1,0 +1,43 @@
+.filter-tags {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  background: #f2f6ff;
+
+  &__scroll {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  &__item {
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 12px;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 16px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--active {
+      border-color: #ff5712;
+      background: #fff5f0;
+
+      .filter-tags__text {
+        color: #ff5712;
+      }
+    }
+  }
+
+  &__text {
+    font-size: 12px;
+    color: #666;
+    line-height: 18px;
+  }
+}

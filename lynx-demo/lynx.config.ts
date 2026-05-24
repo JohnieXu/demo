@@ -3,6 +3,7 @@ import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin'
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check'
 import { pluginSass } from '@rsbuild/plugin-sass'
+import * as sass from 'sass'
 import dgram from 'dgram'
 import { promisify } from 'util'
 import { readdirSync, statSync } from 'fs'
@@ -72,7 +73,12 @@ export default defineConfig({
       engineVersion: '3.7'
     }),
     pluginTypeCheck(),
-    pluginSass(),
+    pluginSass({
+      sassLoaderOptions: {
+        implementation: sass,
+        api: 'modern',
+      },
+    }),
   ],
   resolve: {
     alias: {

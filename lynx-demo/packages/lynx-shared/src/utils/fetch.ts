@@ -5,15 +5,21 @@
  * This module should only be imported in background-only contexts.
  */
 
-'background only';
-
 import type { Request, RequestInit, Response } from '@lynx-js/types/background';
 
 /** Lynx fetch function typed from @lynx-js/types instead of DOM lib */
-const _fetch = fetch as unknown as (
+function getFetch(): (
   input: string | Request | URL,
   init?: RequestInit,
-) => Promise<Response>;
+) => Promise<Response> {
+  if (typeof fetch === 'undefined') {
+    throw new Error('fetch is only available on the background thread');
+  }
+  return fetch as unknown as (
+    input: string | Request | URL,
+    init?: RequestInit,
+  ) => Promise<Response>;
+}
 
 type LynxRequestInfo = string | Request | URL;
 
@@ -112,7 +118,7 @@ async function timeoutFetch(input: LynxRequestInfo, init?: RequestInit & { timeo
       reject(new LynxFetchError(`Request timeout after ${timeout}ms`));
     }, timeout);
 
-    _fetch(input, requestInit)
+    getFetch()(input, requestInit)
       .then((response) => {
         clearTimeout(timer);
         resolve(response);
@@ -151,6 +157,7 @@ async function parseResponse<T>(response: Response): Promise<LynxResponse<T>> {
  * Create a configured fetch instance
  */
 export function createFetch(defaultConfig: RequestConfig = {}) {
+  'background only';
   const requestInterceptors: Interceptor[] = [];
   const responseInterceptors: ResponseInterceptor[] = [];
   const errorInterceptors: ErrorInterceptor[] = [];

@@ -46,6 +46,7 @@
     "jsdom": "^26.1.0",
     "postcss-px-to-viewport-8-plugin": "^1.2.5",
     "prettier": "^3.8.3",
+    "sass": "^1.100.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.59.3",
     "vitest": "^3.2.4"

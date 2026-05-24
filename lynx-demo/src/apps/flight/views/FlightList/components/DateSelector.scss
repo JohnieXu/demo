@@ -1,0 +1,57 @@
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  overflow: hidden;
+
+  &__scroll {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  &__item {
+    flex-shrink: 0;
+    width: 60px;
+    min-height: 50px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 7px;
+    box-sizing: border-box;
+
+    &--active {
+      background: #ff5712;
+
+      .date-selector__week,
+      .date-selector__day {
+        color: #ffffff;
+      }
+    }
+  }
+
+  &__week {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 400;
+    color: #333333;
+    letter-spacing: 0.24px;
+  }
+
+  &__day {
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 600;
+    color: #333333;
+    letter-spacing: 0.28px;
+  }
+}

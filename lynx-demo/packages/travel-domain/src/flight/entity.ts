@@ -443,6 +443,37 @@ export interface FlightSearchCriteria {
   readonly entranceSource?: number
 }
 
+// ---------------------------------------------------------------------------
+// Filter / Statistics
+// ---------------------------------------------------------------------------
+
+export interface FilterLabel {
+  readonly label: string
+  readonly value: string
+  readonly type: string
+}
+
+export interface AirportStatistic {
+  readonly airportCode: string
+  readonly airportName: string
+  readonly count: number
+}
+
+export interface AirlineStatistic {
+  readonly airlineCode: string
+  readonly airlineName: string
+  readonly count: number
+}
+
+export interface FlightSearchResult {
+  readonly flights: readonly Flight[]
+  readonly labels: readonly FilterLabel[]
+  readonly depAirportStatistics: readonly AirportStatistic[]
+  readonly arrAirportStatistics: readonly AirportStatistic[]
+  readonly airlineStatistics: readonly AirlineStatistic[]
+  readonly emptyMessage?: string
+}
+
 export interface CabinSearchCriteria {
   readonly sessionId?: string
   readonly goExtData: string

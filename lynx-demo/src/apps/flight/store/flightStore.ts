@@ -17,6 +17,10 @@ export type FlightSearchParams = {
   tab: TabType
   departure: string
   arrival: string
+  departureCode: string
+  arrivalCode: string
+  departureType: number
+  arrivalType: number
   date: string
   weekday: string
   returnDate?: string
@@ -37,6 +41,20 @@ export type FlightState = {
   // Search params
   searchParams: FlightSearchParams
   setSearchParams: (params: Partial<FlightSearchParams>) => void
+
+  // Passenger count
+  adultNum: number
+  childNum: number
+  setAdultNum: (num: number) => void
+  setChildNum: (num: number) => void
+
+  // Selected date for keep-alive
+  selectedDate: string
+  setSelectedDate: (date: string) => void
+
+  // B2C mode
+  entranceSource: number
+  setEntranceSource: (source: number) => void
 
   // Search results
   flightList: FlightItem[]
@@ -62,6 +80,10 @@ const initialSearchParams: FlightSearchParams = {
   tab: 'flight',
   departure: '北京',
   arrival: '上海',
+  departureCode: 'BJS',
+  arrivalCode: 'SHA',
+  departureType: 2,
+  arrivalType: 2,
   date: '8月31日',
   weekday: '周五',
   cabin: 'nolimit',
@@ -73,6 +95,17 @@ export const useFlightStore = create<FlightState>((set) => ({
     set((state) => ({
       searchParams: { ...state.searchParams, ...params },
     })),
+
+  adultNum: 1,
+  childNum: 0,
+  setAdultNum: (num) => set({ adultNum: num }),
+  setChildNum: (num) => set({ childNum: num }),
+
+  selectedDate: '',
+  setSelectedDate: (date) => set({ selectedDate: date }),
+
+  entranceSource: 0,
+  setEntranceSource: (source) => set({ entranceSource: source }),
 
   flightList: [],
   setFlightList: (list) => set({ flightList: list }),
@@ -92,5 +125,13 @@ export const useFlightStore = create<FlightState>((set) => ({
   selectedFlight: null,
   setSelectedFlight: (flight) => set({ selectedFlight: flight }),
 
-  resetSearch: () => set({ searchParams: initialSearchParams, flightList: [], selectedFlight: null }),
+  resetSearch: () => set({
+    searchParams: initialSearchParams,
+    adultNum: 1,
+    childNum: 0,
+    selectedDate: '',
+    entranceSource: 0,
+    flightList: [],
+    selectedFlight: null,
+  }),
 }))

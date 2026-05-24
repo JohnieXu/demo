@@ -37,6 +37,7 @@ import type {
   RefundListRequest,
   RefundFlowListRequest,
   UploadRequest,
+  FlightSearchResult,
 } from './entity.js'
 
 export interface IFlightSearchRepository {
@@ -46,7 +47,7 @@ export interface IFlightSearchRepository {
 
   searchV2(
     criteria: FlightSearchCriteria
-  ): Promise<Result<PageResult<Flight>>>
+  ): Promise<Result<FlightSearchResult>>
 
   getCabinList(
     criteria: CabinSearchCriteria

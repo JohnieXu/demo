@@ -1,247 +1,358 @@
-import { useState, useMemo } from '@lynx-js/react'
+import { useState, useEffect, useCallback, useRef } from '@lynx-js/react'
+import type { NodesRef } from '@lynx-js/types'
 import { clsx } from 'clsx'
+import { useNavigate } from 'react-router'
 import { NavBar } from '../../components/NavBar'
 import { useFlightStore } from '../../store/flightStore'
-import { mockFlightList, dateList } from './mockData'
-import type { FlightInfo, SortType, FilterKey } from './types'
+import { useFlightList } from './hooks/useFlightList'
+import { useFlightFilter } from './hooks/useFlightFilter'
+import { useSortBarScroll } from './hooks/useSortBarScroll'
+import { DateSelector } from './components/DateSelector'
+import { FilterTags } from './components/FilterTags'
+import { FlightCard } from './components/FlightCard'
+import { FlightSkeleton } from './components/FlightSkeleton'
+import { EmptyState } from './components/EmptyState'
+import { SortBar } from './components/SortBar'
+import { FilterPopup } from './components/FilterPopup'
+import { PassengerPopup } from './components/PassengerPopup'
+import type { Flight, SortType } from 'travel-domain'
+import type { FilterLabelItem } from './components/FilterTags'
+import { mockFlightList } from './mockData'
 import './index.scss'
 
-const filterTags = [
-  { label: '大兴出发', key: 'depDaxing' as FilterKey },
-  { label: '首都出发', key: 'depCapital' as FilterKey },
-  { label: '虹桥到达', key: 'arrHongqiao' as FilterKey },
-  { label: '浦东到达', key: 'arrPudong' as FilterKey },
-  { label: '仅看直飞', key: 'onlyDirect' as FilterKey },
-  { label: '大机型', key: 'largeAircraft' as FilterKey },
-  { label: '隐藏共享航班', key: 'hideShared' as FilterKey },
-  { label: '单成人价格', key: 'singleAdult' as FilterKey },
+function mapMockToFlights(list: typeof mockFlightList): Flight[] {
+  return list.map((item) => ({
+    flightNumber: item.flightNo,
+    airline: { code: '', name: item.airline },
+    acCode: '',
+    logo: item.airlineIcon || '',
+    model: item.aircraftType,
+    depDate: '',
+    arrDate: '',
+    depCityCode: '',
+    arrCityCode: '',
+    depCityName: '',
+    arrCityName: '',
+    depCode: '',
+    depAirport: item.departureAirport,
+    arrCode: '',
+    arrAirport: item.arrivalAirport,
+    depTerminal: '',
+    arrTerminal: '',
+    depTime: item.departureTime,
+    arrTime: item.arrivalTime,
+    duration: item.duration,
+    stops: [],
+    isShare: 0,
+    isStop: 0,
+    shareAcCode: '',
+    shareLogo: '',
+    shareFlight: '',
+    shareFlyNo: '',
+    price: item.price,
+    intervalDay: item.intervalDay,
+    depWeek: '',
+    meal: item.mealService ? 1 : 0,
+    mealDesc: '',
+    extData: '',
+    discount: parseFloat(item.discount) || 0,
+    cabinName: item.cabinClass,
+    handBaggageRule: '',
+    consignBaggageRule: '',
+    baggageRule: '',
+  }))
+}
+
+const mockFilterLabels: FilterLabelItem[] = [
+  { label: '上午出发', value: '上午出发' },
+  { label: '下午出发', value: '下午出发' },
+  { label: '仅看直飞', value: '仅看直飞' },
+  { label: '隐藏共享航班', value: '隐藏共享航班' },
+  { label: '大机型', value: '大机型' },
 ]
 
-const sortBarItems: { key: SortType; label: string; icon: string }[] = [
-  { key: 'direct', label: '优先直飞', icon: '✈' },
-  { key: 'time', label: '时间排序', icon: '⏱' },
-  { key: 'price', label: '价格排序', icon: '¥' },
-]
+function getTodayKey(): string {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}${month}${day}`
+}
 
 export function FlightList() {
-  const { searchParams } = useFlightStore()
+  const navigate = useNavigate()
+  const {
+    searchParams,
+    adultNum,
+    childNum,
+    selectedDate,
+    setSelectedDate,
+    entranceSource,
+    setAdultNum,
+    setChildNum,
+  } = useFlightStore()
 
-  const [activeDateIndex, setActiveDateIndex] = useState(0)
-  const [activeSort, setActiveSort] = useState<SortType>('direct')
-  const [filters, setFilters] = useState<Record<FilterKey, boolean>>({
-    depDaxing: false,
-    depCapital: false,
-    arrHongqiao: false,
-    arrPudong: false,
-    onlyDirect: false,
-    largeAircraft: false,
-    hideShared: false,
-    singleAdult: false,
+  const [showPassengerPopup, setShowPassengerPopup] = useState(false)
+  const [filterLabels, setFilterLabels] = useState<FilterLabelItem[]>(mockFilterLabels)
+  const [topSelectedLabels, setTopSelectedLabels] = useState<string[]>([])
+
+  // Sort bar scroll
+  const { isSortBarHidden, handleScroll } = useSortBarScroll()
+
+  // Date selector state
+  const [activeDateKey, setActiveDateKey] = useState(() => {
+    if (selectedDate) {
+      const d = new Date(selectedDate)
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}${month}${day}`
+    }
+    return getTodayKey()
   })
 
-  const sortedFlights = useMemo(() => {
-    let list = [...mockFlightList]
+  // Sync selectedDate from store on mount
+  useEffect(() => {
+    if (selectedDate) {
+      const d = new Date(selectedDate)
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      setActiveDateKey(`${year}${month}${day}`)
+    }
+  }, [selectedDate])
 
-    // Apply filters
-    if (filters.depDaxing) {
-      list = list.filter((f) => f.departureAirport.includes('大兴'))
+  // Build search criteria
+  const getSearchCriteria = useCallback(() => {
+    'background only';
+    const fromDate = selectedDate || new Date().toISOString().slice(0, 10)
+    return {
+      cabinGrade: 0 as const,
+      adultNum,
+      childNum,
+      fromCity: searchParams.departureCode,
+      fromCityType: searchParams.departureType,
+      fromDate,
+      toCity: searchParams.arrivalCode,
+      toCityType: searchParams.arrivalType,
+      tripType: 1 as const,
+      entranceSource,
     }
-    if (filters.depCapital) {
-      list = list.filter((f) => f.departureAirport.includes('首都'))
-    }
-    if (filters.arrHongqiao) {
-      list = list.filter((f) => f.arrivalAirport.includes('虹桥'))
-    }
-    if (filters.arrPudong) {
-      list = list.filter((f) => f.arrivalAirport.includes('浦东'))
-    }
-    if (filters.largeAircraft) {
-      list = list.filter((f) => f.aircraftSize === '大')
-    }
+  }, [searchParams, adultNum, childNum, selectedDate, entranceSource])
 
-    // Apply sort
-    switch (activeSort) {
-      case 'time':
-        list.sort((a, b) => a.departureTime.localeCompare(b.departureTime))
-        break
-      case 'price':
-        list.sort((a, b) => a.price - b.price)
-        break
-      case 'direct':
-      default:
-        // Keep default order (could be based on recommendation score)
-        break
+  // Flight filter
+  const filter = useFlightFilter({
+    getBaseParams: getSearchCriteria,
+    requestPreview: async () => ({ flights: [] }),
+  })
+
+  // Keep appliedQueryParams in ref for latest access in effects
+  const appliedQueryParamsRef = useRef(filter.appliedQueryParams)
+  appliedQueryParamsRef.current = filter.appliedQueryParams
+
+  // Flight list
+  const flightListHook = useFlightList({
+    getSearchCriteria,
+    onResult: (result) => {
+      if (result.labels?.length) {
+        setFilterLabels(result.labels.map((l) => ({ label: l.label, value: l.value })))
+      }
+      filter.syncFilterPopupOptionsByFlightData({
+        depAirportStatistics: [...result.depAirportStatistics] as any,
+        arrAirportStatistics: [...result.arrAirportStatistics] as any,
+        airlineStatistics: [...result.airlineStatistics] as any,
+      })
+    },
+  })
+
+  // Refresh ref for finishRefresh
+  const refreshRef = useRef<NodesRef>(null)
+
+  // Finish refresh animation when refreshing state becomes false
+  const prevRefreshingRef = useRef(flightListHook.refreshing)
+  useEffect(() => {
+    if (prevRefreshingRef.current && !flightListHook.refreshing) {
+      refreshRef.current?.invoke({
+        method: 'finishRefresh',
+      }).exec()
     }
+    prevRefreshingRef.current = flightListHook.refreshing
+  }, [flightListHook.refreshing])
 
-    return list
-  }, [activeSort, filters])
+  // Auto fetch when sort changes
+  useEffect(() => {
+    flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flightListHook.sortType, flightListHook.sortOrder])
 
-  const toggleFilter = (key: FilterKey) => {
-    setFilters((prev) => ({ ...prev, [key]: !prev[key] }))
+  // Initial fetch on mount
+  useEffect(() => {
+    flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Date change handler
+  const handleDateChange = (dateKey: string) => {
+    'background only';
+    setActiveDateKey(dateKey)
+    const year = dateKey.slice(0, 4)
+    const month = dateKey.slice(4, 6)
+    const day = dateKey.slice(6, 8)
+    const dateStr = `${year}-${month}-${day}`
+    setSelectedDate(dateStr)
+    flightListHook.fetchFlights(filter.appliedQueryParams)
   }
+
+  // Sort change handler
+  const handleSortChange = (nextSortType: SortType) => {
+    'background only';
+    flightListHook.handleSortChange(nextSortType)
+  }
+
+  // Filter confirm handler
+  const handleFilterConfirm = () => {
+    'background only';
+    filter.applyDraftFilters()
+    // Defer fetch to next tick so appliedQueryParams is updated
+    setTimeout(() => {
+      flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    }, 0)
+  }
+
+  // Filter tags change handler
+  const handleFilterTagsChange = (selectedLabels: string[]) => {
+    'background only';
+    setTopSelectedLabels(selectedLabels)
+    filter.syncFiltersFromTopLabels(selectedLabels)
+    setTimeout(() => {
+      flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    }, 0)
+  }
+
+  // Flight card click
+  const handleFlightClick = (flight: Flight) => {
+    'background only';
+    navigate(`/cabinList?flightNo=${flight.flightNumber}`)
+  }
+
+  // Passenger confirm
+  const handlePassengerConfirm = (adult: number, child: number) => {
+    'background only';
+    setAdultNum(adult)
+    setChildNum(child)
+    setShowPassengerPopup(false)
+    flightListHook.fetchFlights(filter.appliedQueryParams)
+  }
+
+  // Determine display data: prefer API result, fallback to mock
+  const displayFlights = flightListHook.flightList.length > 0
+    ? flightListHook.flightList
+    : (!flightListHook.loading && !flightListHook.refreshing)
+      ? mapMockToFlights(mockFlightList)
+      : []
 
   return (
     <view className="page-flight-list">
-      {/* NavBar */}
       <NavBar title={`${searchParams.departure}-${searchParams.arrival}`} />
 
-      {/* Date Selector */}
-      <scroll-view
-        className="date-selector"
-        scroll-orientation="horizontal"
-        show-scroll-bar={false}
+      <DateSelector selectedDate={activeDateKey} onChange={handleDateChange} />
+
+      <view
+        className="flight-passenger-bar"
+        bindtap={() => setShowPassengerPopup(true)}
       >
-        {dateList.map((item, index) => (
-          <view
-            key={index}
-            className={clsx(
-              'date-item',
-              index === activeDateIndex && 'date-item-active',
-            )}
-            bindtap={() => setActiveDateIndex(index)}
-          >
-            <text className="date-item__label">{item.label}</text>
-            <text
-              className={clsx(
-                'date-item__date',
-                index === activeDateIndex && 'date-item__date-active',
-              )}
-            >
-              {item.date}
-            </text>
-          </view>
-        ))}
-      </scroll-view>
-
-      {/* Filter Tags */}
-      <scroll-view
-        className="filter-bar"
-        scroll-orientation="horizontal"
-        show-scroll-bar={false}
-      >
-        {filterTags.map((tag) => (
-          <view
-            key={tag.key}
-            className={clsx(
-              'filter-tag',
-              filters[tag.key] && 'filter-tag-active',
-            )}
-            bindtap={() => toggleFilter(tag.key)}
-          >
-            <text className="filter-tag__text">{tag.label}</text>
-          </view>
-        ))}
-      </scroll-view>
-
-      {/* Flight List */}
-      <scroll-view
-        className="flight-list"
-        scroll-orientation="vertical"
-        show-scroll-bar={false}
-      >
-        {sortedFlights.map((flight) => (
-          <FlightCard key={flight.flightNo} flight={flight} />
-        ))}
-      </scroll-view>
-
-      {/* Bottom Sort Bar */}
-      <view className="sort-bar">
-        <view className="sort-bar__item" bindtap={() => { /* open filter modal */ }}>
-          <text className="sort-bar__icon">☰</text>
-          <text className="sort-bar__label">筛选</text>
-        </view>
-        {sortBarItems.map((item) => (
-          <view
-            key={item.key}
-            className={clsx(
-              'sort-bar__item',
-              activeSort === item.key && 'sort-bar__item-active',
-            )}
-            bindtap={() => setActiveSort(item.key)}
-          >
-            <text className="sort-bar__icon">{item.icon}</text>
-            <text className="sort-bar__label">{item.label}</text>
-          </view>
-        ))}
-      </view>
-    </view>
-  )
-}
-
-function getAirlineColorClass(airline: string): string {
-  const map: Record<string, string> = {
-    '国航': 'airline-ca',
-    '南航': 'airline-cz',
-    '东航': 'airline-mu',
-    '海航': 'airline-hu',
-    '吉祥': 'airline-ho',
-    '厦航': 'airline-mf',
-  }
-  return map[airline] || 'airline-default'
-}
-
-function FlightCard({ flight }: { flight: FlightInfo }) {
-  const airlineColorClass = getAirlineColorClass(flight.airline)
-
-  return (
-    <view className="flight-card">
-      <view className="flight-card__main">
-        {/* Left: Departure info */}
-        <view className="flight-card__departure">
-          <text className="flight-card__time">{flight.departureTime}</text>
-          <text className="flight-card__airport">{flight.departureAirport}</text>
-        </view>
-
-        {/* Center: Duration & arrow */}
-        <view className="flight-card__middle">
-          <text className="flight-card__duration">{flight.duration}</text>
-          <view className="flight-card__arrow" />
-        </view>
-
-        {/* Right: Arrival info + Price */}
-        <view className="flight-card__right">
-          <view className="flight-card__arrival">
-            <view className="flight-card__arrival-row">
-              <text className="flight-card__time">{flight.arrivalTime}</text>
-              {flight.intervalDay > 0 && (
-                <text className="flight-card__next-day">+{flight.intervalDay}</text>
-              )}
-            </view>
-            <text className="flight-card__airport">{flight.arrivalAirport}</text>
-          </view>
-
-          {/* Price block */}
-          <view className="flight-card__price-block">
-            <view className="flight-card__price-row">
-              <text className="flight-card__price-symbol">¥</text>
-              <text className="flight-card__price">{flight.price}</text>
-            </view>
-            <text className="flight-card__cabin-info">
-              {flight.cabinClass}{flight.discount}
-            </text>
-          </view>
-        </view>
+        <text className="flight-passenger-bar__text">
+          {adultNum}成人
+          {childNum > 0 ? ` ${childNum}儿童` : ''}
+        </text>
+        <text className="flight-passenger-bar__arrow">▼</text>
       </view>
 
-      {/* Airline info row */}
-      <view className="flight-card__airline">
-        <view className={`flight-card__airline-dot ${airlineColorClass}`} />
-        <text className="flight-card__airline-text">
-          {flight.airline}
-        </text>
-        <text className="flight-card__airline-divider">|</text>
-        <text className="flight-card__airline-text">{flight.flightNo}</text>
-        <text className="flight-card__airline-divider">|</text>
-        <text className="flight-card__airline-text">
-          {flight.aircraftType}({flight.aircraftSize})
-        </text>
-        {flight.mealService && (
-          <>
-            <text className="flight-card__airline-divider">|</text>
-            <text className="flight-card__meal-icon">🍽</text>
-          </>
+      <FilterTags
+        labels={filterLabels}
+        selectedLabels={topSelectedLabels}
+        onChange={handleFilterTagsChange}
+        loading={flightListHook.loading}
+        nodata={!displayFlights.length}
+      />
+
+      <refresh
+        ref={refreshRef}
+        className="flight-list-refresh"
+        bindstartrefresh={flightListHook.onRefresh}
+      >
+        <refresh-header className="flight-list-refresh__header">
+          <text className="flight-list-refresh__text">正在刷新...</text>
+        </refresh-header>
+        <scroll-view
+          className="flight-list-scroll"
+          scroll-orientation="vertical"
+          show-scroll-bar={false}
+          bindscroll={handleScroll}
+        >
+          {flightListHook.loading && !flightListHook.refreshing && (
+            <FlightSkeleton />
+          )}
+
+          {!flightListHook.loading && displayFlights.length === 0 && (
+            <EmptyState text={flightListHook.noDataText} />
+          )}
+
+          <view className="flight-list-content">
+            {displayFlights.map((flight) => (
+              <FlightCard
+                key={`${flight.flightNumber}_${flight.depTime}`}
+                flight={flight}
+                selectedDate={activeDateKey}
+                isMultiPeople={adultNum + childNum > 1}
+                isB2C={entranceSource > 0}
+                onClick={handleFlightClick}
+              />
+            ))}
+          </view>
+        </scroll-view>
+      </refresh>
+
+      <view
+        className={clsx(
+          'sort-bar-container',
+          isSortBarHidden && 'sort-bar-container--hidden'
         )}
+      >
+        <SortBar
+          sortType={flightListHook.sortType}
+          sortOrder={flightListHook.sortOrder}
+          filterCount={filter.appliedFilterBadgeCount}
+          onSortChange={handleSortChange}
+          onFilterClick={filter.openFilterPopup}
+        />
       </view>
+
+      <FilterPopup
+        show={filter.showFilterPopup}
+        tabs={filter.tabs}
+        featuredOptions={filter.featuredOptions}
+        timeRangeOptions={filter.timeRangeOptions}
+        depAirportOptions={filter.depAirportOptions}
+        arrAirportOptions={filter.arrAirportOptions}
+        airlineOptions={filter.airlineOptions}
+        modelOptions={filter.modelOptions}
+        filters={filter.draftFilters}
+        previewCount={filter.previewCount}
+        previewLoading={filter.previewLoading}
+        onClose={filter.closeFilterPopup}
+        onReset={filter.resetDraftFilters}
+        onConfirm={handleFilterConfirm}
+        onChange={filter.setDraftFilters}
+      />
+
+      <PassengerPopup
+        show={showPassengerPopup}
+        adultNum={adultNum}
+        childNum={childNum}
+        onClose={() => setShowPassengerPopup(false)}
+        onConfirm={handlePassengerConfirm}
+      />
     </view>
   )
 }
