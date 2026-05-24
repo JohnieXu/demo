@@ -25,7 +25,7 @@ export interface RequestConfig extends Omit<RequestInit, 'body'> {
   /** Request body (object will be JSON-stringified) */
   data?: Record<string, unknown> | string | FormData | ArrayBuffer;
   /** URL query parameters */
-  params?: Record<string, string | number | boolean>;
+  params?: Record<string, string | number | boolean | undefined>;
 }
 
 export interface LynxResponse<T = unknown> {
@@ -46,19 +46,22 @@ export class LynxFetchError extends Error {
     public statusText?: string,
     public data?: unknown,
     public config?: RequestConfig,
+    public code?: string,
   ) {
     super(message);
     this.name = 'LynxFetchError';
   }
 }
 
-function buildURL(url: string, baseURL?: string, params?: Record<string, string | number | boolean>): string {
+function buildURL(url: string, baseURL?: string, params?: Record<string, string | number | boolean | undefined>): string {
   let fullUrl = baseURL ? `${baseURL.replace(/\/$/, '')}/${url.replace(/^\//, '')}` : url;
 
   if (params && Object.keys(params).length > 0) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      searchParams.append(key, String(value));
+      if (value !== undefined) {
+        searchParams.append(key, String(value));
+      }
     });
     const separator = fullUrl.includes('?') ? '&' : '?';
     fullUrl += separator + searchParams.toString();
@@ -201,7 +204,14 @@ export function createFetch(defaultConfig: RequestConfig = {}) {
     } catch (error) {
       const lynxError = error instanceof LynxFetchError
         ? error
-        : new LynxFetchError(error instanceof Error ? error.message : String(error), undefined, undefined, undefined, mergedConfig);
+        : new LynxFetchError(
+            error instanceof Error ? error.message : String(error),
+            undefined,
+            undefined,
+            undefined,
+            mergedConfig,
+            (error as { code?: string }).code,
+          );
 
       // Run error interceptors
       for (const interceptor of errorInterceptors) {

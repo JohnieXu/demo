@@ -18,9 +18,12 @@
     "@react-spring/web": "^10.0.3",
     "@tanstack/react-router": "^1.170.3",
     "clsx": "^2.1.1",
+    "lynx-shared": "workspace:*",
     "lynx-ui": "workspace:*",
     "react-router": "^6.30.3",
     "react-spring-lynx": "workspace:*",
+    "travel-data": "workspace:*",
+    "travel-domain": "workspace:*",
     "zustand": "^5.0.13"
   },
   "devDependencies": {

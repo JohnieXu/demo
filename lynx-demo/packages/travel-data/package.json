@@ -1,0 +1,13 @@
+{
+  "name": "travel-data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "lynx-shared": "workspace:*",
+    "travel-domain": "workspace:*"
+  }
+}
