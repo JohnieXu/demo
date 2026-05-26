@@ -13,6 +13,7 @@ const OrderDetail = lazy(() => import('./views/OrderDetail/index').then(m => ({ 
 const TrainList = lazy(() => import('./views/TrainList/index').then(m => ({ default: m.TrainList })))
 const FlightList = lazy(() => import('./views/FlightList/index').then(m => ({ default: m.FlightList })))
 
+// eslint-disable-next-line react-refresh/only-export-components
 function LazyLoad({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<view />}>{children}</Suspense>
 }

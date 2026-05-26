@@ -46,6 +46,7 @@ export function useFlightList(options: UseFlightListOptions) {
         }
 
         const result = await repoRef.current.searchV2(params)
+        console.log('result', result)
 
         // Race condition protection: discard stale responses
         if (currentReqId !== flightListReqId.current) return

@@ -3,20 +3,20 @@ import type { NodesRef } from '@lynx-js/types'
 import { clsx } from 'clsx'
 import { useNavigate } from 'react-router'
 import { NavBar } from '../../components/NavBar'
-import { useFlightStore } from '../../store/flightStore'
-import { useFlightList } from './hooks/useFlightList'
-import { useFlightFilter } from './hooks/useFlightFilter'
-import { useSortBarScroll } from './hooks/useSortBarScroll'
-import { DateSelector } from './components/DateSelector'
-import { FilterTags } from './components/FilterTags'
-import { FlightCard } from './components/FlightCard'
-import { FlightSkeleton } from './components/FlightSkeleton'
-import { EmptyState } from './components/EmptyState'
-import { SortBar } from './components/SortBar'
-import { FilterPopup } from './components/FilterPopup'
-import { PassengerPopup } from './components/PassengerPopup'
+import { useFlightStore } from '../../store'
+import { useFlightList, useFlightFilter, useSortBarScroll } from './hooks'
+import {
+  DateSelector,
+  EmptyState,
+  FilterPopup,
+  FilterTags,
+  FlightCard,
+  FlightSkeleton,
+  PassengerPopup,
+  SortBar,
+} from './components'
+import type { FilterLabelItem } from './components'
 import type { Flight, SortType } from 'travel-domain'
-import type { FilterLabelItem } from './components/FilterTags'
 import { mockFlightList } from './mockData'
 import './index.scss'
 
@@ -125,7 +125,16 @@ export function FlightList() {
   // Build search criteria
   const getSearchCriteria = useCallback(() => {
     'background only';
-    const fromDate = selectedDate || new Date().toISOString().slice(0, 10)
+    let fromDate = selectedDate;
+    if (fromDate) {
+      fromDate = fromDate.replace(/-/g, '');
+    } else {
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      fromDate = `${year}${month}${day}`;
+    }
     return {
       cabinGrade: 0 as const,
       adultNum,
@@ -136,120 +145,126 @@ export function FlightList() {
       toCity: searchParams.arrivalCode,
       toCityType: searchParams.arrivalType,
       tripType: 1 as const,
-      entranceSource,
-    }
-  }, [searchParams, adultNum, childNum, selectedDate, entranceSource])
+      entranceSource: entranceSource ?? 0,
+      // retDate: fromDate,
+    };
+  }, [searchParams, adultNum, childNum, selectedDate, entranceSource]);
 
   // Flight filter
   const filter = useFlightFilter({
     getBaseParams: getSearchCriteria,
     requestPreview: async () => ({ flights: [] }),
-  })
+  });
 
   // Keep appliedQueryParams in ref for latest access in effects
-  const appliedQueryParamsRef = useRef(filter.appliedQueryParams)
-  appliedQueryParamsRef.current = filter.appliedQueryParams
+  const appliedQueryParamsRef = useRef(filter.appliedQueryParams);
+  appliedQueryParamsRef.current = filter.appliedQueryParams;
 
   // Flight list
   const flightListHook = useFlightList({
     getSearchCriteria,
     onResult: (result) => {
       if (result.labels?.length) {
-        setFilterLabels(result.labels.map((l) => ({ label: l.label, value: l.value })))
+        setFilterLabels(
+          result.labels.map((l) => ({ label: l.label, value: l.value })),
+        );
       }
       filter.syncFilterPopupOptionsByFlightData({
-        depAirportStatistics: [...result.depAirportStatistics] as any,
-        arrAirportStatistics: [...result.arrAirportStatistics] as any,
-        airlineStatistics: [...result.airlineStatistics] as any,
-      })
+        depAirportStatistics: [...result.depAirportStatistics],
+        arrAirportStatistics: [...result.arrAirportStatistics],
+        airlineStatistics: [...result.airlineStatistics],
+      });
     },
-  })
+  });
 
   // Refresh ref for finishRefresh
-  const refreshRef = useRef<NodesRef>(null)
+  const refreshRef = useRef<NodesRef>(null);
 
   // Finish refresh animation when refreshing state becomes false
-  const prevRefreshingRef = useRef(flightListHook.refreshing)
+  const prevRefreshingRef = useRef(flightListHook.refreshing);
   useEffect(() => {
     if (prevRefreshingRef.current && !flightListHook.refreshing) {
-      refreshRef.current?.invoke({
-        method: 'finishRefresh',
-      }).exec()
+      refreshRef.current
+        ?.invoke({
+          method: 'finishRefresh',
+        })
+        .exec();
     }
-    prevRefreshingRef.current = flightListHook.refreshing
-  }, [flightListHook.refreshing])
+    prevRefreshingRef.current = flightListHook.refreshing;
+  }, [flightListHook.refreshing]);
 
   // Auto fetch when sort changes
   useEffect(() => {
-    flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    flightListHook.fetchFlights(appliedQueryParamsRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flightListHook.sortType, flightListHook.sortOrder])
+  }, [flightListHook.sortType, flightListHook.sortOrder]);
 
   // Initial fetch on mount
   useEffect(() => {
-    flightListHook.fetchFlights(appliedQueryParamsRef.current)
+    flightListHook.fetchFlights(appliedQueryParamsRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   // Date change handler
   const handleDateChange = (dateKey: string) => {
     'background only';
-    setActiveDateKey(dateKey)
-    const year = dateKey.slice(0, 4)
-    const month = dateKey.slice(4, 6)
-    const day = dateKey.slice(6, 8)
-    const dateStr = `${year}-${month}-${day}`
-    setSelectedDate(dateStr)
-    flightListHook.fetchFlights(filter.appliedQueryParams)
-  }
+    setActiveDateKey(dateKey);
+    const year = dateKey.slice(0, 4);
+    const month = dateKey.slice(4, 6);
+    const day = dateKey.slice(6, 8);
+    const dateStr = `${year}-${month}-${day}`;
+    setSelectedDate(dateStr);
+    flightListHook.fetchFlights(filter.appliedQueryParams);
+  };
 
   // Sort change handler
   const handleSortChange = (nextSortType: SortType) => {
     'background only';
-    flightListHook.handleSortChange(nextSortType)
-  }
+    flightListHook.handleSortChange(nextSortType);
+  };
 
   // Filter confirm handler
   const handleFilterConfirm = () => {
     'background only';
-    filter.applyDraftFilters()
+    filter.applyDraftFilters();
     // Defer fetch to next tick so appliedQueryParams is updated
     setTimeout(() => {
-      flightListHook.fetchFlights(appliedQueryParamsRef.current)
-    }, 0)
-  }
+      flightListHook.fetchFlights(appliedQueryParamsRef.current);
+    }, 0);
+  };
 
   // Filter tags change handler
   const handleFilterTagsChange = (selectedLabels: string[]) => {
     'background only';
-    setTopSelectedLabels(selectedLabels)
-    filter.syncFiltersFromTopLabels(selectedLabels)
+    setTopSelectedLabels(selectedLabels);
+    filter.syncFiltersFromTopLabels(selectedLabels);
     setTimeout(() => {
-      flightListHook.fetchFlights(appliedQueryParamsRef.current)
-    }, 0)
-  }
+      flightListHook.fetchFlights(appliedQueryParamsRef.current);
+    }, 0);
+  };
 
   // Flight card click
   const handleFlightClick = (flight: Flight) => {
     'background only';
-    navigate(`/cabinList?flightNo=${flight.flightNumber}`)
-  }
+    navigate(`/cabinList?flightNo=${flight.flightNumber}`);
+  };
 
   // Passenger confirm
   const handlePassengerConfirm = (adult: number, child: number) => {
     'background only';
-    setAdultNum(adult)
-    setChildNum(child)
-    setShowPassengerPopup(false)
-    flightListHook.fetchFlights(filter.appliedQueryParams)
-  }
+    setAdultNum(adult);
+    setChildNum(child);
+    setShowPassengerPopup(false);
+    flightListHook.fetchFlights(filter.appliedQueryParams);
+  };
 
   // Determine display data: prefer API result, fallback to mock
-  const displayFlights = flightListHook.flightList.length > 0
-    ? flightListHook.flightList
-    : (!flightListHook.loading && !flightListHook.refreshing)
-      ? mapMockToFlights(mockFlightList)
-      : []
+  const displayFlights =
+    flightListHook.flightList.length > 0
+      ? flightListHook.flightList
+      : !flightListHook.loading && !flightListHook.refreshing
+        ? mapMockToFlights(mockFlightList)
+        : [];
 
   return (
     <view className="page-flight-list">
@@ -284,7 +299,7 @@ export function FlightList() {
         <refresh-header className="flight-list-refresh__header">
           <text className="flight-list-refresh__text">正在刷新...</text>
         </refresh-header>
-        <scroll-view
+        <list
           className="flight-list-scroll"
           scroll-orientation="vertical"
           show-scroll-bar={false}
@@ -299,24 +314,29 @@ export function FlightList() {
           )}
 
           <view className="flight-list-content">
-            {displayFlights.map((flight) => (
-              <FlightCard
-                key={`${flight.flightNumber}_${flight.depTime}`}
-                flight={flight}
-                selectedDate={activeDateKey}
-                isMultiPeople={adultNum + childNum > 1}
-                isB2C={entranceSource > 0}
-                onClick={handleFlightClick}
-              />
+            {displayFlights.map((flight, index) => (
+              <list-item
+                key={`${flight.flightNumber}_${flight.depTime}_${index}`}
+                item-key={`${flight.flightNumber}_${flight.depTime}_${index}`}
+              >
+                <FlightCard
+                  key={`${flight.flightNumber}_${flight.depTime}_${index}`}
+                  flight={flight}
+                  selectedDate={activeDateKey}
+                  isMultiPeople={adultNum + childNum > 1}
+                  isB2C={entranceSource > 0}
+                  onClick={handleFlightClick}
+                />
+              </list-item>
             ))}
           </view>
-        </scroll-view>
+        </list>
       </refresh>
 
       <view
         className={clsx(
           'sort-bar-container',
-          isSortBarHidden && 'sort-bar-container--hidden'
+          isSortBarHidden && 'sort-bar-container--hidden',
         )}
       >
         <SortBar
@@ -354,5 +374,5 @@ export function FlightList() {
         onConfirm={handlePassengerConfirm}
       />
     </view>
-  )
+  );
 }

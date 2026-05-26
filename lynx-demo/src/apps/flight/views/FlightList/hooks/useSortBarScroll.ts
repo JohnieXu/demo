@@ -10,6 +10,7 @@ export function useSortBarScroll(threshold = 20) {
 
   const handleScroll = useCallback(
     (e: { detail: { scrollTop: number } }) => {
+      'background only';
       const currentScrollTop = e.detail.scrollTop || 0
       const delta = currentScrollTop - lastScrollTop.current
 
