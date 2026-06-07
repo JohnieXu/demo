@@ -126,12 +126,13 @@ export class FlightRemoteDataSource {
   /* ─── upload ───────────────────────────────────────────── */
 
   async upload(params: UploadRequestDto) {
-    const formData = new FormData()
-    if (typeof params.file === 'string') {
-      formData.append('file', params.file)
-    } else {
-      formData.append('file', params.file)
-    }
+    // const formData = new FormData()
+    // if (typeof params.file === 'string') {
+    //   formData.append('file', params.file)
+    // } else {
+    //   formData.append('file', params.file)
+    // }
+    const formData =  { ...params }
     return travelClient.post<UploadResponseDto>('/openapi/single/flightOrder/upload', formData as unknown as unknown as Record<string, unknown>)
   }
 

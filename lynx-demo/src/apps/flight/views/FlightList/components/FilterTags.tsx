@@ -12,6 +12,8 @@ interface FilterTagsProps {
   onChange: (selectedValues: string[]) => void
   loading?: boolean
   nodata?: boolean
+  className?: string
+  style?: Record<string, string | number>
 }
 
 export function FilterTags({
@@ -20,6 +22,8 @@ export function FilterTags({
   onChange,
   loading,
   nodata,
+  className,
+  style,
 }: FilterTagsProps) {
   if (loading || nodata || !labels.length) {
     return null
@@ -36,7 +40,7 @@ export function FilterTags({
   }
 
   return (
-    <view className="filter-tags">
+    <view className={clsx('filter-tags', className)} style={style}>
       <scroll-view
         className="filter-tags__scroll"
         scroll-orientation="horizontal"

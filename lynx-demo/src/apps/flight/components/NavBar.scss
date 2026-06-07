@@ -11,6 +11,10 @@
   padding-left: calc(env(safe-area-inset-left) + 6px);
   padding-right: calc(env(safe-area-inset-right) + 6px);
   .nav-bar__left {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     .icon {
       width: 24px;
       height: 24px;
@@ -29,10 +33,24 @@
     }
   }
   .nav-bar__right {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    .icon {
+      width: 24px;
+      height: 24px;
+      &--hidden {
+        opacity: 0;
+      }
+    }
     .text {
       color: #333333;
       font-size: 18px;
       line-height: 26px;
+      &--hidden {
+        opacity: 0;
+      }
     }
   }
 }

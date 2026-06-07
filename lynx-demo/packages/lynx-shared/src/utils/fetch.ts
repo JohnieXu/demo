@@ -29,7 +29,7 @@ export interface RequestConfig extends Omit<RequestInit, 'body'> {
   /** Base URL prepended to the request URL */
   baseURL?: string;
   /** Request body (object will be JSON-stringified) */
-  data?: Record<string, unknown> | string | FormData | ArrayBuffer;
+  data?: Record<string, unknown> | string | ArrayBuffer;
   /** URL query parameters */
   params?: Record<string, string | number | boolean | undefined>;
 }
@@ -79,7 +79,7 @@ function buildURL(url: string, baseURL?: string, params?: Record<string, string 
 function buildHeaders(config: RequestConfig): Record<string, string> {
   const headers: Record<string, string> = {};
 
-  if (config.data && typeof config.data === 'object' && !(config.data instanceof FormData) && !(config.data instanceof ArrayBuffer)) {
+  if (config.data && typeof config.data === 'object' && !(config.data instanceof ArrayBuffer)) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -100,10 +100,10 @@ function buildHeaders(config: RequestConfig): Record<string, string> {
   return headers;
 }
 
-function buildBody(config: RequestConfig): string | FormData | ArrayBuffer | undefined {
+function buildBody(config: RequestConfig): string | ArrayBuffer | undefined {
   if (!config.data) return undefined;
 
-  if (typeof config.data === 'string' || config.data instanceof FormData || config.data instanceof ArrayBuffer) {
+  if (typeof config.data === 'string' || config.data instanceof ArrayBuffer) {
     return config.data;
   }
 
@@ -118,12 +118,21 @@ async function timeoutFetch(input: LynxRequestInfo, init?: RequestInit & { timeo
       reject(new LynxFetchError(`Request timeout after ${timeout}ms`));
     }, timeout);
 
+    console.log('fetch with input config', input, requestInit);
+
     getFetch()(input, requestInit)
       .then((response) => {
+        console.log('fetch response', response);
+        if (response.json) {
+          response.json().then((data) => {
+            console.log('fetch response data', data);
+          })
+        }
         clearTimeout(timer);
         resolve(response);
       })
       .catch((error) => {
+        console.log('fetch error', error);
         clearTimeout(timer);
         reject(error instanceof Error ? error : new LynxFetchError(String(error)));
       });
@@ -176,6 +185,8 @@ export function createFetch(defaultConfig: RequestConfig = {}) {
     for (const interceptor of requestInterceptors) {
       mergedConfig = await interceptor(mergedConfig);
     }
+
+    // debugger
 
     const fullUrl = buildURL(url, mergedConfig.baseURL, mergedConfig.params);
     const headers = buildHeaders(mergedConfig);

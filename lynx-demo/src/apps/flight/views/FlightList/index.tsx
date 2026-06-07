@@ -1,10 +1,17 @@
-import { useState, useEffect, useCallback, useRef } from '@lynx-js/react'
-import type { NodesRef } from '@lynx-js/types'
-import { clsx } from 'clsx'
-import { useNavigate } from 'react-router'
-import { NavBar } from '../../components/NavBar'
-import { useFlightStore } from '../../store'
-import { useFlightList, useFlightFilter, useSortBarScroll } from './hooks'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from '@lynx-js/react';
+import type { NodesRef } from '@lynx-js/types';
+import { clsx } from 'clsx';
+import { useNavigate } from 'react-router';
+import { NavBar } from '../../components/NavBar';
+import { useFlightStore } from '../../store';
+import { useFlightList, useFlightFilter, useSortBarScroll } from './hooks';
 import {
   DateSelector,
   EmptyState,
@@ -14,14 +21,16 @@ import {
   FlightSkeleton,
   PassengerPopup,
   SortBar,
-} from './components'
-import type { FilterLabelItem } from './components'
-import type { Flight, SortType } from 'travel-domain'
-import { mockFlightList } from './mockData'
-import './index.scss'
+} from './components';
+import type { FilterLabelItem } from './components';
+import type { Flight, SortType } from 'travel-domain';
+import { mockFlightList } from './mockData';
+import './index.scss';
+import { PageContainer } from '../../components/PageContainer';
 
 function mapMockToFlights(list: typeof mockFlightList): Flight[] {
   return list.map((item) => ({
+    key: `${item.flightNo}_${item.airline}_${item.departureTime}_${item.arrivalTime}`,
     flightNumber: item.flightNo,
     airline: { code: '', name: item.airline },
     acCode: '',
@@ -60,7 +69,7 @@ function mapMockToFlights(list: typeof mockFlightList): Flight[] {
     handBaggageRule: '',
     consignBaggageRule: '',
     baggageRule: '',
-  }))
+  }));
 }
 
 const mockFilterLabels: FilterLabelItem[] = [
@@ -69,18 +78,18 @@ const mockFilterLabels: FilterLabelItem[] = [
   { label: '仅看直飞', value: '仅看直飞' },
   { label: '隐藏共享航班', value: '隐藏共享航班' },
   { label: '大机型', value: '大机型' },
-]
+];
 
 function getTodayKey(): string {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return `${year}${month}${day}`
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
 }
 
 export function FlightList() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     searchParams,
     adultNum,
@@ -90,37 +99,38 @@ export function FlightList() {
     entranceSource,
     setAdultNum,
     setChildNum,
-  } = useFlightStore()
+  } = useFlightStore();
 
-  const [showPassengerPopup, setShowPassengerPopup] = useState(false)
-  const [filterLabels, setFilterLabels] = useState<FilterLabelItem[]>(mockFilterLabels)
-  const [topSelectedLabels, setTopSelectedLabels] = useState<string[]>([])
+  const [showPassengerPopup, setShowPassengerPopup] = useState(false);
+  const [filterLabels, setFilterLabels] =
+    useState<FilterLabelItem[]>(mockFilterLabels);
+  const [topSelectedLabels, setTopSelectedLabels] = useState<string[]>([]);
 
   // Sort bar scroll
-  const { isSortBarHidden, handleScroll } = useSortBarScroll()
+  const { isSortBarHidden, handleScroll } = useSortBarScroll();
 
   // Date selector state
   const [activeDateKey, setActiveDateKey] = useState(() => {
     if (selectedDate) {
-      const d = new Date(selectedDate)
-      const year = d.getFullYear()
-      const month = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      return `${year}${month}${day}`
+      const d = new Date(selectedDate);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
     }
-    return getTodayKey()
-  })
+    return getTodayKey();
+  });
 
   // Sync selectedDate from store on mount
   useEffect(() => {
     if (selectedDate) {
-      const d = new Date(selectedDate)
-      const year = d.getFullYear()
-      const month = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      setActiveDateKey(`${year}${month}${day}`)
+      const d = new Date(selectedDate);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      setActiveDateKey(`${year}${month}${day}`);
     }
-  }, [selectedDate])
+  }, [selectedDate]);
 
   // Build search criteria
   const getSearchCriteria = useCallback(() => {
@@ -174,6 +184,13 @@ export function FlightList() {
         arrAirportStatistics: [...result.arrAirportStatistics],
         airlineStatistics: [...result.airlineStatistics],
       });
+    },
+    onLoadDone: () => {
+      refreshRef.current
+        ?.invoke({
+          method: 'finishRefresh',
+        })
+        .exec();
     },
   });
 
@@ -259,38 +276,27 @@ export function FlightList() {
   };
 
   // Determine display data: prefer API result, fallback to mock
-  const displayFlights =
-    flightListHook.flightList.length > 0
+  const displayFlights = useMemo(() => {
+    return flightListHook.flightList.length > 0
       ? flightListHook.flightList
       : !flightListHook.loading && !flightListHook.refreshing
         ? mapMockToFlights(mockFlightList)
         : [];
+  }, [
+    flightListHook.flightList,
+    flightListHook.loading,
+    flightListHook.refreshing,
+  ]);
 
   return (
-    <view className="page-flight-list">
-      <NavBar title={`${searchParams.departure}-${searchParams.arrival}`} />
-
-      <DateSelector selectedDate={activeDateKey} onChange={handleDateChange} />
-
-      <view
-        className="flight-passenger-bar"
-        bindtap={() => setShowPassengerPopup(true)}
-      >
-        <text className="flight-passenger-bar__text">
-          {adultNum}成人
-          {childNum > 0 ? ` ${childNum}儿童` : ''}
-        </text>
-        <text className="flight-passenger-bar__arrow">▼</text>
-      </view>
-
-      <FilterTags
-        labels={filterLabels}
-        selectedLabels={topSelectedLabels}
-        onChange={handleFilterTagsChange}
-        loading={flightListHook.loading}
-        nodata={!displayFlights.length}
-      />
-
+    <PageContainer
+      className="page-flight-list"
+      showNavBar={true}
+      navBarProps={{
+        title: `${searchParams.departure}-${searchParams.arrival}`,
+        prefixText: 'Back',
+      }}
+    >
       <refresh
         ref={refreshRef}
         className="flight-list-refresh"
@@ -299,28 +305,75 @@ export function FlightList() {
         <refresh-header className="flight-list-refresh__header">
           <text className="flight-list-refresh__text">正在刷新...</text>
         </refresh-header>
-        <list
-          className="flight-list-scroll"
-          scroll-orientation="vertical"
-          show-scroll-bar={false}
-          bindscroll={handleScroll}
+
+        <view
+          style={{
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            paddingTop: '100px',
+          }}
         >
-          {flightListHook.loading && !flightListHook.refreshing && (
-            <FlightSkeleton />
-          )}
+          <DateSelector
+            selectedDate={activeDateKey}
+            onChange={handleDateChange}
+          />
 
-          {!flightListHook.loading && displayFlights.length === 0 && (
-            <EmptyState text={flightListHook.noDataText} />
-          )}
+          <view
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              height: '36px',
+            }}
+          >
+            <FilterTags
+              labels={filterLabels}
+              selectedLabels={topSelectedLabels}
+              onChange={handleFilterTagsChange}
+              loading={flightListHook.loading}
+              nodata={!displayFlights.length}
+              style={{ flex: '1' }}
+            />
+            <view
+              className="flight-passenger-bar"
+              bindtap={() => setShowPassengerPopup(true)}
+            >
+              <text className="flight-passenger-bar__text">
+                {adultNum}成人
+                {childNum > 0 ? ` ${childNum}儿童` : ''}
+              </text>
+              <text className="flight-passenger-bar__arrow">▼</text>
+            </view>
+          </view>
 
-          <view className="flight-list-content">
-            {displayFlights.map((flight, index) => (
+          {/*{flightListHook.loading && !flightListHook.refreshing && (*/}
+          {/*  <FlightSkeleton />*/}
+          {/*)}*/}
+
+          {/*{!flightListHook.loading && displayFlights.length === 0 && (*/}
+          {/*  <EmptyState text={flightListHook.noDataText} />*/}
+          {/*)}*/}
+          <list
+            className="flight-list-scroll"
+            scroll-orientation="vertical"
+            list-type="single"
+            span-count={1}
+            show-scroll-bar={false}
+            bindscroll={handleScroll}
+            style={{ listMainAxisGap: '8px', flex: '1' }}
+          >
+            {displayFlights.map((flight) => (
               <list-item
-                key={`${flight.flightNumber}_${flight.depTime}_${index}`}
-                item-key={`${flight.flightNumber}_${flight.depTime}_${index}`}
+                key={flight.key}
+                item-key={flight.key}
+                recyclable={false}
               >
                 <FlightCard
-                  key={`${flight.flightNumber}_${flight.depTime}_${index}`}
+                  key={flight.key}
                   flight={flight}
                   selectedDate={activeDateKey}
                   isMultiPeople={adultNum + childNum > 1}
@@ -329,24 +382,23 @@ export function FlightList() {
                 />
               </list-item>
             ))}
+          </list>
+          <view
+            className={clsx(
+              'sort-bar-container',
+              isSortBarHidden && 'sort-bar-container--hidden',
+            )}
+          >
+            <SortBar
+              sortType={flightListHook.sortType}
+              sortOrder={flightListHook.sortOrder}
+              filterCount={filter.appliedFilterBadgeCount}
+              onSortChange={handleSortChange}
+              onFilterClick={filter.openFilterPopup}
+            />
           </view>
-        </list>
+        </view>
       </refresh>
-
-      <view
-        className={clsx(
-          'sort-bar-container',
-          isSortBarHidden && 'sort-bar-container--hidden',
-        )}
-      >
-        <SortBar
-          sortType={flightListHook.sortType}
-          sortOrder={flightListHook.sortOrder}
-          filterCount={filter.appliedFilterBadgeCount}
-          onSortChange={handleSortChange}
-          onFilterClick={filter.openFilterPopup}
-        />
-      </view>
 
       <FilterPopup
         show={filter.showFilterPopup}
@@ -373,6 +425,6 @@ export function FlightList() {
         onClose={() => setShowPassengerPopup(false)}
         onConfirm={handlePassengerConfirm}
       />
-    </view>
+    </PageContainer>
   );
 }

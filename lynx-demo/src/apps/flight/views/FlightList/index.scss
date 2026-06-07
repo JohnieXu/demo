@@ -10,7 +10,7 @@
 
 /* ========== Passenger Bar ========== */
 .flight-passenger-bar {
-  width: 375px;
+  width: 100px;
   height: 36px;
   background: #fff;
   display: flex;
@@ -38,6 +38,7 @@
 .flight-list-refresh {
   flex: 1;
   width: 375px;
+  height: 100%;
 
   &__header {
     width: 100%;
@@ -59,6 +60,7 @@
 .flight-list-scroll {
   width: 100%;
   height: 100%;
+  //height: 70vh;
 }
 
 .flight-list-content {

@@ -7,11 +7,13 @@ const DEFAULT_NO_DATA_TEXT = '暂无航班信息'
 interface UseFlightListOptions {
   getSearchCriteria: () => FlightSearchCriteria
   onResult?: (result: FlightSearchResult) => void
+  // trigger when load done(success or error)
+  onLoadDone?: () => void
 }
 
 export function useFlightList(options: UseFlightListOptions) {
   'background only';
-  const { getSearchCriteria, onResult } = options
+  const { getSearchCriteria, onResult, onLoadDone } = options;
 
   const [flightList, setFlightList] = useState<readonly Flight[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,55 +28,61 @@ export function useFlightList(options: UseFlightListOptions) {
   const repoRef = useRef(new FlightSearchRepository())
 
   const fetchFlights = useCallback(
-    async (extraParams: Partial<FlightSearchCriteria> = {}, opts: { preserveOnError?: boolean } = {}) => {
+    async (
+      extraParams: Partial<FlightSearchCriteria> = {},
+      opts: { preserveOnError?: boolean } = {},
+    ) => {
       'background only';
-      const currentReqId = flightListReqId.current + 1
-      flightListReqId.current = currentReqId
+      const currentReqId = flightListReqId.current + 1;
+      flightListReqId.current = currentReqId;
 
       if (!refreshing) {
-        setLoading(true)
+        setLoading(true);
       }
-      setError(null)
+      setError(null);
 
       try {
-        const criteria = getSearchCriteria()
+        const criteria = getSearchCriteria();
         const params: FlightSearchCriteria = {
           ...criteria,
           sortType,
           sortOrder,
           ...extraParams,
-        }
+        };
 
-        const result = await repoRef.current.searchV2(params)
-        console.log('result', result)
+        console.log('search with params', params);
+        const result = await repoRef.current.searchV2(params);
+        console.log('result', result);
 
         // Race condition protection: discard stale responses
-        if (currentReqId !== flightListReqId.current) return
+        if (currentReqId !== flightListReqId.current) return;
 
         if (result.isSuccess) {
-          const data = result.data
-          setFlightList(data.flights)
-          setNoDataText(data.emptyMessage || DEFAULT_NO_DATA_TEXT)
-          onResult?.(data)
+          const data = result.data;
+          setFlightList(data.flights);
+          setNoDataText(data.emptyMessage || DEFAULT_NO_DATA_TEXT);
+          onResult?.(data);
         } else {
-          setFlightList([])
-          setNoDataText(result.error.message || DEFAULT_NO_DATA_TEXT)
+          setFlightList([]);
+          setNoDataText(result.error.message || DEFAULT_NO_DATA_TEXT);
         }
       } catch (e) {
-        if (currentReqId !== flightListReqId.current) return
-        setError(e instanceof Error ? e : new Error(String(e)))
+        if (currentReqId !== flightListReqId.current) return;
+        setError(e instanceof Error ? e : new Error(String(e)));
         if (!opts.preserveOnError) {
-          setFlightList([])
+          setFlightList([]);
         }
       } finally {
+        console.log('fetch finally', currentReqId, flightListReqId.current);
         if (currentReqId === flightListReqId.current) {
-          setLoading(false)
-          setRefreshing(false)
+          setLoading(false);
+          setRefreshing(false);
+          onLoadDone?.();
         }
       }
     },
-    [getSearchCriteria, onResult, sortType, sortOrder, refreshing]
-  )
+    [getSearchCriteria, onResult, onLoadDone, sortType, sortOrder, refreshing],
+  );
 
   const onRefresh = useCallback(() => {
     'background only';

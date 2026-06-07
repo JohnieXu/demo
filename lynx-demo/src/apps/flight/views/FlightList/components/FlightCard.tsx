@@ -79,6 +79,7 @@ export function FlightCard({
       className={clsx('flight-card', {
         'flight-card--highlighted': isHighlighted,
       })}
+      style={{ height: '120px' }}
       bindtap={handleClick}
     >
       <view className="flight-card__inner">

@@ -27,6 +27,7 @@ import type {
 // ---------------------------------------------------------------------------
 
 export interface Flight {
+  readonly key: string
   readonly flightNumber: string
   readonly airline: Airline
   readonly acCode: string
@@ -156,7 +157,7 @@ export interface FlightOrder {
 // ---------------------------------------------------------------------------
 
 export interface Passenger {
-  readonly id: number
+  readonly id?: number
   readonly memberId: string
   readonly passengerName: string
   readonly englishName: string

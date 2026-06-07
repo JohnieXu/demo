@@ -8,7 +8,7 @@ import { createFetch } from 'lynx-shared'
 import type { RequestConfig, LynxResponse } from 'lynx-shared'
 import type { ApiResponse } from './types.js'
 
-const TRAVEL_API_BASE_URL = 'https://api.example-travel.com/v1'
+const TRAVEL_API_BASE_URL = import.meta.env.DEV ? 'https://ts-api.ourtour.com' : 'https://ts-api.ourtour.com'
 
 export const travelClient = createFetch({
   baseURL: TRAVEL_API_BASE_URL,

@@ -12,7 +12,7 @@ import type {
   TrainPriceCalendarDto,
 } from './dto.js'
 
-function toQuery(record: Record<string, any>) {
+function toQuery(record: unknown) {
   return record as Record<string, string | number | boolean | undefined>
 }
 

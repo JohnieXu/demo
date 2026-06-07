@@ -109,6 +109,7 @@ import type {
 
 export function toFlight(dto: FlightDetailDto): Flight {
   return {
+    key: `${dto.flightNumber}_${dto.airline}_${dto.depCode}_${dto.arrCode}`,
     flightNumber: dto.flightNumber ?? '',
     airline: { code: dto.acCode ?? '', name: dto.airline ?? '', logo: dto.logo },
     acCode: dto.acCode ?? '',

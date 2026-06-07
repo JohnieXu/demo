@@ -9,5 +9,5 @@ export function EmptyState({ text = '暂无航班信息' }: EmptyStateProps) {
     <view className="empty-state">
       <text className="empty-state__text">{text}</text>
     </view>
-  )
+  );
 }
