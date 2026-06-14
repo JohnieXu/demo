@@ -72,7 +72,7 @@ export function Segments<T extends string = string>({
   //   indicator.setStyleProperty("transition", `transform 220ms cubic-bezier(0.22, 1, 0.36, 1), width 220ms cubic-bezier(0.22, 1, 0.36, 1)`)
   // }
 
-  const updateIndicator = useCallback(
+  const updateIndicatorMTS = useCallback(
     ({ left, width }: IndicatorStyle) => {
       'main thread';
       const indicator = indicatorRef.current;
@@ -90,9 +90,9 @@ export function Segments<T extends string = string>({
   useEffect(() => {
     if (activeId) {
       setInnerActiveId(activeId);
-      runOnMainThread(updateIndicator)(indicatorStyle);
+      runOnMainThread(updateIndicatorMTS)(indicatorStyle);
     }
-  }, [activeId, indicatorStyle, segments, updateIndicator]);
+  }, [activeId, indicatorStyle, segments, updateIndicatorMTS]);
 
   useEffect(() => {
     if (!innerActiveId && segments.length > 0) {
@@ -110,7 +110,7 @@ export function Segments<T extends string = string>({
           const left = firstItemRect.left - wrapperRect.left;
           const width = firstItemRect.width;
           setIndicatorStyle({ left, width });
-          runOnMainThread(updateIndicator)({ left, width });
+          runOnMainThread(updateIndicatorMTS)({ left, width });
         };
 
         lynx
@@ -144,7 +144,7 @@ export function Segments<T extends string = string>({
           .exec();
       }, 0);
     }
-  }, [segments, innerActiveId, onSegmentChange, updateIndicator]);
+  }, [segments, innerActiveId, onSegmentChange, updateIndicatorMTS]);
 
   const handleSegmentChangeMTS = (e: MainThread.TouchEvent) => {
     'main thread';
@@ -153,7 +153,7 @@ export function Segments<T extends string = string>({
     console.log('handleSegmentChange', id);
     if (!id) return;
     onSegmentChange?.(id as T);
-    updateIndicator(indicatorStyle);
+    updateIndicatorMTS(indicatorStyle);
   };
 
   const handleSegmentChange = useCallback(
@@ -218,10 +218,10 @@ export function Segments<T extends string = string>({
         const left = currentItemRect.left - wrapperRect.left;
         const width = currentItemRect.width;
         setIndicatorStyle({ left, width });
-        runOnMainThread(updateIndicator)({ left, width });
+        runOnMainThread(updateIndicatorMTS)({ left, width });
       }
     },
-    [onSegmentChange, updateIndicator],
+    [onSegmentChange, updateIndicatorMTS],
   );
 
   return (

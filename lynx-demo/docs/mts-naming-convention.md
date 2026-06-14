@@ -31,7 +31,7 @@ ReactLynx 的双线程架构下，"主线程脚本（Main Thread Script, MTS）"
 
 ```ts
 // ✅ 推荐
-const updateIndicator = useCallback(({ left, width }: IndicatorStyle) => {
+const updateIndicatorMTS = useCallback(({ left, width }: IndicatorStyle) => {
   'main thread';
   const indicator = indicatorRef.current;
   if (!indicator) return;
@@ -40,7 +40,7 @@ const updateIndicator = useCallback(({ left, width }: IndicatorStyle) => {
 }, [indicatorRef]);
 
 // ❌ 缺指令 → 编译器不会把函数体分发到主线程
-const updateIndicator = useCallback(({ left, width }: IndicatorStyle) => {
+const updateIndicatorMTS = useCallback(({ left, width }: IndicatorStyle) => {
   const indicator = indicatorRef.current; // 报错：主线程 ref 不能在 background 访问
   // ...
 }, [indicatorRef]);
@@ -57,7 +57,7 @@ const updateIndicator = useCallback(({ left, width }: IndicatorStyle) => {
 
 ```ts
 // ✅ 推荐：传入的是带 MT/MTS 后缀的主线程函数引用
-runOnMainThread(updateIndicator)({ left, width });
+runOnMainThread(updateIndicatorMTS)({ left, width });
 runOnMainThread(handleSegmentChangeMTS)(event);
 
 // ❌ 禁止：直接传箭头函数（每次都是新引用，闭包变量无法跨线程）
@@ -84,7 +84,7 @@ runOnMainThread(({ left, width }: IndicatorStyle) => {
 ### 4.3 依赖数组需包含主线程 ref
 
 ```ts
-const updateIndicator = useCallback((style) => {
+const updateIndicatorMTS = useCallback((style) => {
   'main thread';
   indicatorRef.current?.setStyleProperty(/* ... */);
 }, [indicatorRef]); // ✅ 必须把 useMainThreadRef 放进依赖
@@ -94,9 +94,9 @@ const updateIndicator = useCallback((style) => {
 
 参考 [src/apps/flight/components/Segments.tsx](../src/apps/flight/components/Segments.tsx)：
 
-| 函数名                | 类型     | 对应 ref / 事件             | 用途                            |
-| --------------------- | -------- | --------------------------- | ------------------------------- |
-| `updateIndicator`     | `MT`     | `indicatorRef` (main-thread) | 更新 indicator 位置与宽度       |
+| 函数名                   | 类型  | 对应 ref / 事件              | 用途                            |
+| ------------------------ | ----- | ---------------------------- | ------------------------------- |
+| `updateIndicatorMTS`     | `MTS` | `indicatorRef` (main-thread) | 更新 indicator 位置与宽度       |
 | `handleSegmentChangeMTS` | `MTS` | `main-thread:bindtap`        | 切 tab 时同步 indicator 样式    |
 
 可参考 lynx-ui 包内的同款约定（来自 `@lynx-js/lynx-ui`）：
