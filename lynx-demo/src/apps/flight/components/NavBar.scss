@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 6px;
-  background: #fff;
+  background: rgba(255, 255, 255, var(--nav-bar-bg-opacity, 1));
   // fixme: Safe Area Padding not working, should use native pass to GlobalProps?
   padding-top: calc(env(safe-area-inset-top) + 16px);
   padding-bottom: calc(env(safe-area-inset-bottom) + 16px);

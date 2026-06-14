@@ -1,15 +1,27 @@
 .page-order-list {
   height: 100%;
   background: #F3F3F3;
+  display: flex;
+  flex-direction: column;
+
+  .page-header-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
+    width: 375px;
+    background-color: rgb(236, 114, 32);
+  }
   
   /* Orders List */
   .orders-list {
     width: 375px;
-    padding: 0 16px;
+    height: 100%;
+    padding: 16px 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 16px;
+    // margin-top: 16px;
   }
   
   /* Order Item */
