@@ -8,7 +8,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    height: 80px;
+    height: calc(env(safe-area-inset-top) + 80px);
     width: 375px;
     background-color: rgb(236, 114, 32);
   }
