@@ -8,14 +8,14 @@ import os from 'os'
 import { readdirSync, statSync } from 'fs'
 import { join } from 'path'
 
-// 物理网卡名称前缀（优先匹配）
+// 物理网卡名称前缀（优先匹配），匹配时大小写不敏感
 const PHYSICAL_PREFIXES = ['en', 'eth', 'wlan']
-// 需要排除的虚拟/隧道接口前缀（Clash TUN、VPN、Docker 等）
-const VIRTUAL_PREFIXES = [
+// 需要排除的虚拟/隧道接口关键字（同时匹配 startsWith 和 includes，大小写不敏感）
+const VIRTUAL_KEYWORDS = [
   'lo', // loopback
   'utun', // macOS TUN/VPN（含 Clash TUN 模式创建的虚拟网卡）
   'tun', // Linux TUN
-  'tap', // TAP
+  'tap', // TAP / TAP-Windows (OpenVPN)
   'ipsec', // IPSec VPN
   'ppp', // PPP
   'docker', // Docker
@@ -26,7 +26,13 @@ const VIRTUAL_PREFIXES = [
   'ham',
   'anpi',
   'vbox', // VirtualBox
-  'vmnet', // VMware
+  'vmnet', // VMware VMnet (lowercase)
+  'vmware', // VMware 友好名称以 "VMware" 开头
+  'virtual', // Hyper-V Virtual Adapter / Wi-Fi Direct Virtual Adapter
+  'hyper-v', // Hyper-V vEthernet
+  'wi-fi direct', // Wi-Fi Direct 虚拟网卡
+  'bluetooth', // 蓝牙网络连接
+  'openvpn', // OpenVPN DCO Adapter
 ]
 
 // get the host ipv4 address not the localhost address
@@ -37,7 +43,8 @@ function getOutboundIPv4Address(): string {
 
   for (const [name, addrs] of Object.entries(interfaces)) {
     if (!addrs) continue
-    if (VIRTUAL_PREFIXES.some((prefix) => name.startsWith(prefix))) continue
+    const lname = name.toLowerCase()
+    if (VIRTUAL_KEYWORDS.some((kw) => lname.startsWith(kw) || lname.includes(kw))) continue
 
     for (const addr of addrs) {
       // 排除 IPv6、loopback、169.254.x.x 链路本地地址
@@ -48,9 +55,9 @@ function getOutboundIPv4Address(): string {
     }
   }
 
-  // 优先选择物理网卡（en0/eth0/wlan0 等）
+  // 优先选择物理网卡（en0/eth0/WLAN 等），大小写不敏感
   const physical = candidates.find((c) =>
-    PHYSICAL_PREFIXES.some((prefix) => c.name.startsWith(prefix)),
+    PHYSICAL_PREFIXES.some((prefix) => c.name.toLowerCase().startsWith(prefix)),
   )
   if (physical) return physical.address
 
