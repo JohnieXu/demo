@@ -1,0 +1,23 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+
+group("root") {
+  testonly = true
+  deps = [ ":default" ]
+}
+
+group("default") {
+  testonly = true
+  deps = [ ":cpp_demo" ]
+}
+
+group("all") {
+  testonly = true
+  deps = [ ":cpp_demo" ]
+}
+
+executable("cpp_demo") {
+  output_name = "cpp_demo"
+  sources = [ "main.cpp" ]
+}

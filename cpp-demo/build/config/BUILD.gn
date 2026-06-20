@@ -1,0 +1,30 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Build config directory: hosts shared compiler/linker flag presets
+# and helper configs that targets can apply via `configs += [ ... ]`.
+
+import("compiler_flags.gni")
+
+# Project-wide default compile/link flags.
+# Reuse this config from every target via configs += [ "//build/config:default_flags" ].
+config("default_flags") {
+  cflags = [
+    "-O$cpp_optimization_level",
+    "-Wall",
+    "-Wextra",
+    "-Wno-unused-parameter",
+  ]
+  cflags_c = []
+  cflags_cc = [
+    "-std=c++17",
+    "-fno-exceptions",
+  ]
+  ldflags = []
+  if (is_debug) {
+    cflags += [ "-g" ]
+  } else {
+    defines = [ "NDEBUG" ]
+  }
+}

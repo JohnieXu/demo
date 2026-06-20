@@ -1,0 +1,12 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Minimal BUILDCONFIG for the cpp-demo project.
+# Wires up the in-repo toolchain so that targets can be compiled.
+
+# Use the in-repo toolchain defined in //build/toolchain.
+set_default_toolchain("//build/toolchain:gcc")
+
+# Project name used by some GN helpers.
+gn_project_name = "cpp_demo"

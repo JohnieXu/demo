@@ -1,0 +1,60 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Simplified gcc_toolchain template, modeled after Chromium's
+# //build/toolchain/gcc_toolchain.gni.
+
+template("gcc_toolchain") {
+  cc = invoker.cc
+  cxx = invoker.cxx
+  ld = invoker.ld
+  ar = invoker.ar
+
+  toolchain(target_name) {
+    tool("cc") {
+      depfile = "{{output}}.d"
+      command = "$cc -MMD -MF {{output}}.d {{cflags}} {{cflags_c}} {{include_dirs}} {{defines}} -c {{source}} -o {{output}}"
+      description = "CC {{output}}"
+      depsformat = "gcc"
+      outputs = [ "{{source_out_dir}}/{{source_name_part}}.o" ]
+    }
+
+    tool("cxx") {
+      depfile = "{{output}}.d"
+      command = "$cxx -MMD -MF {{output}}.d {{cflags}} {{cflags_cc}} {{include_dirs}} {{defines}} -c {{source}} -o {{output}}"
+      description = "CXX {{output}}"
+      depsformat = "gcc"
+      outputs = [ "{{source_out_dir}}/{{source_name_part}}.o" ]
+    }
+
+    tool("alink") {
+      command = "rm -f {{output}} && $ar rcs {{output}} {{inputs}}"
+      description = "AR {{output}}"
+      outputs = [ "{{target_output_name}}.a" ]
+    }
+
+    tool("solink") {
+      command = "$ld -shared {{ldflags}} -o {{output}} {{inputs}} {{libs}} {{solibs}}"
+      description = "SOLINK {{output}}"
+      outputs = [ "{{target_output_name}}.so" ]
+    }
+
+    tool("link") {
+      command = "$ld {{ldflags}} -o {{output}} {{inputs}} {{libs}} {{solibs}}"
+      description = "LINK {{output}}"
+      outputs = [ "{{target_output_name}}" ]
+    }
+
+    # Mirror invoker parameters into toolchain_args so they become shell
+    # variables ($cc, $cxx, $ld, $ar) at build time.
+    toolchain_args = {
+      cc = invoker.cc
+      cxx = invoker.cxx
+      ld = invoker.ld
+      ar = invoker.ar
+      current_cpu = invoker.current_cpu
+      current_os = invoker.current_os
+    }
+  }
+}

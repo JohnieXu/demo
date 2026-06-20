@@ -1,0 +1,8 @@
+# Build output directory
+/out/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store

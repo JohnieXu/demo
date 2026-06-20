@@ -1,0 +1,28 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+
+import("gcc_toolchain.gni")
+
+if (host_os == "mac") {
+  _default_cc = "cc"
+  _default_cxx = "c++"
+  _default_ld = "c++"
+  _default_ar = "ar"
+  _default_os = "mac"
+} else {
+  _default_cc = "gcc"
+  _default_cxx = "g++"
+  _default_ld = "g++"
+  _default_ar = "ar"
+  _default_os = "linux"
+}
+
+gcc_toolchain("gcc") {
+  cc = _default_cc
+  cxx = _default_cxx
+  ld = _default_ld
+  ar = _default_ar
+  current_cpu = host_cpu
+  current_os = _default_os
+}

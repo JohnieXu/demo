@@ -1,0 +1,20 @@
+# Copyright 2026 The Lynx Authors. All rights reserved.
+# Licensed under the Apache License Version 2.0 that can be found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Shared build flags for the cpp-demo project.
+# This file is imported to read variables; the actual `config(...)` targets
+# live in //build/config:BUILD.gn.
+
+declare_args() {
+  # Whether this is a debug build (default: true). Controls NDEBUG / -g.
+  is_debug = true
+
+  # Optimization level: 0 (debug), 1, 2, 3, s, z
+  cpp_optimization_level = "2"
+
+  # Standard warning / debug flags applied to every C++ target.
+  cpp_extra_cflags = []
+  cpp_extra_cxxflags = []
+  cpp_extra_ldflags = []
+}
