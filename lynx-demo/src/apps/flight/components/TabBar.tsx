@@ -1,6 +1,9 @@
 import { clsx } from "clsx"
-import IconBooking from "@assets/flight/svg/query/booking.svg"
-import IconOrder from "@assets/flight/svg/query/order.svg"
+import { Icon } from "lynx-ui"
+import IconBookingSvg from "@assets/flight/svg/query/booking.svg"
+import IconOrderSvg from "@assets/flight/svg/query/order.svg"
+import IconBookingPng from "@assets/flight/images/query/booking.png"
+import IconOrderPng from "@assets/flight/images/query/order.png"
 import "./TabBar.scss"
 
 export interface TabBarProps {
@@ -17,11 +20,11 @@ export function TabBar({ activeTab = "booking", onTabChange }: TabBarProps) {
     <view className="bottom-tab-bar">
       <view className="bottom-content">
         <view className={clsx("bottom-tab", activeTab === "booking" && "active")} bindtap={() => handleTabChange("booking")}>
-          <svg className="bottom-tab-icon bottom-icon-booking" src={IconBooking} />
+          <Icon svg={IconBookingSvg} png={IconBookingPng} className="bottom-tab-icon bottom-icon-booking" />
           <text className={clsx("bottom-tab-label booking-label", activeTab === "booking" && "active")}>预订</text>
         </view>
         <view className={clsx("bottom-tab", activeTab === "order" && "active")} bindtap={() => handleTabChange("order")}>
-          <svg className="bottom-tab-icon bottom-icon-order" src={IconOrder} />
+          <Icon svg={IconOrderSvg} png={IconOrderPng} className="bottom-tab-icon bottom-icon-order" />
           <text className={clsx("bottom-tab-label order-label", activeTab === "order" && "active")}>订单</text>
         </view>
       </view>
