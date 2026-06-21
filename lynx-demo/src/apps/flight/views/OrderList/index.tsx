@@ -4,7 +4,7 @@ import { List } from '@lynx-js/lynx-ui'
 import { useCallback, useMainThreadRef } from '@lynx-js/react'
 import type { FlightOrder } from 'travel-domain';
 import { useFlightStore } from '../../store'
-import { INavbarRef, NavBar } from '../../components/NavBar'
+import { INavbarRefMT, NavBar } from '../../components/NavBar'
 import { useScrollOpacity } from '../../hooks/useScrollOpacity'
 
 import './index.scss';
@@ -31,7 +31,7 @@ export function OrderList() {
   const { selectedFlight } = useFlightStore();
   const navigate = useNavigate();
 
-  const navBarRef = useMainThreadRef<INavbarRef>(null)
+  const navBarRef = useMainThreadRef<INavbarRefMT>(null)
 
   const setNavBarOpacityMT = useCallback((opacity: number) => {
     'main thread';
@@ -40,7 +40,7 @@ export function OrderList() {
     }
   }, [navBarRef])
 
-  const { opacity, inverseOpacity, handleScrollMT } = useScrollOpacity({
+  const { inverseOpacity, handleScrollMT } = useScrollOpacity({
     threshold: 100,
     startOpacity: 0,
     endOpacity: 1,
@@ -812,7 +812,7 @@ export function OrderList() {
         className="page-header-bg"
         style={{ opacity: inverseOpacity }}
       ></view>
-      <NavBar main-thread:ref={navBarRef} title="我的订单" backgroundOpacity={opacity}></NavBar>
+      <NavBar main-thread:ref={navBarRef} title="我的订单"></NavBar>
 
       {/* Orders List */}
       <List
