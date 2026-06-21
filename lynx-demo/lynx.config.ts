@@ -1,3 +1,6 @@
+// 生成 JSON 格式的 web bundle，兼容 @lynx-js/web-core 0.18.x 和 0.20.x
+process.env.EXPERIMENTAL_USE_WEB_BINARY_TEMPLATE = 'false'
+
 import { defineConfig } from '@lynx-js/rspeedy'
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin'
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
