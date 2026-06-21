@@ -1,4 +1,5 @@
-import { useCallback, useState } from '@lynx-js/react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { runOnBackground, runOnMainThread, useCallback, useEffect, useMemo, useState } from '@lynx-js/react'
 import type { ScrollEvent } from '@lynx-js/types'
 
 export interface UseScrollOpacityOptions {
@@ -13,13 +14,23 @@ export interface UseScrollOpacityOptions {
   startOpacity?: number
   /** Opacity when scrollTop has reached (or passed) the threshold. @default 0 */
   endOpacity?: number
+  /**
+   * Main-thread style setter invoked synchronously on the main thread.
+   * Must be a function marked with the `'main thread'` directive.
+   * @default undefined
+   */
+  setStyleMT?: (opacity: number) => void
 }
 
 export interface UseScrollOpacityReturn {
   /** Current opacity in the [startOpacity, endOpacity] range. */
   opacity: number
+  /** The inverse of `opacity`, i.e. `1 - opacity`. */
+  inverseOpacity: number
   /** Bind this to a scrollable view's `onScroll` prop. */
   handleScroll: (e: ScrollEvent) => void
+  /** Bind this to a scrollable view's `main-thread:onScroll` prop. */
+  handleScrollMT: (e: any) => void
 }
 
 /**
@@ -32,15 +43,24 @@ export interface UseScrollOpacityReturn {
  * Lynx scrollable view's `onScroll`.
  *
  * @example
- *   const { opacity, handleScroll } = useScrollOpacity({ threshold: 80 })
+ *   const { opacity, handleScroll, handleScrollMT } = useScrollOpacity({ threshold: 80 })
  *   <NavBar backgroundOpacity={opacity} />
- *   <List onScroll={handleScroll} />
+ *   <List onScroll={handleScroll} main-thread:onScroll={handleScrollMT} />
  */
 export function useScrollOpacity(
   options: UseScrollOpacityOptions,
 ): UseScrollOpacityReturn {
-  const { threshold, startOpacity = 1, endOpacity = 0 } = options
+  const { threshold, startOpacity = 1, endOpacity = 0, setStyleMT } = options
   const [opacity, setOpacity] = useState(startOpacity)
+
+  const inverseOpacity = useMemo(() => Math.max(0, 1 - opacity), [opacity])
+
+  // Sync the initial opacity to the main-thread element on mount.
+  useEffect(() => {
+    if (setStyleMT) {
+      runOnMainThread(setStyleMT)(startOpacity)
+    }
+  }, [setStyleMT, startOpacity])
 
   const handleScroll = useCallback(
     (e: ScrollEvent) => {
@@ -59,11 +79,38 @@ export function useScrollOpacity(
       }
       const ratio = scrollTop / threshold
       const nextOpacity = startOpacity + (endOpacity - startOpacity) * ratio
-      console.log('nextOpacity', nextOpacity)
+      // console.log('nextOpacity', nextOpacity)
       setOpacity(nextOpacity)
+      if (setStyleMT) {
+        runOnMainThread(setStyleMT)(nextOpacity)
+      }
     },
-    [threshold, startOpacity, endOpacity],
+    [threshold, startOpacity, endOpacity, setStyleMT],
   )
 
-  return { opacity, handleScroll }
+  const handleScrollMT = useCallback(
+    (e: any) => {
+      'main thread'
+      const scrollTop = e.detail?.scrollTop || 0
+
+      let nextOpacity = startOpacity
+      if (scrollTop <= 0) {
+        nextOpacity = startOpacity
+      } else if (scrollTop >= threshold) {
+        nextOpacity = endOpacity
+      } else {
+        const ratio = scrollTop / threshold
+        nextOpacity = startOpacity + (endOpacity - startOpacity) * ratio
+      }
+
+      runOnBackground(setOpacity)(nextOpacity)
+
+      if (setStyleMT) {
+        setStyleMT(nextOpacity)
+      }
+    },
+    [threshold, startOpacity, endOpacity, setStyleMT],
+  )
+
+  return { opacity, inverseOpacity, handleScroll, handleScrollMT }
 }

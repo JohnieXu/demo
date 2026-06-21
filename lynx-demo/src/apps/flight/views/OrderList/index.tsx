@@ -2,10 +2,11 @@
 import { useNavigate } from 'react-router'
 import { List } from '@lynx-js/lynx-ui'
 import { useFlightStore } from '../../store'
-import { NavBar } from '../../components/NavBar'
+import { INavbarRef, NavBar } from '../../components/NavBar'
 import { useScrollOpacity } from '../../hooks/useScrollOpacity'
 
 import './index.scss'
+import { useCallback, useMainThreadRef } from '@lynx-js/react'
 
 export interface Order {
   id: string
@@ -20,9 +21,25 @@ export function OrderList() {
   const { selectedFlight } = useFlightStore()
   const navigate = useNavigate()
 
-  function handleOrderTap(order: Order) {
+  const navBarRef = useMainThreadRef<INavbarRef>(null)
+
+  const setNavBarOpacityMT = useCallback((opacity: number) => {
+    'main thread';
+    if (navBarRef.current) {
+      navBarRef.current.setOpacity(opacity)
+    }
+  }, [navBarRef])
+
+  const { opacity, inverseOpacity, handleScrollMT } = useScrollOpacity({
+    threshold: 100,
+    startOpacity: 0,
+    endOpacity: 1,
+    setStyleMT: setNavBarOpacityMT,
+  })
+
+  const handleOrderTap = useCallback((order: Order) => {
     navigate(`/orderDetail/${order.id}`)
-  }
+  }, [navigate])
 
   // Mock orders
   const orders = [
@@ -203,19 +220,14 @@ export function OrderList() {
     },
   ]
 
-  // Fade the NavBar background from opaque to transparent as the list scrolls.
-  // Below 80px the background is gradually mixed; beyond 80px it stays fully
-  // transparent so the page content can show through.
-  const { opacity, handleScroll } = useScrollOpacity({ threshold: 100, startOpacity: 0, endOpacity: 1 })
-
   return (
     <view className="page-order-list">
       {/* 这里可以替换为导航栏背景图 */}
-      <view className="page-header-bg" style={{ opacity: Math.max(0, 1 - opacity) }}></view>
-      <NavBar title="我的订单" backgroundOpacity={opacity}></NavBar>
+      <view className="page-header-bg" style={{ opacity: inverseOpacity }}></view>
+      <NavBar main-thread:ref={navBarRef} title="我的订单" backgroundOpacity={opacity}></NavBar>
 
       {/* Orders List */}
-      <List className="orders-list" listId="order-list" listType="single" scrollOrientation="vertical" spanCount={1} mainAxisGap={12} scrollEventThrottle={0} onScroll={handleScroll}>
+      <List className="orders-list" listId="order-list" listType="single" scrollOrientation="vertical" spanCount={1} mainAxisGap={12} scrollEventThrottle={0} main-thread:onScroll={handleScrollMT}>
         {orders.map((order) => (
           <list-item key={order.id} item-key={order.id} bindtap={() => handleOrderTap(order)}>
             <view className="order-item">
