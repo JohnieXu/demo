@@ -2,6 +2,11 @@
 export { travelClient, setAuthToken } from './network/client.js'
 export type { ApiResponse, ApiErrorDto } from './network/types.js'
 
+// Auth
+export { AuthRepository } from './auth/repository.js'
+export { AuthRemoteDataSource } from './auth/datasource.js'
+export * from './auth/dto.js'
+
 // Flight
 export {
   FlightSearchRepository,

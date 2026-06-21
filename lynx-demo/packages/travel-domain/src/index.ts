@@ -2,6 +2,10 @@
 export * from './common/result.js'
 export * from './common/pagination.js'
 
+// Auth
+export * from './auth/entity.js'
+export type { IAuthRepository } from './auth/repository.js'
+
 // Flight
 export * from './flight/value-object.js'
 export * from './flight/entity.js'
