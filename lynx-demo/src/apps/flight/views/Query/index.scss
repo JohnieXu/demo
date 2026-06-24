@@ -26,45 +26,44 @@
       // background: linear-gradient(180deg, #d5edff 0%, rgba(213, 237, 255, 0) 100%);
     }
   }
-  
-  /* System Bar */
-  .system-bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 375px;
-    height: 44px;
-    background-color: rgba(255, 255, 255, 0.71);
-  
-    .time-display {
-      position: absolute;
-      left: 21px;
-      top: 27%;
-      font-size: 14px;
-      color: #000;
-      font-weight: 600;
-    }
-  }
-  
+
   /* Tabs */
   .tabs {
     width: 375px;
-    height: 44px;
-    position: absolute;
-    left: 0;
-    top: 158px;
+    height: 48px;
+    position: relative;
+    margin-top: 158px;
     padding: 0 16px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
     background: #fff;
+    overflow: hidden;
+    border-radius: 12px 12px 0px 0px;
+    // opacity: 0.5;
+
+    .tabs-bg {
+      position: absolute;
+      width: 375px;
+      height: 48px;
+      left: 0px;
+      top: 0px;
+      background-image: url('@assets/flight/images/query/tab-bg.png');
+      background-size: cover;
+      background-position: center top;
+      // background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+      backdrop-filter: blur(20px);
+      border-radius: 12px 12px 0px 0px;
+      background-color: transparent;
+    }
   
     .tab-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
+      background: transparent;
   
       .tab-text {
         font-size: 16px;
@@ -91,9 +90,6 @@
   
   /* Booking Section */
   .booking-section {
-    position: absolute;
-    left: 0;
-    top: 194px;
     width: 375px;
     // padding: 0 16px;
   
