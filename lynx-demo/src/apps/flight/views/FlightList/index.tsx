@@ -174,6 +174,7 @@ export function FlightList() {
   const flightListHook = useFlightList({
     getSearchCriteria,
     onResult: (result) => {
+      'background only';
       if (result.labels?.length) {
         setFilterLabels(
           result.labels.map((l) => ({ label: l.label, value: l.value })),
@@ -185,7 +186,11 @@ export function FlightList() {
         airlineStatistics: [...result.airlineStatistics],
       });
     },
+    /**
+     * FIXME: refresh 属于 xelement 在 macos 上不支持，在当前版本 iOS 的 explorer 上也没有，故 finishRefresh 方法找不到
+     */
     onLoadDone: () => {
+      'background only';
       refreshRef.current
         ?.invoke({
           method: 'finishRefresh',
@@ -294,7 +299,6 @@ export function FlightList() {
       showNavBar={true}
       navBarProps={{
         title: `${searchParams.departure}-${searchParams.arrival}`,
-        prefixText: 'Back',
       }}
     >
       <refresh
