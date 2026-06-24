@@ -12,6 +12,7 @@ const OrderList = lazy(() => import('./views/OrderList/index').then(m => ({ defa
 const OrderDetail = lazy(() => import('./views/OrderDetail/index').then(m => ({ default: m.OrderDetail })))
 const TrainList = lazy(() => import('./views/TrainList/index').then(m => ({ default: m.TrainList })))
 const FlightList = lazy(() => import('./views/FlightList/index').then(m => ({ default: m.FlightList })))
+const CabinList = lazy(() => import('./views/CabinList/index').then(m => ({ default: m.CabinList })))
 
 // eslint-disable-next-line react-refresh/only-export-components
 function LazyLoad({ children }: { children: React.ReactNode }) {
@@ -28,6 +29,7 @@ root.render(<MemoryRouter>
       <Route path='/booking' element={<LazyLoad><Booking /></LazyLoad>}></Route>
       <Route path='/trainList' element={<LazyLoad><TrainList /></LazyLoad>}></Route>
       <Route path='/flightList' element={<LazyLoad><FlightList /></LazyLoad>}></Route>
+      <Route path='/cabinList' element={<LazyLoad><CabinList /></LazyLoad>}></Route>
     </Route>
   </Routes>
 </MemoryRouter>)
