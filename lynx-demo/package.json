@@ -14,6 +14,7 @@
     "@lynx-js/luna-styles": "^0.1.0",
     "@lynx-js/lynx-ui": "^3.133.0",
     "@lynx-js/react": "^0.120.0",
+    "@lynx-js/react-use": "^0.2.1",
     "@react-spring/types": "^10.0.3",
     "@react-spring/web": "^10.0.3",
     "@tanstack/react-router": "^1.170.3",
