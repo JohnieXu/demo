@@ -1,6 +1,8 @@
-import { useState } from '@lynx-js/react'
+import { useMemo, useState } from '@lynx-js/react'
 import { clsx } from 'clsx'
 import { useNavigate } from 'react-router'
+import { Calendar } from 'lynx-ui'
+import { useFlightStore } from '../../store/flightStore'
 import { TabBar } from '../../components/TabBar'
 import { RecentSearches } from './components/RecentSearches'
 import "./index.scss"
@@ -10,10 +12,44 @@ type TabType = 'flight' | 'train'
 
 type CabinClass = 'nolimit' | 'business';
 
+const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+
+function parseDisplayDate(dateText: string): Date {
+  const match = dateText.match(/(\d{1,2})月(\d{1,2})日/)
+  if (!match) return new Date()
+
+  const month = parseInt(match[1], 10) - 1
+  const day = parseInt(match[2], 10)
+  const now = new Date()
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const year = now.getFullYear()
+  let date = new Date(year, month, day)
+  if (date < today) {
+    date = new Date(year + 1, month, day)
+  }
+  return date
+}
+
+function formatDisplayDate(date: Date): { dateText: string; weekday: string } {
+  return {
+    dateText: `${date.getMonth() + 1}月${date.getDate()}日`,
+    weekday: WEEKDAYS[date.getDay()],
+  }
+}
+
 export function Query() {
   const [activeTab, setActiveTab] = useState<TabType>('flight');
   const [selectedCabin, setSelectedCabin] = useState<CabinClass>('nolimit');
+  const [showCalendar, setShowCalendar] = useState(false)
   const navigate = useNavigate();
+  const { searchParams, setSearchParams } = useFlightStore()
+
+  const selectedDate = useMemo(
+    () => parseDisplayDate(searchParams.date),
+    [searchParams.date],
+  )
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -30,6 +66,13 @@ export function Query() {
       navigate('/flightList');
     }
   };
+
+  const handleDateConfirm = (date: Date | Date[]) => {
+    const selected = Array.isArray(date) ? date[0] : date
+    const { dateText, weekday } = formatDisplayDate(selected)
+    setSearchParams({ date: dateText, weekday })
+    setShowCalendar(false)
+  }
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
     if (tab === 'order') {
@@ -92,9 +135,12 @@ export function Query() {
 
             {/* Date Selection */}
             <view className="date-row">
-              <view className="date-selection date-selection--start">
-                <text className="date-text">8月31日</text>
-                <text className="weekday-text">周五</text>
+              <view
+                className="date-selection date-selection--start"
+                bindtap={() => setShowCalendar(true)}
+              >
+                <text className="date-text">{searchParams.date}</text>
+                <text className="weekday-text">{searchParams.weekday}</text>
               </view>
               <view className="date-selection date-selection--end">
                 <text className="date-text">9月1日</text>
@@ -108,6 +154,7 @@ export function Query() {
                 { id: 'nolimit', label: '不限舱位' },
                 { id: 'business', label: '公务/头等舱' },
               ]}
+              activeId={selectedCabin}
               onSegmentChange={handleCabinChange}
             ></Segments>
 
@@ -130,6 +177,16 @@ export function Query() {
 
       {/* Bottom tabbar */}
       <TabBar onTabChange={handleBottomTabChange}></TabBar>
+
+      <Calendar
+        show={showCalendar}
+        poppable
+        type="single"
+        defaultDate={selectedDate}
+        title="选择出发日期"
+        onShowChange={setShowCalendar}
+        onConfirm={handleDateConfirm}
+      />
     </view>
   );
 }
