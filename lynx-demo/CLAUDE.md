@@ -6,6 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **ReactLynx** mobile app project bootstrapped with `create-rspeedy`. ReactLynx is a React-like framework for building mobile experiences that run on Lynx (a mobile rendering engine). Apps are scanned via QR code with the LynxExplorer app during development.
 
+## Read in Advance
+
+Read the docs below in advance to help you understand the library or frameworks this project depends on.
+
+- Lynx: [llms.txt](https://lynxjs.org/llms.txt).
+  While dealing with a Lynx task, an agent **MUST** read this doc because it is an entry point of all available docs about Lynx.
+
 ## Commands
 
 ```bash
