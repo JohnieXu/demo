@@ -127,12 +127,12 @@ export function CalendarHeader(props: CalendarHeaderProps) {
 }
 
 const headerActionStyle = (disabled: boolean): CSSProperties => ({
-  width: CALENDAR_DEFAULTS.headerActionSize + 16,
-  height: CALENDAR_DEFAULTS.headerActionSize + 16,
+  width: CALENDAR_DEFAULTS.headerActionSize + 16 + 'px',
+  height: CALENDAR_DEFAULTS.headerActionSize + 16 + 'px',
   alignItems: 'center',
   justifyContent: 'center',
   color: disabled ? CALENDAR_DEFAULTS.headerActionDisabledColor : CALENDAR_DEFAULTS.headerActionColor,
-  fontSize: CALENDAR_DEFAULTS.headerActionSize,
+  fontSize: CALENDAR_DEFAULTS.headerActionSize + 'px',
   fontWeight: '600',
 })
 
@@ -144,31 +144,31 @@ const styles: Record<string, CSSProperties> = {
     zIndex: 1,
   },
   headerTitle: {
-    height: CALENDAR_DEFAULTS.headerTitleHeight,
+    height: CALENDAR_DEFAULTS.headerTitleHeight + 'px',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.headerTitleFontSize,
+    fontSize: CALENDAR_DEFAULTS.headerTitleFontSize + 'px',
     color: CALENDAR_DEFAULTS.textColor,
     fontWeight: '600',
   },
   headerSubtitle: {
-    height: CALENDAR_DEFAULTS.headerSubtitleHeight,
+    height: CALENDAR_DEFAULTS.headerSubtitleHeight + 'px',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: CALENDAR_DEFAULTS.paddingMd,
-    paddingRight: CALENDAR_DEFAULTS.paddingMd,
+    paddingLeft: CALENDAR_DEFAULTS.paddingMd + 'px',
+    paddingRight: CALENDAR_DEFAULTS.paddingMd + 'px',
   },
   subtitleText: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.headerSubtitleFontSize,
+    fontSize: CALENDAR_DEFAULTS.headerSubtitleFontSize + 'px',
     color: CALENDAR_DEFAULTS.textColor,
     fontWeight: '600',
   },
   weekdays: {
-    height: CALENDAR_DEFAULTS.weekdayHeight,
+    height: CALENDAR_DEFAULTS.weekdayHeight + 'px',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -176,7 +176,7 @@ const styles: Record<string, CSSProperties> = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.weekdayFontSize,
+    fontSize: CALENDAR_DEFAULTS.weekdayFontSize + 'px',
     color: CALENDAR_DEFAULTS.weekdayColor,
   },
 }

@@ -217,7 +217,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   }, [shouldRender, placeholders.length, rowHeight])
 
   return (
-    <view className="lynx-calendar__month" style={containerHeight ? { height: containerHeight } : undefined}>
+    <view className="lynx-calendar__month" style={containerHeight ? { height: containerHeight + 'px' } : undefined}>
       {renderMonthHeader()}
       <view className="lynx-calendar__days" style={styles.days}>
         {renderMark()}
@@ -235,10 +235,10 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
   },
   monthTitle: {
-    height: CALENDAR_DEFAULTS.monthTitleHeight,
+    height: CALENDAR_DEFAULTS.monthTitleHeight + 'px',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.monthTitleFontSize,
+    fontSize: CALENDAR_DEFAULTS.monthTitleFontSize + 'px',
     color: CALENDAR_DEFAULTS.textColor,
     fontWeight: '500',
   },
@@ -247,7 +247,7 @@ const styles: Record<string, CSSProperties> = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    fontSize: CALENDAR_DEFAULTS.monthMarkFontSize,
+    fontSize: CALENDAR_DEFAULTS.monthMarkFontSize + 'px',
     color: CALENDAR_DEFAULTS.monthMarkColor,
     zIndex: -1,
     pointerEvents: 'none',

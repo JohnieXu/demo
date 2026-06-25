@@ -566,8 +566,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
 })
 
 const confirmStyle = (disabled: boolean, color?: string): CSSProperties => ({
-  height: CALENDAR_DEFAULTS.confirmButtonHeight,
-  margin: CALENDAR_DEFAULTS.confirmButtonMargin,
+  height: CALENDAR_DEFAULTS.confirmButtonHeight + 'px',
+  margin: CALENDAR_DEFAULTS.confirmButtonMargin + 'px',
   borderRadius: CALENDAR_DEFAULTS.confirmButtonBorderRadius,
   backgroundColor: disabled ? '#ccc' : color || CALENDAR_DEFAULTS.primaryColor,
   alignItems: 'center',
@@ -575,7 +575,7 @@ const confirmStyle = (disabled: boolean, color?: string): CSSProperties => ({
 })
 
 const confirmTextStyle = (disabled: boolean): CSSProperties => ({
-  fontSize: 14,
+  fontSize: 14 + 'px',
   color: disabled ? '#999' : '#fff',
   fontWeight: '500',
 })

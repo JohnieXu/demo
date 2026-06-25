@@ -14,15 +14,15 @@ function getDayStyle(
   const height = parseSize(rowHeight)
   const base: CSSProperties = {
     width: '14.285%',
-    height,
-    marginBottom: CALENDAR_DEFAULTS.dayMarginBottom,
+    height: height + 'px',
+    marginBottom: CALENDAR_DEFAULTS.dayMarginBottom + 'px',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   }
 
   if (type === 'placeholder') {
-    return { width: '100%', height }
+    return { width: '100%', height: height + 'px' }
   }
 
   if (isFirstDay && offset > 0) {
@@ -37,7 +37,7 @@ function getDayStyle(
     case 'multiple-selected':
       base.color = CALENDAR_DEFAULTS.selectedDayColor
       base.backgroundColor = activeColor
-      base.borderRadius = CALENDAR_DEFAULTS.borderRadius
+      base.borderRadius = CALENDAR_DEFAULTS.borderRadius + 'px'
       break
     case 'start':
       base.color = CALENDAR_DEFAULTS.selectedDayColor
@@ -136,9 +136,9 @@ export function CalendarDay(props: CalendarDayProps) {
         <view
           className="lynx-calendar__selected-day"
           style={{
-            width: parseSize(rowHeight),
-            height: parseSize(rowHeight),
-            borderRadius: parseSize(rowHeight) / 2,
+            width: parseSize(rowHeight) + 'px',
+            height: parseSize(rowHeight) + 'px',
+            borderRadius: parseSize(rowHeight) / 2 + 'px',
             backgroundColor: color || CALENDAR_DEFAULTS.primaryColor,
             alignItems: 'center',
             justifyContent: 'center',
@@ -174,26 +174,26 @@ export function CalendarDay(props: CalendarDayProps) {
 
 const styles: Record<string, CSSProperties> = {
   dayText: {
-    fontSize: CALENDAR_DEFAULTS.dayFontSize,
-    lineHeight: CALENDAR_DEFAULTS.dayFontSize,
+    fontSize: CALENDAR_DEFAULTS.dayFontSize + 'px',
+    lineHeight: CALENDAR_DEFAULTS.dayFontSize + 'px',
   },
   topInfo: {
     position: 'absolute',
-    top: 2,
+    top: 2 + 'px',
     left: 0,
     right: 0,
-    fontSize: CALENDAR_DEFAULTS.infoFontSize,
-    lineHeight: CALENDAR_DEFAULTS.infoLineHeight,
+    fontSize: CALENDAR_DEFAULTS.infoFontSize + 'px',
+    lineHeight: CALENDAR_DEFAULTS.infoLineHeight + 'px',
     textAlign: 'center',
     color: 'inherit',
   },
   bottomInfo: {
     position: 'absolute',
-    bottom: 2,
+    bottom: 2 + 'px',
     left: 0,
     right: 0,
-    fontSize: CALENDAR_DEFAULTS.infoFontSize,
-    lineHeight: CALENDAR_DEFAULTS.infoLineHeight,
+    fontSize: CALENDAR_DEFAULTS.infoFontSize + 'px',
+    lineHeight: CALENDAR_DEFAULTS.infoLineHeight + 'px',
     textAlign: 'center',
     color: 'inherit',
   },
