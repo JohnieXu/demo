@@ -1,0 +1,55 @@
+# Build output
+build/
+*.xcworkspace
+*.xcodeproj
+
+# CMake
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Third-party SDK (should be downloaded separately)
+# thirdparty/lynx/
+thirdparty/tmp/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Bundles that may be generated or copied from other projects
+# Keep the placeholder, but ignore any copied bundle from external dist
+# resources/*.lynx.bundle
