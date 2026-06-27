@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from '@lynx-js/react'
-import type { CSSProperties } from '@lynx-js/types'
-import { CALENDAR_DEFAULTS, CALENDAR_TEXTS } from './constants'
+import { CALENDAR_TEXTS } from './constants'
 import { CalendarDay } from './CalendarDay'
 import type { CalendarDayItem, CalendarDayType, CalendarMonthProps } from './types'
 import {
@@ -13,6 +12,8 @@ import {
   parseSize,
 } from './utils'
 
+const DEFAULT_DAY_HEIGHT = 64
+
 export function CalendarMonth(props: CalendarMonthProps) {
   const {
     date,
@@ -21,7 +22,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
     minDate,
     maxDate,
     showMark = true,
-    rowHeight = CALENDAR_DEFAULTS.dayHeight,
+    rowHeight = DEFAULT_DAY_HEIGHT,
     formatter,
     lazyRender = true,
     visible = true,
@@ -176,7 +177,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   const renderMonthHeader = () => {
     if (!showMonthTitle) return null
     return (
-      <view className="lynx-calendar__month-title" style={styles.monthTitle}>
+      <view className="lu-calendar__month-title">
         {renderMonthTitle
           ? renderMonthTitle({ date, text: title })
           : <text>{title}</text>}
@@ -187,7 +188,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   const renderMark = () => {
     if (!showMark || !shouldRender) return null
     return (
-      <view className="lynx-calendar__month-mark" style={styles.monthMark}>
+      <view className="lu-calendar__month-mark">
         <text>{date.getMonth() + 1}</text>
       </view>
     )
@@ -217,39 +218,12 @@ export function CalendarMonth(props: CalendarMonthProps) {
   }, [shouldRender, placeholders.length, rowHeight])
 
   return (
-    <view className="lynx-calendar__month" style={containerHeight ? { height: containerHeight + 'px' } : undefined}>
+    <view className="lu-calendar__month" style={containerHeight ? { height: `${containerHeight}px` } : undefined}>
       {renderMonthHeader()}
-      <view className="lynx-calendar__days" style={styles.days}>
+      <view className="lu-calendar__days">
         {renderMark()}
         {(shouldRender ? days : placeholders).map(renderDay)}
       </view>
     </view>
   )
-}
-
-const styles: Record<string, CSSProperties> = {
-  days: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    position: 'relative',
-  },
-  monthTitle: {
-    height: CALENDAR_DEFAULTS.monthTitleHeight + 'px',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.monthTitleFontSize + 'px',
-    color: CALENDAR_DEFAULTS.textColor,
-    fontWeight: '500',
-  },
-  monthMark: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    fontSize: CALENDAR_DEFAULTS.monthMarkFontSize + 'px',
-    color: CALENDAR_DEFAULTS.monthMarkColor,
-    zIndex: -1,
-    pointerEvents: 'none',
-  },
 }

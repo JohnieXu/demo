@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router'
 import { DialogProvider } from './components/dialog/index';
 import { useBackHandler } from './hooks/useBackHandler';
-import './App.scss';
+import './App.css';
 
 export function App() {
   // Use the back handler hook to intercept system back gestures
@@ -9,7 +9,7 @@ export function App() {
 
   return (
     <DialogProvider>
-      <view className="app">
+      <view className="app lynx-theme-light">
         <Outlet />
       </view>
     </DialogProvider>

@@ -1,0 +1,121 @@
+:root,
+page,
+.lynx-theme-light {
+  /* Brand / Primary */
+  --lu-color-primary: #ff5712;
+  --lu-color-primary-pressed: #e04d0f;
+  --lu-color-primary-subtle: rgba(255, 87, 18, 0.1);
+
+  /* Background */
+  --lu-color-background: #ffffff;
+  --lu-color-surface: #ffffff;
+  --lu-color-surface-elevated: #ffffff;
+  --lu-color-surface-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Text */
+  --lu-color-text-primary: #333333;
+  --lu-color-text-secondary: #666666;
+  --lu-color-text-tertiary: #999999;
+  --lu-color-text-inverse: #ffffff;
+  --lu-color-text-disabled: #cccccc;
+
+  /* Border */
+  --lu-color-border: #e7e7e7;
+  --lu-color-border-subtle: #f2f2f2;
+  --lu-color-border-inverse: rgba(255, 255, 255, 0.2);
+
+  /* Status */
+  --lu-color-danger: #ff4d4f;
+  --lu-color-success: #52c41a;
+  --lu-color-warning: #faad14;
+  --lu-color-info: #1890ff;
+
+  /* Disabled */
+  --lu-color-disabled: #cccccc;
+  --lu-color-disabled-bg: #f5f5f5;
+
+  /* Mask / Overlay */
+  --lu-color-mask: rgba(0, 0, 0, 0.4);
+
+  /* Spacing (px-based for postcss-px-to-viewport conversion) */
+  --lu-space-xs: 4px;
+  --lu-space-sm: 8px;
+  --lu-space-md: 12px;
+  --lu-space-lg: 16px;
+  --lu-space-xl: 20px;
+  --lu-space-2xl: 24px;
+  --lu-space-3xl: 32px;
+
+  /* Border Radius */
+  --lu-radius-sm: 4px;
+  --lu-radius-md: 8px;
+  --lu-radius-lg: 12px;
+  --lu-radius-xl: 16px;
+  --lu-radius-2xl: 22px;
+  --lu-radius-full: 9999px;
+
+  /* Typography */
+  --lu-font-size-xs: 10px;
+  --lu-font-size-sm: 12px;
+  --lu-font-size-base: 14px;
+  --lu-font-size-lg: 16px;
+  --lu-font-size-xl: 18px;
+  --lu-font-size-2xl: 20px;
+  --lu-font-size-3xl: 24px;
+
+  /* Line Height */
+  --lu-line-height-tight: 1.25;
+  --lu-line-height-normal: 1.5;
+  --lu-line-height-relaxed: 1.75;
+
+  /* Shadow */
+  --lu-shadow-sm: 0 2px 8px rgba(100, 101, 102, 0.08);
+  --lu-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* Calendar-specific */
+  --lu-calendar-range-middle-opacity: 0.1;
+  --lu-calendar-month-mark-color: rgba(242, 243, 245, 0.8);
+  --lu-calendar-weekday-color: #999999;
+}
+
+.lynx-theme-dark {
+  /* Brand / Primary */
+  --lu-color-primary: #ff8c4d;
+  --lu-color-primary-pressed: #ffaa7a;
+  --lu-color-primary-subtle: rgba(255, 140, 77, 0.15);
+
+  /* Background */
+  --lu-color-background: #000000;
+  --lu-color-surface: #1a1a1a;
+  --lu-color-surface-elevated: #262626;
+  --lu-color-surface-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --lu-color-text-primary: #ffffff;
+  --lu-color-text-secondary: #b3b3b3;
+  --lu-color-text-tertiary: #808080;
+  --lu-color-text-inverse: #333333;
+  --lu-color-text-disabled: #666666;
+
+  /* Border */
+  --lu-color-border: #404040;
+  --lu-color-border-subtle: #333333;
+  --lu-color-border-inverse: rgba(0, 0, 0, 0.2);
+
+  /* Status */
+  --lu-color-danger: #ff7875;
+  --lu-color-success: #95de64;
+  --lu-color-warning: #ffd666;
+  --lu-color-info: #69c0ff;
+
+  /* Disabled */
+  --lu-color-disabled: #666666;
+  --lu-color-disabled-bg: #262626;
+
+  /* Mask / Overlay */
+  --lu-color-mask: rgba(0, 0, 0, 0.6);
+
+  /* Calendar-specific */
+  --lu-calendar-month-mark-color: rgba(255, 255, 255, 0.05);
+  --lu-calendar-weekday-color: #808080;
+}

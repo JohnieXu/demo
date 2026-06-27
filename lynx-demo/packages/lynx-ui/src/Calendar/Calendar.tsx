@@ -10,7 +10,7 @@ import {
 import type { CSSProperties } from '@lynx-js/types'
 import { CalendarHeader } from './CalendarHeader'
 import { CalendarMonth } from './CalendarMonth'
-import { CALENDAR_DEFAULTS, CALENDAR_TEXTS, POPUP_STYLES } from './constants'
+import { CALENDAR_TEXTS } from './constants'
 import type { CalendarDayItem, CalendarProps, CalendarRef } from './types'
 import {
   calcDateNum,
@@ -48,7 +48,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
     showMark = true,
     showTitle = true,
     formatter,
-    rowHeight = CALENDAR_DEFAULTS.dayHeight,
+    rowHeight = 64,
     confirmText = CALENDAR_TEXTS.confirm,
     lazyRender = true,
     showConfirm = true,
@@ -453,13 +453,13 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
     return (
       <view
         className={joinClass(
-          'lynx-calendar__confirm',
-          disabled && 'lynx-calendar__confirm--disabled',
+          'lu-calendar__confirm',
+          disabled && 'lu-calendar__confirm--disabled ui-disabled',
         )}
-        style={confirmStyle(disabled, color)}
+        style={color ? ({ '--lu-color-primary': color } as CSSProperties) : undefined}
         bindtap={disabled ? undefined : handleConfirm}
       >
-        <text style={confirmTextStyle(disabled)}>{text}</text>
+        <text className="lu-calendar__confirm-text">{text}</text>
       </view>
     )
   }
@@ -470,9 +470,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
 
     return (
       <view
-        className={joinClass('lynx-calendar', className)}
+        className={joinClass('lu-calendar', className)}
         style={{
-          backgroundColor: CALENDAR_DEFAULTS.background,
           display: 'flex',
           flexDirection: 'column',
           ...(style ?? {}),
@@ -494,8 +493,8 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
           onPanelChange={(date) => setCurrentPanelDate(cloneDate(date))}
         />
         <scroll-view
-          className="lynx-calendar__body"
-          style={styles.body}
+          className="lu-calendar__body"
+          style={{ flex: 1, minHeight: 0 }}
           scroll-y
           scroll-top={scrollTop}
           bindscroll={handleScroll}
@@ -531,10 +530,9 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
           ))}
         </scroll-view>
         <view
-          className="lynx-calendar__footer"
+          className="lu-calendar__footer"
           style={{
-            ...styles.footer,
-            paddingBottom: safeAreaInsetBottom ? 'env(safe-area-inset-bottom)' : 0,
+            paddingBottom: safeAreaInsetBottom ? 'env(safe-area-inset-bottom)' : '0px',
           }}
         >
           {renderFooterButton()}
@@ -546,14 +544,13 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
   if (poppable) {
     if (!show) return null
     return (
-      <view className="lynx-calendar-popup" style={POPUP_STYLES.overlay} bindtap={handleOverlayTap}>
+      <view className="lu-calendar-popup" bindtap={handleOverlayTap}>
         <view
-          className="lynx-calendar-popup__content"
+          className="lu-calendar-popup__content"
           style={{
-            ...POPUP_STYLES.content,
             borderRadius: round
-              ? `${CALENDAR_DEFAULTS.popupBorderRadius}px ${CALENDAR_DEFAULTS.popupBorderRadius}px 0 0`
-              : 0,
+              ? '16px 16px 0 0'
+              : '0px',
           }}
         >
           {renderCalendarPanel()}
@@ -564,30 +561,3 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(function Calendar
 
   return renderCalendarPanel()
 })
-
-const confirmStyle = (disabled: boolean, color?: string): CSSProperties => ({
-  height: CALENDAR_DEFAULTS.confirmButtonHeight + 'px',
-  margin: CALENDAR_DEFAULTS.confirmButtonMargin + 'px',
-  borderRadius: CALENDAR_DEFAULTS.confirmButtonBorderRadius,
-  backgroundColor: disabled ? '#ccc' : color || CALENDAR_DEFAULTS.primaryColor,
-  alignItems: 'center',
-  justifyContent: 'center',
-})
-
-const confirmTextStyle = (disabled: boolean): CSSProperties => ({
-  fontSize: 14 + 'px',
-  color: disabled ? '#999' : '#fff',
-  fontWeight: '500',
-})
-
-const styles: Record<string, CSSProperties> = {
-  body: {
-    flex: 1,
-    minHeight: 0,
-  },
-  footer: {
-    flexShrink: 0,
-    padding: '8px 16px',
-    backgroundColor: CALENDAR_DEFAULTS.background,
-  },
-}

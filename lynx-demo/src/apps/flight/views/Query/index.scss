@@ -1,3 +1,5 @@
+$tab-wrapper-height: 80px;
+
 .page-query {
   width: 375px;
   height: 100%;
@@ -53,7 +55,7 @@
       background-size: cover;
       background-position: center top;
       // background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
-      backdrop-filter: blur(20px);
+      // backdrop-filter: blur(20px);
       border-radius: 12px 12px 0px 0px;
       background-color: transparent;
     }
@@ -218,6 +220,12 @@
       font-weight: 400;
       letter-spacing: 0;
     }
+  }
+
+  /* Bottom Gap */
+  .body-gap {
+    width: 100%;
+    height: $tab-wrapper-height;
   }
 }
 

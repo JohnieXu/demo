@@ -1,5 +1,4 @@
-import type { CSSProperties } from '@lynx-js/types'
-import { CALENDAR_DEFAULTS, CALENDAR_TEXTS } from './constants'
+import { CALENDAR_TEXTS } from './constants'
 import type { CalendarHeaderProps } from './types'
 import {
   compareMonth,
@@ -51,7 +50,7 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     if (!showTitle) return null
     const text = title ?? CALENDAR_TEXTS.title
     return (
-      <view className="lynx-calendar__header-title" style={styles.headerTitle}>
+      <view className="lu-calendar__header-title">
         {renderTitle ? renderTitle() : <text>{text}</text>}
       </view>
     )
@@ -71,10 +70,9 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     return (
       <view
         className={joinClass(
-          'lynx-calendar__header-action',
-          disabled && 'lynx-calendar__header-action--disabled',
+          'lu-calendar__header-action',
+          disabled && 'lu-calendar__header-action--disabled',
         )}
-        style={headerActionStyle(disabled)}
         bindtap={disabled ? undefined : onClick}
       >
         <text>{isNext ? '>' : '<'}</text>
@@ -87,12 +85,11 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     const text = subtitle ?? (date ? formatMonthTitle(date) : '')
     return (
       <view
-        className="lynx-calendar__header-subtitle"
-        style={styles.headerSubtitle}
+        className="lu-calendar__header-subtitle"
         bindtap={onClickSubtitle}
       >
         {renderAction(false)}
-        <view className="lynx-calendar__header-subtitle-text" style={styles.subtitleText}>
+        <view className="lu-calendar__header-subtitle-text">
           {renderSubtitle ? renderSubtitle({ date, text }) : <text>{text}</text>}
         </view>
         {renderAction(true)}
@@ -107,9 +104,9 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     ]
 
     return (
-      <view className="lynx-calendar__weekdays" style={styles.weekdays}>
+      <view className="lu-calendar__weekdays">
         {weekdays.map((text, index) => (
-          <view key={index} className="lynx-calendar__weekday" style={styles.weekday}>
+          <view key={index} className="lu-calendar__weekday">
             <text>{text}</text>
           </view>
         ))}
@@ -118,65 +115,10 @@ export function CalendarHeader(props: CalendarHeaderProps) {
   }
 
   return (
-    <view className="lynx-calendar__header" style={styles.header}>
+    <view className="lu-calendar__header">
       {renderHeaderTitle()}
       {renderHeaderSubtitle()}
       {renderWeekdays()}
     </view>
   )
-}
-
-const headerActionStyle = (disabled: boolean): CSSProperties => ({
-  width: CALENDAR_DEFAULTS.headerActionSize + 16 + 'px',
-  height: CALENDAR_DEFAULTS.headerActionSize + 16 + 'px',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: disabled ? CALENDAR_DEFAULTS.headerActionDisabledColor : CALENDAR_DEFAULTS.headerActionColor,
-  fontSize: CALENDAR_DEFAULTS.headerActionSize + 'px',
-  fontWeight: '600',
-})
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    flexShrink: 0,
-    backgroundColor: CALENDAR_DEFAULTS.background,
-    boxShadow: '0 2px 8px rgba(100, 101, 102, 0.08)',
-    zIndex: 1,
-  },
-  headerTitle: {
-    height: CALENDAR_DEFAULTS.headerTitleHeight + 'px',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.headerTitleFontSize + 'px',
-    color: CALENDAR_DEFAULTS.textColor,
-    fontWeight: '600',
-  },
-  headerSubtitle: {
-    height: CALENDAR_DEFAULTS.headerSubtitleHeight + 'px',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: CALENDAR_DEFAULTS.paddingMd + 'px',
-    paddingRight: CALENDAR_DEFAULTS.paddingMd + 'px',
-  },
-  subtitleText: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.headerSubtitleFontSize + 'px',
-    color: CALENDAR_DEFAULTS.textColor,
-    fontWeight: '600',
-  },
-  weekdays: {
-    height: CALENDAR_DEFAULTS.weekdayHeight + 'px',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  weekday: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: CALENDAR_DEFAULTS.weekdayFontSize + 'px',
-    color: CALENDAR_DEFAULTS.weekdayColor,
-  },
 }

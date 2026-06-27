@@ -1,73 +1,40 @@
 import type { CSSProperties } from '@lynx-js/types'
-import { CALENDAR_DEFAULTS } from './constants'
 import type { CalendarDayProps, CalendarDayType } from './types'
-import { isLastRowInMonth, joinClass, parseSize } from './utils'
+import { isLastRowInMonth, joinClass, parseSize, toCSSSize } from './utils'
+
+const stateMap: Record<CalendarDayType, string> = {
+  '': 'normal',
+  selected: 'selected',
+  'start-end': 'start-end',
+  'multiple-selected': 'selected',
+  start: 'start',
+  end: 'end',
+  middle: 'middle',
+  'multiple-middle': 'middle',
+  disabled: 'disabled',
+  placeholder: 'placeholder',
+}
 
 function getDayStyle(
-  type: CalendarDayType,
-  color: string,
   rowHeight: number | string,
   offset: number,
-  isFirstDay: boolean,
+  index: number,
   date?: Date,
 ): CSSProperties {
-  const height = parseSize(rowHeight)
-  const base: CSSProperties = {
-    width: '14.285%',
-    height: height + 'px',
-    marginBottom: CALENDAR_DEFAULTS.dayMarginBottom + 'px',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
+  const height = toCSSSize(rowHeight)
+  const style: CSSProperties = {
+    height,
   }
 
-  if (type === 'placeholder') {
-    return { width: '100%', height: height + 'px' }
-  }
-
-  if (isFirstDay && offset > 0) {
-    base.marginLeft = `${(100 * offset) / 7}%`
-  }
-
-  const activeColor = color || CALENDAR_DEFAULTS.primaryColor
-
-  switch (type) {
-    case 'selected':
-    case 'start-end':
-    case 'multiple-selected':
-      base.color = CALENDAR_DEFAULTS.selectedDayColor
-      base.backgroundColor = activeColor
-      base.borderRadius = CALENDAR_DEFAULTS.borderRadius + 'px'
-      break
-    case 'start':
-      base.color = CALENDAR_DEFAULTS.selectedDayColor
-      base.backgroundColor = activeColor
-      base.borderRadius = `${CALENDAR_DEFAULTS.borderRadius}px 0 0 ${CALENDAR_DEFAULTS.borderRadius}px`
-      break
-    case 'end':
-      base.color = CALENDAR_DEFAULTS.selectedDayColor
-      base.backgroundColor = activeColor
-      base.borderRadius = `0 ${CALENDAR_DEFAULTS.borderRadius}px ${CALENDAR_DEFAULTS.borderRadius}px 0`
-      break
-    case 'middle':
-    case 'multiple-middle':
-      base.color = activeColor
-      base.backgroundColor = `${activeColor}${Math.round(
-        CALENDAR_DEFAULTS.rangeMiddleBgOpacity * 255,
-      )
-        .toString(16)
-        .padStart(2, '0')}`
-      break
-    case 'disabled':
-      base.color = CALENDAR_DEFAULTS.disabledColor
-      break
+  if (index === 0 && offset > 0) {
+    style.marginLeft = `${(100 * offset) / 7}%`
   }
 
   if (date && isLastRowInMonth(date, offset)) {
-    base.marginBottom = 0
+    style.marginBottom = '0px'
   }
 
-  return base
+  return style
 }
 
 export function CalendarDay(props: CalendarDayProps) {
@@ -97,30 +64,35 @@ export function CalendarDay(props: CalendarDayProps) {
   if (type === 'placeholder') {
     return (
       <view
-        className="lynx-calendar__day lynx-calendar__day--placeholder"
-        style={getDayStyle('placeholder', color ?? '', rowHeight, offset, false)}
+        className="lu-calendar__day lu-calendar__day--placeholder"
+        style={{ height: toCSSSize(rowHeight) }}
       />
     )
   }
 
-  const dayStyle = getDayStyle(
-    type ?? '',
-    color ?? '',
-    rowHeight,
-    offset,
-    index === 0,
-    date,
-  )
+  const dayStyle = getDayStyle(rowHeight, offset, index, date)
+  const dayState = stateMap[type ?? '']
+  const isSelected =
+    type === 'selected' || type === 'start-end' || type === 'multiple-selected'
+  const isRangeStart = type === 'start' || type === 'start-end'
+  const isRangeEnd = type === 'end' || type === 'start-end'
+  const isRangeMiddle = type === 'middle' || type === 'multiple-middle'
+  const isDisabled = type === 'disabled'
+
+  const inlineStyle: CSSProperties = {
+    ...dayStyle,
+    ...(color ? ({ '--lu-color-primary': color } as CSSProperties) : {}),
+  }
 
   const renderContent = () => {
     const topInfoNode = item.topInfo || renderTopInfo ? (
-      <text className="lynx-calendar__top-info" style={styles.topInfo}>
+      <text className="lu-calendar__top-info">
         {renderTopInfo ? renderTopInfo(item) : item.topInfo}
       </text>
     ) : null
 
     const bottomInfoNode = item.bottomInfo || renderBottomInfo ? (
-      <text className="lynx-calendar__bottom-info" style={styles.bottomInfo}>
+      <text className="lu-calendar__bottom-info">
         {renderBottomInfo ? renderBottomInfo(item) : item.bottomInfo}
       </text>
     ) : null
@@ -128,20 +100,17 @@ export function CalendarDay(props: CalendarDayProps) {
     const textNode = renderDayText ? (
       renderDayText(item)
     ) : (
-      <text className="lynx-calendar__day-text" style={styles.dayText}>{item.text}</text>
+      <text className="lu-calendar__day-text">{item.text}</text>
     )
 
-    if (type === 'selected') {
+    if (isSelected) {
       return (
         <view
-          className="lynx-calendar__selected-day"
+          className="lu-calendar__selected-day"
           style={{
-            width: parseSize(rowHeight) + 'px',
-            height: parseSize(rowHeight) + 'px',
-            borderRadius: parseSize(rowHeight) / 2 + 'px',
-            backgroundColor: color || CALENDAR_DEFAULTS.primaryColor,
-            alignItems: 'center',
-            justifyContent: 'center',
+            width: toCSSSize(rowHeight),
+            height: toCSSSize(rowHeight),
+            borderRadius: `${parseSize(rowHeight) / 2}px`,
           }}
         >
           {topInfoNode}
@@ -152,7 +121,7 @@ export function CalendarDay(props: CalendarDayProps) {
     }
 
     return (
-      <view style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <view className="lu-calendar__day-content">
         {topInfoNode}
         {textNode}
         {bottomInfoNode}
@@ -162,39 +131,21 @@ export function CalendarDay(props: CalendarDayProps) {
 
   return (
     <view
-      className={joinClass('lynx-calendar__day', `lynx-calendar__day--${type}`, className)}
-      style={dayStyle}
+      className={joinClass(
+        'lu-calendar__day',
+        `lu-calendar__day--${dayState}`,
+        isSelected && 'lu-calendar__day--selected',
+        isRangeStart && 'lu-calendar__day--range-start',
+        isRangeEnd && 'lu-calendar__day--range-end',
+        isRangeMiddle && 'lu-calendar__day--range-middle',
+        isDisabled && 'lu-calendar__day--disabled',
+        className,
+      )}
+      style={inlineStyle}
       bindtap={handleTap}
       data-testid={`day-${item.text}`}
     >
       {renderContent()}
     </view>
   )
-}
-
-const styles: Record<string, CSSProperties> = {
-  dayText: {
-    fontSize: CALENDAR_DEFAULTS.dayFontSize + 'px',
-    lineHeight: CALENDAR_DEFAULTS.dayFontSize + 'px',
-  },
-  topInfo: {
-    position: 'absolute',
-    top: 2 + 'px',
-    left: 0,
-    right: 0,
-    fontSize: CALENDAR_DEFAULTS.infoFontSize + 'px',
-    lineHeight: CALENDAR_DEFAULTS.infoLineHeight + 'px',
-    textAlign: 'center',
-    color: 'inherit',
-  },
-  bottomInfo: {
-    position: 'absolute',
-    bottom: 2 + 'px',
-    left: 0,
-    right: 0,
-    fontSize: CALENDAR_DEFAULTS.infoFontSize + 'px',
-    lineHeight: CALENDAR_DEFAULTS.infoLineHeight + 'px',
-    textAlign: 'center',
-    color: 'inherit',
-  },
 }

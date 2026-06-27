@@ -137,7 +137,10 @@ export function Query() {
             <view className="date-row">
               <view
                 className="date-selection date-selection--start"
-                bindtap={() => setShowCalendar(true)}
+                bindtap={() => {
+                  console.log('点击出发出发日期')
+                  setShowCalendar(true)
+                }}
               >
                 <text className="date-text">{searchParams.date}</text>
                 <text className="weekday-text">{searchParams.weekday}</text>
@@ -172,7 +175,13 @@ export function Query() {
               { text: '昆明-福州 11月6日' },
             ]}
           />
+
+          <view className="red-box"></view>
+          <view className="w-32 h-auto bg-purple-800">
+            <text className="text-lg text-white">Test Tailwindcss</text>
+          </view>
         </view>
+        <view className="body-gap"></view>
       </scroll-view>
 
       {/* Bottom tabbar */}

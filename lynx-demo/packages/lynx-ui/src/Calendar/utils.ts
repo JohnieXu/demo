@@ -129,3 +129,7 @@ export function joinClass(...classes: (string | false | undefined)[]): string {
 export function parseSize(size: number | string): number {
   return typeof size === 'number' ? size : parseInt(size, 10)
 }
+
+export function toCSSSize(size: number | string): string {
+  return `${parseSize(size)}px`
+}
