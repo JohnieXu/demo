@@ -7,6 +7,7 @@ import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check'
 import { pluginSass } from '@rsbuild/plugin-sass'
 import * as sass from 'sass'
+// import * as sassEmbedded from 'sass-embedded'
 import os from 'os'
 import { readdirSync, statSync } from 'fs'
 import { join } from 'path'
@@ -121,10 +122,18 @@ export default defineConfig({
       engineVersion: '3.7'
     }),
     pluginTypeCheck(),
+    // 注意：sass-embedded 必须固定在 1.80.x。
+    // 1.81+ 版本内置的 GraalVM 要求 macOS >= 14 (Sonoma)，
+    // 当前开发机为 macOS 13.x，升级后子进程会持续报
+    // "VM initialization failed: Current Mac OS X version 13.0 is lower than minimum supported version 14.0"
+    // 并导致构建崩溃 + EPIPE。详见 docs/sass-embedded-version-note.md
     pluginSass({
       sassLoaderOptions: {
-        implementation: sass,
+        implementation: sass, // 或者使用 sassEmbedded
         api: 'modern',
+        sassOptions: {
+          verbose: true,
+        }
       },
     }),
   ],
