@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rspeedy build",
     "dev": "rspeedy dev",
+    "doctor:dev": "RSDOCTOR=true rspeedy dev",
     "format": "prettier --write .",
     "lint": "eslint .",
     "preview": "rspeedy preview",
