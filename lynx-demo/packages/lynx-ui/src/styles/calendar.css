@@ -157,6 +157,18 @@
   color: var(--lu-color-text-disabled);
 }
 
+/*
+ * Lynx has CSS inheritance disabled (enableCSSInheritance: false), so the
+ * `color` above on the day wrapper does NOT cascade to the nested <text>
+ * nodes. Apply the disabled color directly to the text elements so disabled
+ * dates actually look muted (mirrors Vant's .van-calendar__day--disabled).
+ */
+.lu-calendar__day--disabled .lu-calendar__day-text,
+.lu-calendar__day--disabled .lu-calendar__top-info,
+.lu-calendar__day--disabled .lu-calendar__bottom-info {
+  color: var(--lu-color-text-disabled);
+}
+
 .lu-calendar__selected-day {
   display: flex;
   align-items: center;
