@@ -24,6 +24,7 @@
     "lynx-ui": "workspace:*",
     "react-router": "^6.30.3",
     "react-spring-lynx": "workspace:*",
+    "tailwindcss": "^3.4.19",
     "travel-data": "workspace:*",
     "travel-domain": "workspace:*",
     "zustand": "^5.0.13"
