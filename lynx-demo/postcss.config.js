@@ -1,5 +1,5 @@
 // Responsive apps config - add app names here to enable viewport scaling
-const RESPONSIVE_APPS = ['flight'] // Easy to extend: ['flight', 'furniture', ...]
+const RESPONSIVE_APPS = ['flight', 'ui-example'] // Easy to extend: ['flight', 'furniture', ...]
 
 import pxToViewportPlugin from 'postcss-px-to-viewport-8-plugin'
 import tailwindcss from 'tailwindcss'
