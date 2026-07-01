@@ -37,6 +37,9 @@ export interface CalendarProps {
   show?: boolean
   /** Selection type. Default: 'single' */
   type?: CalendarType
+  /** Panel switch mode: 'none' tiles all months as a scroll list (no arrows);
+   *  'month' / 'year-month' show one month with paging arrows. Default: 'none' */
+  switchMode?: CalendarSwitchMode
   /** Popup title. */
   title?: ReactNode
   /** Primary accent color. Default: #ff5712 */
@@ -107,11 +110,17 @@ export interface CalendarProps {
   renderPrevMonth?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
   /** Render prop for next month arrow. */
   renderNextMonth?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
+  /** Render prop for previous year arrow. Only used in year-month mode. */
+  renderPrevYear?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
+  /** Render prop for next year arrow. Only used in year-month mode. */
+  renderNextYear?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
 
   onSelect?: (date: Date | Date[]) => void
   onConfirm?: (date: Date | Date[]) => void
   onUnselect?: (date: Date) => void
   onMonthShow?: (params: { date: Date; title: string }) => void
+  /** Fired when the panel month changes in month/year-month mode. */
+  onPanelChange?: (params: { date: Date }) => void
   onOverRange?: () => void
   onShowChange?: (show: boolean) => void
   onClickDisabledDate?: (item: CalendarDayItem) => void
@@ -165,12 +174,15 @@ export interface CalendarHeaderProps {
   showTitle?: boolean
   showSubtitle?: boolean
   firstDayOfWeek?: number
+  switchMode?: CalendarSwitchMode
   onClickSubtitle?: () => void
   onPanelChange?: (date: Date) => void
   renderTitle?: () => ReactNode
   renderSubtitle?: (params: { date?: Date; text?: string }) => ReactNode
   renderPrevMonth?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
   renderNextMonth?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
+  renderPrevYear?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
+  renderNextYear?: (params: { disabled: boolean; onClick: () => void }) => ReactNode
 }
 
 export interface CalendarScrollViewRef {

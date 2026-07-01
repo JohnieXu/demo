@@ -41,11 +41,16 @@ function useLatest<T>(value: T) {
 // every frame; useThrottle caps how often the heavy month computation runs.
 const SCROLL_THROTTLE_MS = 200;
 
+// Monotonic counter giving each Calendar instance a stable, unique scroll-view
+// id for imperative scrollTo (Lynx <scroll-view> has no reactive scroll-top).
+let calendarInstanceSeq = 0;
+
 export const Calendar = forwardRef<CalendarRef, CalendarProps>(
   function Calendar(props, ref) {
     const {
       show,
       type = 'single',
+      switchMode = 'none',
       title,
       color,
       round = true,
@@ -80,10 +85,13 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       renderConfirm,
       renderPrevMonth,
       renderNextMonth,
+      renderPrevYear,
+      renderNextYear,
       onSelect,
       onConfirm,
       onUnselect,
       onMonthShow,
+      onPanelChange,
       onOverRange,
       onShowChange,
       onClickDisabledDate,
@@ -91,14 +99,17 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
     } = props;
 
     const safeFirstDayOfWeek = firstDayOfWeek % 7;
+    const canSwitch = switchMode !== 'none';
 
     const minDate = useMemo(() => {
-      return minDateProp ?? getToday();
-    }, [minDateProp]);
+      return minDateProp ?? (canSwitch ? undefined : getToday());
+    }, [minDateProp, canSwitch]);
 
     const maxDate = useMemo(() => {
-      return maxDateProp ?? getMonthByOffset(getToday(), 6);
-    }, [maxDateProp]);
+      return (
+        maxDateProp ?? (canSwitch ? undefined : getMonthByOffset(getToday(), 6))
+      );
+    }, [maxDateProp, canSwitch]);
 
     const limitDateRange = useCallback(
       (date: Date, min = minDate, max = maxDate) => {
@@ -169,6 +180,14 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
     });
     const [visibleRange, setVisibleRange] = useState<[number, number]>([0, 0]);
     const [scrollTop, setScrollTop] = useState(0);
+    // Unique id so imperative scrollTo targets THIS calendar's scroll-view even
+    // with multiple calendars mounted. Lynx <scroll-view> has no reactive
+    // scroll-top; scrolling must go through createSelectorQuery().invoke().
+    const scrollIdRef = useRef<string>('');
+    if (!scrollIdRef.current) {
+      scrollIdRef.current = `lu-calendar-body-${calendarInstanceSeq++}`;
+    }
+    const scrollId = scrollIdRef.current;
     const currentDateRef = useLatest(currentDate);
     const disabledDaysMapRef = useRef<Map<number, CalendarDayItem[]>>(
       new Map(),
@@ -253,34 +272,34 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
 
     const select = useCallback(
       (date: Date | Date[], complete = false) => {
-        const cloned = cloneDates(date);
-        setCurrentDate(cloned);
-        onSelect?.(cloned);
+        // Track the final value locally so onConfirm receives the just-selected
+        // date. React's setCurrentDate is async, so currentDateRef.current is
+        // stale within this callback (Vant reads the synchronous ref value).
+        let finalDate = cloneDates(date);
 
         if (complete && type === 'range') {
-          const valid = checkRange(cloned as [Date, Date]);
-          if (!valid && maxRange) {
-            const start = (cloned as [Date, Date])[0];
-            const limitedEnd = getDayByOffset(start, +maxRange - 1);
-            const newRange: [Date, Date] = [start, limitedEnd];
-            setCurrentDate(newRange);
-            onSelect?.(newRange);
+          const valid = checkRange(finalDate as [Date, Date]);
+          if (!valid) {
+            // Range exceeds maxRange: auto-truncate, emit select once, and do
+            // NOT confirm (mirrors Vant Calendar.tsx:408-418 early return).
+            if (maxRange) {
+              const start = (finalDate as [Date, Date])[0];
+              finalDate = [start, getDayByOffset(start, +maxRange - 1)];
+            }
+            setCurrentDate(finalDate);
+            onSelect?.(finalDate);
+            return;
           }
         }
 
+        setCurrentDate(finalDate);
+        onSelect?.(finalDate);
+
         if (complete && !showConfirm) {
-          onConfirm?.(currentDateRef.current ?? cloned);
+          onConfirm?.(finalDate);
         }
       },
-      [
-        type,
-        maxRange,
-        showConfirm,
-        onSelect,
-        onConfirm,
-        checkRange,
-        currentDateRef,
-      ],
+      [type, maxRange, showConfirm, onSelect, onConfirm, checkRange],
     );
 
     const getDisabledDate = useCallback(
@@ -317,7 +336,9 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
               if (disabledDay) {
                 const newEnd = getPrevDay(disabledDay);
                 if (compareDay(startDay, newEnd) === -1) {
-                  select([startDay, newEnd], true);
+                  // Vant Calendar.tsx:477 — truncated range is incomplete,
+                  // so it must not confirm (no complete flag).
+                  select([startDay, newEnd]);
                 } else {
                   select([date]);
                 }
@@ -376,6 +397,13 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
 
     const scrollToDateInternal = useCallback(
       (targetDate: Date) => {
+        // In month/year-month mode there is a single paged month — just switch
+        // the panel date (mirrors Vant scrollToDate() under canSwitch).
+        if (canSwitch) {
+          setCurrentPanelDate(cloneDate(targetDate));
+          return;
+        }
+
         const monthIndex = months.findIndex(
           (m) => compareMonth(m, targetDate) === 0,
         );
@@ -388,9 +416,24 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
           rowHeight,
           safeFirstDayOfWeek,
         );
-        setScrollTop(monthOffset + dayOffset);
+        const offset = monthOffset + dayOffset;
+        setScrollTop(offset);
+
+        // Lynx <scroll-view> has no reactive scroll-top prop; drive the scroll
+        // imperatively via SelectorQuery (same idiom as
+        // src/apps/flight/components/Segments.tsx). Optional-chained so non-Lynx
+        // environments (e.g. unit tests) no-op instead of throwing.
+        lynx
+          ?.createSelectorQuery()
+          .select(`#${scrollId}`)
+          .invoke({
+            method: 'scrollTo',
+            params: { index: 0, offset, smooth: false },
+            fail: (err) => console.warn('[Calendar] scrollTo failed', err),
+          })
+          .exec();
       },
-      [months, monthOffsets, rowHeight, safeFirstDayOfWeek],
+      [canSwitch, months, monthOffsets, rowHeight, safeFirstDayOfWeek, scrollId],
     );
 
     const reset = useCallback(
@@ -442,7 +485,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
       if (target) {
         setCurrentPanelDate(cloneDate(target));
       }
-    }, [type, minDate, maxDate, getInitialDate]);
+    }, [type, minDate, maxDate, switchMode, getInitialDate]);
 
     // scroll fires on every frame; just record the latest offset (a single
     // number) and let useThrottle gate the expensive month computation below.
@@ -565,7 +608,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
             }
             currentDate={currentDate}
             allowSameDay={allowSameDay}
-            showMonthTitle
+            showMonthTitle={index !== 0 || !showSubtitle}
             firstDayOfWeek={safeFirstDayOfWeek}
             onClick={onClickDay}
             onClickDisabledDate={onClickDisabledDate}
@@ -591,6 +634,7 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
         visibleRange,
         currentDate,
         allowSameDay,
+        showSubtitle,
         safeFirstDayOfWeek,
         onClickDay,
         onClickDisabledDate,
@@ -623,23 +667,64 @@ export const Calendar = forwardRef<CalendarRef, CalendarProps>(
             subtitle={subtitle}
             showTitle={showTitle}
             showSubtitle={showSubtitle}
+            switchMode={switchMode}
             firstDayOfWeek={safeFirstDayOfWeek}
             renderTitle={renderTitle}
             renderSubtitle={renderSubtitle}
             renderPrevMonth={renderPrevMonth}
             renderNextMonth={renderNextMonth}
-            onPanelChange={(date) => setCurrentPanelDate(cloneDate(date))}
+            renderPrevYear={renderPrevYear}
+            renderNextYear={renderNextYear}
+            onPanelChange={(date) => {
+              setCurrentPanelDate(cloneDate(date));
+              onPanelChange?.({ date });
+            }}
           />
-          <scroll-view
-            className="lu-calendar__body"
-            style={{ flex: 1, minHeight: '400px' }}
-            scroll-orientation="vertical"
-            scroll-y
-            // scroll-top={scrollTop}
-            bindscroll={handleScroll}
-          >
-            {monthsContent}
-          </scroll-view>
+          {canSwitch ? (
+            <scroll-view
+              className="lu-calendar__body"
+              style={{ flex: 1, minHeight: '400px' }}
+              scroll-orientation="vertical"
+              scroll-y
+            >
+              <CalendarMonth
+                date={currentPanelDate}
+                type={type}
+                color={color}
+                minDate={minDate}
+                maxDate={maxDate}
+                showMark={showMark}
+                rowHeight={rowHeight}
+                formatter={formatter}
+                lazyRender={false}
+                visible
+                currentDate={currentDate}
+                allowSameDay={allowSameDay}
+                showMonthTitle={!showSubtitle}
+                firstDayOfWeek={safeFirstDayOfWeek}
+                onClick={onClickDay}
+                onClickDisabledDate={onClickDisabledDate}
+                onDisabledDaysChange={(days) =>
+                  handleDisabledDaysChange(0, days)
+                }
+                renderMonthTitle={renderMonthTitle}
+                renderTopInfo={renderTopInfo}
+                renderBottomInfo={renderBottomInfo}
+                renderDayText={renderDayText}
+              />
+            </scroll-view>
+          ) : (
+            <scroll-view
+              id={scrollId}
+              className="lu-calendar__body"
+              style={{ flex: 1, minHeight: '400px' }}
+              scroll-orientation="vertical"
+              scroll-y
+              bindscroll={handleScroll}
+            >
+              {monthsContent}
+            </scroll-view>
+          )}
           <view
             className="lu-calendar__footer"
             style={{

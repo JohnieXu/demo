@@ -1,2 +1,2 @@
 export { Calendar } from './Calendar'
-export type { CalendarProps, CalendarRef, CalendarDayItem, CalendarType, CalendarDayType } from './types'
+export type { CalendarProps, CalendarRef, CalendarDayItem, CalendarType, CalendarDayType, CalendarSwitchMode } from './types'

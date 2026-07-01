@@ -252,4 +252,103 @@ describe('Calendar', () => {
     fireEvent.tap(overlay!)
     expect(onShowChange).toHaveBeenCalledWith(false)
   })
+
+  it('does not show month-switch arrows in none mode (default)', () => {
+    const minDate = createDate(2026, 6, 1)
+    const maxDate = createDate(2026, 6, 30)
+
+    const { queryByText } = render(
+      <Calendar poppable={false} minDate={minDate} maxDate={maxDate} />,
+    )
+
+    expect(queryByText('<')).not.toBeInTheDocument()
+    expect(queryByText('>')).not.toBeInTheDocument()
+  })
+
+  it('shows month arrows in month switch mode', () => {
+    const { getByText } = render(
+      <Calendar poppable={false} switchMode="month" />,
+    )
+
+    expect(asElement(getByText('<'))).toBeInTheDocument()
+    expect(asElement(getByText('>'))).toBeInTheDocument()
+    // No year arrows in plain month mode.
+    // (queryByText would return null; getByText throwing is covered elsewhere.)
+  })
+
+  it('shows year and month arrows in year-month switch mode', () => {
+    const { getByText } = render(
+      <Calendar poppable={false} switchMode="year-month" />,
+    )
+
+    expect(asElement(getByText('«'))).toBeInTheDocument()
+    expect(asElement(getByText('<'))).toBeInTheDocument()
+    expect(asElement(getByText('>'))).toBeInTheDocument()
+    expect(asElement(getByText('»'))).toBeInTheDocument()
+  })
+
+  it('emits onPanelChange when switching to the next month', () => {
+    const onPanelChange = vi.fn()
+
+    const { getByText } = render(
+      <Calendar
+        poppable={false}
+        switchMode="month"
+        onPanelChange={onPanelChange}
+      />,
+    )
+
+    // The arrow glyph lives in a <text> inside the tappable action <view>.
+    fireEvent.tap(asElement(getByText('>')).parentElement!)
+    expect(onPanelChange).toHaveBeenCalledTimes(1)
+    expect(onPanelChange.mock.calls[0][0].date).toBeInstanceOf(Date)
+  })
+
+  it('confirms with the just-selected date when showConfirm is false (L1)', () => {
+    const minDate = createDate(2026, 6, 1)
+    const maxDate = createDate(2026, 6, 30)
+    const onConfirm = vi.fn()
+
+    const { getByTestId } = render(
+      <Calendar
+        poppable={false}
+        type="single"
+        minDate={minDate}
+        maxDate={maxDate}
+        showConfirm={false}
+        onConfirm={onConfirm}
+      />,
+    )
+
+    fireEvent.tap(asElement(getByTestId('day-15')))
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    // Regression for L1: previously onConfirm received the stale currentDate.
+    expect(onConfirm.mock.calls[0][0].getDate()).toBe(15)
+  })
+
+  it('does not confirm when range exceeds maxRange (L3)', () => {
+    const minDate = createDate(2026, 6, 1)
+    const maxDate = createDate(2026, 6, 30)
+    const onOverRange = vi.fn()
+    const onConfirm = vi.fn()
+
+    const { getByTestId } = render(
+      <Calendar
+        poppable={false}
+        type="range"
+        minDate={minDate}
+        maxDate={maxDate}
+        maxRange={3}
+        showConfirm={false}
+        onOverRange={onOverRange}
+        onConfirm={onConfirm}
+      />,
+    )
+
+    fireEvent.tap(asElement(getByTestId('day-10')))
+    fireEvent.tap(asElement(getByTestId('day-15')))
+    expect(onOverRange).toHaveBeenCalled()
+    // Regression for L3: overflow auto-truncates but must NOT confirm.
+    expect(onConfirm).not.toHaveBeenCalled()
+  })
 })

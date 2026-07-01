@@ -26,9 +26,13 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.lu-calendar__header-subtitle--with-switch {
+  justify-content: space-between;
 }
 
 .lu-calendar__header-subtitle-text {

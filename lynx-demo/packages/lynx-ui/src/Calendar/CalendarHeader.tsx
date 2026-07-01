@@ -1,10 +1,13 @@
+import { Fragment } from '@lynx-js/react'
 import { CALENDAR_TEXTS } from './constants'
 import type { CalendarHeaderProps } from './types'
 import {
   compareMonth,
   formatMonthTitle,
   getNextMonth,
+  getNextYear,
   getPrevMonth,
+  getPrevYear,
   joinClass,
 } from './utils'
 
@@ -18,23 +21,31 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     showTitle = true,
     showSubtitle = true,
     firstDayOfWeek = 0,
+    switchMode = 'none',
     onClickSubtitle,
     onPanelChange,
     renderTitle,
     renderSubtitle,
     renderPrevMonth,
     renderNextMonth,
+    renderPrevYear,
+    renderNextYear,
   } = props
 
+  const canSwitch = switchMode !== 'none'
+  const showYearAction = switchMode === 'year-month'
+
   const prevMonthDisabled =
-    !!date &&
-    !!minDate &&
-    compareMonth(getPrevMonth(date), minDate) < 0
+    !!date && !!minDate && compareMonth(getPrevMonth(date), minDate) < 0
 
   const nextMonthDisabled =
-    !!date &&
-    !!maxDate &&
-    compareMonth(getNextMonth(date), maxDate) > 0
+    !!date && !!maxDate && compareMonth(getNextMonth(date), maxDate) > 0
+
+  const prevYearDisabled =
+    !!date && !!minDate && compareMonth(getPrevYear(date), minDate) < 0
+
+  const nextYearDisabled =
+    !!date && !!maxDate && compareMonth(getNextYear(date), maxDate) > 0
 
   const handlePrevMonth = () => {
     if (!date || prevMonthDisabled) return
@@ -44,6 +55,16 @@ export function CalendarHeader(props: CalendarHeaderProps) {
   const handleNextMonth = () => {
     if (!date || nextMonthDisabled) return
     onPanelChange?.(getNextMonth(date))
+  }
+
+  const handlePrevYear = () => {
+    if (!date || prevYearDisabled) return
+    onPanelChange?.(getPrevYear(date))
+  }
+
+  const handleNextYear = () => {
+    if (!date || nextYearDisabled) return
+    onPanelChange?.(getNextYear(date))
   }
 
   const renderHeaderTitle = () => {
@@ -56,43 +77,87 @@ export function CalendarHeader(props: CalendarHeaderProps) {
     )
   }
 
+  // Mirrors Vant CalendarHeader.tsx:130 — the left side renders [year, month]
+  // and the right side renders [month, year]. Year actions only exist in
+  // 'year-month' mode.
   const renderAction = (isNext: boolean) => {
-    const disabled = isNext ? nextMonthDisabled : prevMonthDisabled
-    const onClick = isNext ? handleNextMonth : handlePrevMonth
+    const monthDisabled = isNext ? nextMonthDisabled : prevMonthDisabled
+    const yearDisabled = isNext ? nextYearDisabled : prevYearDisabled
+    const onMonthClick = isNext ? handleNextMonth : handlePrevMonth
+    const onYearClick = isNext ? handleNextYear : handlePrevYear
+    const renderMonth = isNext ? renderNextMonth : renderPrevMonth
+    const renderYear = isNext ? renderNextYear : renderPrevYear
 
-    if (isNext && renderNextMonth) {
-      return renderNextMonth({ disabled, onClick })
-    }
-    if (!isNext && renderPrevMonth) {
-      return renderPrevMonth({ disabled, onClick })
-    }
-
-    return (
+    const monthAction = renderMonth ? (
+      renderMonth({ disabled: monthDisabled, onClick: onMonthClick })
+    ) : (
       <view
         className={joinClass(
           'lu-calendar__header-action',
-          disabled && 'lu-calendar__header-action--disabled',
+          monthDisabled && 'lu-calendar__header-action--disabled',
         )}
-        bindtap={disabled ? undefined : onClick}
+        bindtap={monthDisabled ? undefined : onMonthClick}
       >
         <text>{isNext ? '>' : '<'}</text>
       </view>
     )
+
+    if (!showYearAction) {
+      return monthAction
+    }
+
+    const yearAction = renderYear ? (
+      renderYear({ disabled: yearDisabled, onClick: onYearClick })
+    ) : (
+      <view
+        className={joinClass(
+          'lu-calendar__header-action',
+          yearDisabled && 'lu-calendar__header-action--disabled',
+        )}
+        bindtap={yearDisabled ? undefined : onYearClick}
+      >
+        <text>{isNext ? '»' : '«'}</text>
+      </view>
+    )
+
+    const monthNode = (
+      <Fragment key={isNext ? 'next-month' : 'prev-month'}>
+        {monthAction}
+      </Fragment>
+    )
+    const yearNode = (
+      <Fragment key={isNext ? 'next-year' : 'prev-year'}>{yearAction}</Fragment>
+    )
+
+    return isNext ? [monthNode, yearNode] : [yearNode, monthNode]
   }
 
   const renderHeaderSubtitle = () => {
     if (!showSubtitle) return null
     const text = subtitle ?? (date ? formatMonthTitle(date) : '')
+    const subtitleText = (
+      <view className="lu-calendar__header-subtitle-text">
+        {renderSubtitle ? renderSubtitle({ date, text }) : <text>{text}</text>}
+      </view>
+    )
+
     return (
       <view
-        className="lu-calendar__header-subtitle"
+        className={joinClass(
+          'lu-calendar__header-subtitle',
+          canSwitch && 'lu-calendar__header-subtitle--with-switch',
+        )}
         bindtap={onClickSubtitle}
       >
-        {renderAction(false)}
-        <view className="lu-calendar__header-subtitle-text">
-          {renderSubtitle ? renderSubtitle({ date, text }) : <text>{text}</text>}
-        </view>
-        {renderAction(true)}
+        {canSwitch ? (
+          <>
+            {renderAction(false)}
+            {subtitleText}
+            {renderAction(true)}
+          </>
+        ) : (
+          subtitleText
+        )}
       </view>
     )
   }
