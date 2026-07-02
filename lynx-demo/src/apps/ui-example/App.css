@@ -103,6 +103,7 @@
   padding-right: 14px;
   border-radius: var(--lu-radius-full);
   background-color: var(--lu-color-primary-subtle);
+  cursor: pointer;
 }
 
 .theme-toggle__text {
@@ -132,11 +133,13 @@
   justify-content: center;
   width: 40px;
   height: 40px;
+  cursor: pointer;
 }
 
 .nav-bar__back-icon {
   font-size: 28px;
   color: var(--lu-color-text-primary);
+  cursor: pointer;
 }
 
 .nav-bar__title {
@@ -169,6 +172,7 @@
 /* ----- Demo block ----- */
 .demo-block {
   margin-bottom: 20px;
+  cursor: pointer;
 }
 
 .demo-block__title {
@@ -176,6 +180,7 @@
   color: var(--lu-color-text-tertiary);
   margin-bottom: 8px;
   padding-left: 4px;
+  cursor: pointer;
 }
 
 .demo-block__card {
@@ -184,6 +189,7 @@
   background-color: var(--lu-color-surface);
   border-radius: var(--lu-radius-lg);
   padding: 16px;
+  cursor: pointer;
 }
 
 .demo-row {
@@ -209,6 +215,8 @@
   height: 420px;
   border-radius: var(--lu-radius-md);
   overflow: hidden;
+  background-color: var(--lu-color-background);
+  border: 1px solid var(--lu-color-border-subtle);
 }
 
 .calendar-host .lu-calendar {

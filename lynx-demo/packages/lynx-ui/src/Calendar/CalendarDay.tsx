@@ -84,19 +84,19 @@ export function CalendarDay(props: CalendarDayProps) {
     ...(color ? ({ '--lu-color-primary': color } as CSSProperties) : {}),
   }
 
+  const topInfoNode = item.topInfo || renderTopInfo ? (
+    <text className="lu-calendar__top-info">
+      {renderTopInfo ? renderTopInfo(item) : item.topInfo}
+    </text>
+  ) : null
+
+  const bottomInfoNode = item.bottomInfo || renderBottomInfo ? (
+    <text className="lu-calendar__bottom-info">
+      {renderBottomInfo ? renderBottomInfo(item) : item.bottomInfo}
+    </text>
+  ) : null
+
   const renderContent = () => {
-    const topInfoNode = item.topInfo || renderTopInfo ? (
-      <text className="lu-calendar__top-info">
-        {renderTopInfo ? renderTopInfo(item) : item.topInfo}
-      </text>
-    ) : null
-
-    const bottomInfoNode = item.bottomInfo || renderBottomInfo ? (
-      <text className="lu-calendar__bottom-info">
-        {renderBottomInfo ? renderBottomInfo(item) : item.bottomInfo}
-      </text>
-    ) : null
-
     const textNode = renderDayText ? (
       renderDayText(item)
     ) : (
@@ -104,27 +104,30 @@ export function CalendarDay(props: CalendarDayProps) {
     )
 
     if (isSelected) {
+      // Keep the selected badge smaller than the day cell so adjacent start/end
+      // badges in a range do not squeeze each other and cause the top/bottom
+      // info labels to wrap (Lynx day cells are ~14.285% wide, while the default
+      // rowHeight is 64px). The badge only contains the main day text; info
+      // labels stay as absolutely-positioned children of the outer day cell.
+      const badgeSize = Math.min(parseSize(rowHeight), 48)
+      const radius = badgeSize / 2
       return (
         <view
           className="lu-calendar__selected-day"
           style={{
-            width: toCSSSize(rowHeight),
-            height: toCSSSize(rowHeight),
-            borderRadius: `${parseSize(rowHeight) / 2}px`,
+            width: `${badgeSize}px`,
+            height: `${badgeSize}px`,
+            borderRadius: `${radius}px`,
           }}
         >
-          {topInfoNode}
           {textNode}
-          {bottomInfoNode}
         </view>
       )
     }
 
     return (
       <view className="lu-calendar__day-content">
-        {topInfoNode}
         {textNode}
-        {bottomInfoNode}
       </view>
     )
   }
@@ -145,7 +148,9 @@ export function CalendarDay(props: CalendarDayProps) {
       bindtap={handleTap}
       data-testid={`day-${item.text}`}
     >
+      {topInfoNode}
       {renderContent()}
+      {bottomInfoNode}
     </view>
   )
 }
