@@ -208,6 +208,9 @@
 .lu-calendar__day-text {
   font-size: var(--lu-font-size-lg);
   line-height: var(--lu-font-size-lg);
+  /* Lynx disables CSS inheritance by default: set the color directly on the
+     text node so it respects the current theme token. */
+  color: var(--lu-color-text-primary);
 }
 
 .lu-calendar__top-info,
