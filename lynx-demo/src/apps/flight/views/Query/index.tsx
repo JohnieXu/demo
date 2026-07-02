@@ -191,6 +191,7 @@ export function Query() {
         show={showCalendar}
         poppable
         type="single"
+        showConfirm={false}
         defaultDate={selectedDate}
         title="选择出发日期"
         onShowChange={setShowCalendar}
