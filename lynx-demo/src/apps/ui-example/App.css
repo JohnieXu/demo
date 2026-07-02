@@ -67,30 +67,35 @@
   border-radius: var(--lu-radius-lg);
   padding: 16px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .home__item-main {
   display: flex;
   flex-direction: column;
   flex: 1;
+  cursor: pointer;
 }
 
 .home__item-title {
   font-size: var(--lu-font-size-lg);
   font-weight: 600;
   color: var(--lu-color-text-primary);
+  cursor: pointer;
 }
 
 .home__item-subtitle {
   font-size: var(--lu-font-size-sm);
   color: var(--lu-color-text-secondary);
   margin-top: 4px;
+  cursor: pointer;
 }
 
 .home__item-arrow {
   font-size: var(--lu-font-size-xl);
   color: var(--lu-color-text-tertiary);
   margin-left: 8px;
+  cursor: pointer;
 }
 
 /* ----- Theme toggle ----- */
@@ -172,7 +177,6 @@
 /* ----- Demo block ----- */
 .demo-block {
   margin-bottom: 20px;
-  cursor: pointer;
 }
 
 .demo-block__title {
@@ -180,7 +184,6 @@
   color: var(--lu-color-text-tertiary);
   margin-bottom: 8px;
   padding-left: 4px;
-  cursor: pointer;
 }
 
 .demo-block__card {
@@ -189,7 +192,6 @@
   background-color: var(--lu-color-surface);
   border-radius: var(--lu-radius-lg);
   padding: 16px;
-  cursor: pointer;
 }
 
 .demo-row {
