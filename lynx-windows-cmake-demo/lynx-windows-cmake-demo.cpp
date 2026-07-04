@@ -8,6 +8,15 @@
 #include "lynx_generic_resource_fetcher.h"
 #include "lynx_services.h"
 
+constexpr UINT WM_LYNX_RESOURCE_COMPLETE = WM_APP + 1;
+constexpr UINT WM_LYNX_HTTP_COMPLETE = WM_APP + 2;
+
+struct WindowContext {
+	lynx::pub::LynxView* view = nullptr;
+	ExampleResourceFetcher* fetcher = nullptr;
+	LynxHttpServiceImpl* http_service = nullptr;
+};
+
 // Helper: sync a LynxView instance to the current client size of a window.
 template <typename T>
 static void SyncLynxViewToWindow(HWND hwnd, T* view) {
@@ -34,9 +43,25 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	{
 	case WM_SIZE:
 	{
-		// Retrieve stored LynxView pointer and sync to new client size.
-		auto view = reinterpret_cast<lynx::pub::LynxView*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
-		SyncLynxViewToWindow(hwnd, view);
+		// Retrieve stored context and sync LynxView to new client size.
+		auto ctx = reinterpret_cast<WindowContext*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		if (ctx) SyncLynxViewToWindow(hwnd, ctx->view);
+		return 0;
+	}
+	case WM_LYNX_RESOURCE_COMPLETE:
+	{
+		auto ctx = reinterpret_cast<WindowContext*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		if (ctx && ctx->fetcher) {
+			ctx->fetcher->CompleteResponse(static_cast<uintptr_t>(wParam));
+		}
+		return 0;
+	}
+	case WM_LYNX_HTTP_COMPLETE:
+	{
+		auto ctx = reinterpret_cast<WindowContext*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		if (ctx && ctx->http_service) {
+			ctx->http_service->CompleteResponse(static_cast<uintptr_t>(wParam));
+		}
 		return 0;
 	}
 	case WM_DESTROY:
@@ -49,7 +74,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int nCmdShow)
 {
-	lynx::pub::LynxServiceCenter::GetInstance().RegisterService(std::make_shared<LynxHttpServiceImpl>());
+	auto http_service = std::make_shared<LynxHttpServiceImpl>();
+	lynx::pub::LynxServiceCenter::GetInstance().RegisterService(http_service);
 
 	auto& lynx_env = lynx::pub::LynxEnv::GetInstance();
 	lynx_env.SetDevtoolEnabled(true);
@@ -88,11 +114,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 		.SetFrame(0, 0, 800, 600)
 		.SetParent(hwnd);
 	// Set Resource fetcher if needed.
-	builder.SetGenericResourceFetcher(std::make_shared<ExampleResourceFetcher>());
+	auto fetcher = std::make_shared<ExampleResourceFetcher>();
+	builder.SetGenericResourceFetcher(fetcher);
 	auto lynx_view = builder.Build();
 
-	// store raw pointer for WndProc to access when handling WM_SIZE
-	::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(lynx_view.get()));
+	WindowContext ctx{};
+	ctx.view = lynx_view.get();
+	ctx.fetcher = fetcher.get();
+	ctx.http_service = http_service.get();
+
+	fetcher->SetOnResponseReadyCallback([hwnd](uintptr_t token) {
+		PostMessage(hwnd, WM_LYNX_RESOURCE_COMPLETE, static_cast<WPARAM>(token), 0);
+	});
+
+	http_service->SetOnResponseReadyCallback([hwnd](uintptr_t token) {
+		PostMessage(hwnd, WM_LYNX_HTTP_COMPLETE, static_cast<WPARAM>(token), 0);
+	});
+
+	// store context for WndProc to access
+	::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&ctx));
 
 	auto load_meta = std::make_shared<lynx::pub::LynxLoadMeta>();
 	load_meta->SetUrl("https://lynxjs.org/lynx-examples/hello-world/dist/main.lynx.bundle");
