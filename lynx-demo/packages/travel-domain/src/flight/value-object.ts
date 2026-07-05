@@ -101,3 +101,5 @@ export type RefundRuleType = 0 | 1
 export type ApplyType = 1 | 2
 
 export type RefundChannel = 1 | 2
+
+export type EntranceSource = 0 | 1

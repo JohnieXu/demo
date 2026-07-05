@@ -23,7 +23,7 @@ import {
   SortBar,
 } from './components';
 import type { FilterLabelItem } from './components';
-import type { Flight, SortType } from 'travel-domain';
+import type { EntranceSource, Flight, SortType } from 'travel-domain';
 import { mockFlightList } from './mockData';
 import './index.scss';
 import { PageContainer } from '../../components/PageContainer';
@@ -155,7 +155,7 @@ export function FlightList() {
       toCity: searchParams.arrivalCode,
       toCityType: searchParams.arrivalType,
       tripType: 1 as const,
-      entranceSource: entranceSource ?? 0,
+      entranceSource: (entranceSource ?? 0) as EntranceSource,
       // retDate: fromDate,
     };
   }, [searchParams, adultNum, childNum, selectedDate, entranceSource]);
@@ -188,6 +188,7 @@ export function FlightList() {
     },
     /**
      * FIXME: refresh 属于 xelement 在 macos 上不支持，在当前版本 iOS 的 explorer 上也没有，故 finishRefresh 方法找不到
+     * @see https://lynxjs.org/next/zh/api/elements/built-in/refresh#%E5%85%BC%E5%AE%B9%E6%80%A7
      */
     onLoadDone: () => {
       'background only';
@@ -223,6 +224,7 @@ export function FlightList() {
 
   // Initial fetch on mount
   useEffect(() => {
+    console.log('fight mounted', lynx.__globalProps, SystemInfo);
     flightListHook.fetchFlights(appliedQueryParamsRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -280,17 +282,25 @@ export function FlightList() {
     flightListHook.fetchFlights(filter.appliedQueryParams);
   };
 
+  const useMock = true
+  useEffect(() => {
+    if (useMock) {
+      console.warn('The flight data is mocked.')
+    }
+  }, [useMock])
+
   // Determine display data: prefer API result, fallback to mock
   const displayFlights = useMemo(() => {
     return flightListHook.flightList.length > 0
       ? flightListHook.flightList
       : !flightListHook.loading && !flightListHook.refreshing
-        ? mapMockToFlights(mockFlightList)
+        ? useMock ? mapMockToFlights(mockFlightList) : []
         : [];
   }, [
     flightListHook.flightList,
     flightListHook.loading,
     flightListHook.refreshing,
+    useMock,
   ]);
 
   return (

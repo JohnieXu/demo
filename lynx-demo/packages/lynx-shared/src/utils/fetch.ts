@@ -118,21 +118,22 @@ async function timeoutFetch(input: LynxRequestInfo, init?: RequestInit & { timeo
       reject(new LynxFetchError(`Request timeout after ${timeout}ms`));
     }, timeout);
 
-    console.log('fetch with input config', input, requestInit);
+    console.log('[fetch] -> fetch request', input, requestInit);
 
     getFetch()(input, requestInit)
       .then((response) => {
-        console.log('fetch response', response);
-        if (response.json) {
-          response.json().then((data) => {
-            console.log('fetch response data', data);
-          })
-        }
+        // FIXME: use json() may consume the original data
+        // if (response.json) {
+        //   response.json().then((data) => {
+        //     console.log('[fetch] <- fetch response json', data);
+        //   })
+        // }
         clearTimeout(timer);
+        console.log('[fetch] <- fetch response raw', response)
         resolve(response);
       })
       .catch((error) => {
-        console.log('fetch error', error);
+        console.warn('[fetch] <- fetch error', error);
         clearTimeout(timer);
         reject(error instanceof Error ? error : new LynxFetchError(String(error)));
       });
@@ -140,7 +141,7 @@ async function timeoutFetch(input: LynxRequestInfo, init?: RequestInit & { timeo
 }
 
 async function parseResponse<T>(response: Response): Promise<LynxResponse<T>> {
-  const contentType = response.headers.get('content-type') || '';
+  const contentType = response.headers.get('Content-Type') || response.headers.get('content-type') || '';
   let data: T;
 
   if (contentType.includes('application/json')) {
@@ -202,6 +203,7 @@ export function createFetch(defaultConfig: RequestConfig = {}) {
     try {
       const response = await timeoutFetch(fullUrl, init);
       let parsedResponse = await parseResponse<T>(response);
+      console.log('[fetch] <- fetch response parsed', parsedResponse)
 
       if (!response.ok) {
         throw new LynxFetchError(

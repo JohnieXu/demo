@@ -20,6 +20,7 @@ import type {
   ApplyType,
   RefundChannel,
   CabinGrade,
+  EntranceSource,
 } from './value-object.js'
 
 // ---------------------------------------------------------------------------
@@ -441,7 +442,7 @@ export interface FlightSearchCriteria {
   readonly depAirports?: readonly string[]
   readonly arrAirports?: readonly string[]
   readonly airlines?: readonly string[]
-  readonly entranceSource?: number
+  readonly entranceSource?: EntranceSource
 }
 
 // ---------------------------------------------------------------------------
@@ -488,7 +489,7 @@ export interface CabinSearchCriteria {
   readonly adultOilFee?: number
   readonly childAirportFee?: number
   readonly childOilFee?: number
-  readonly entranceSource?: number
+  readonly entranceSource?: EntranceSource
   readonly memberId?: string
   readonly adultCostPrice?: number
   readonly childCostPrice?: number
@@ -618,7 +619,7 @@ export interface PriceVerifyRequest {
   readonly childAirportFee?: number
   readonly childOilFee?: number
   readonly memberId?: string
-  readonly entranceSource?: number
+  readonly entranceSource?: EntranceSource
   readonly adultServiceFee?: number
   readonly childServiceFee?: number
 }

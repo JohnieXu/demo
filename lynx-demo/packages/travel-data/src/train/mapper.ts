@@ -71,14 +71,38 @@ export function toSearchRequestDto(criteria: TrainSearchCriteria): TrainSearchRe
 
 /* ─── error helper ──────────────────────────────────────── */
 
+/**
+ * Verify whether the response is business error
+ * @deprecated No need this to verify business error which is handled by client.ts
+ * @param e 
+ * @returns 
+ */
+function isBussinessError(e: unknown): e is { errorCode: string, success: false, message: string } {
+  return (
+      typeof e === 'object' &&                                                                                              
+      e !== null &&                                               
+      'errorCode' in e &&                                                                                                   
+      typeof e.errorCode === 'string' &&                                                                                    
+      (e as Record<string, boolean>).success === false                                                                                                   
+    )
+}
+
 export function toDomainError(e: unknown): DomainError {
   if (e instanceof Error) {
     return {
-      code: 'NETWORK_ERROR',
+      code: (e as { code?: string }).code || 'NETWORK_ERROR',
       message: e.message,
       cause: e,
     }
   }
+  // No need this to verify business error which is handled by client.ts
+  // if (isBussinessError(e)) {
+  //   return {
+  //     code: e.errorCode,
+  //     message: e.message || 'BUSINESS ERROR',
+  //     cause: e,
+  //   }
+  // }
   return {
     code: 'UNKNOWN_ERROR',
     message: String(e),

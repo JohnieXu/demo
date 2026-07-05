@@ -42,9 +42,17 @@ travelClient.useResponseInterceptor((response: LynxResponse<unknown>) => {
   const body = response.data as ApiResponse<unknown> | undefined
 
   if (body && typeof body === 'object' && 'success' in body && !body.success) {
-    const error = new Error(body.message || 'Business error')
+    const error = new Error(body.message || 'BUSINESS ERROR')
     ;(error as Error & { code: string; logId?: string }).code = body.errorCode
-    ;(error as Error & { code: string; logId?: string }).logId = body.logId
+    ;(error as Error & { code: string; logId?: string }).logId = body.logId;
+    error.toString = () => {
+      return JSON.stringify({
+        name: 'BUSINESS ERROR',
+        code: body.errorCode,
+        message: error.message,
+        originalData: body,
+      })
+    }
     throw error
   }
 
