@@ -10,11 +10,53 @@ class LynxHttpServiceImpl : public lynx::pub::LynxHttpService {
 public:
     LynxHttpServiceImpl() = default;
     ~LynxHttpServiceImpl() = default;
-    void Request(std::shared_ptr<lynx::pub::LynxHttpRequest> request, std::shared_ptr<lynx::pub::LynxHttpResponse> response) override {
-        // TODO: implement HTTP request handling if lynx.fetch is used
-        response->SetStatusCode(-1);
-        response->SetStatusText("Not implemented");
-        response->Complete();
+    void Request(std::shared_ptr<lynx::pub::LynxHttpRequest> request,
+                 std::shared_ptr<lynx::pub::LynxHttpResponse> resp) override {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:request->GetUrl().c_str()]];
+        NSMutableURLRequest *nsRequest = [NSMutableURLRequest requestWithURL:url];
+        nsRequest.HTTPMethod = [NSString stringWithUTF8String:request->GetMethod().c_str()];
+
+        const auto& headers = request->GetHeaders();
+        for (const auto& header : headers) {
+            [nsRequest setValue:[NSString stringWithUTF8String:header.second.c_str()]
+             forHTTPHeaderField:[NSString stringWithUTF8String:header.first.c_str()]];
+        }
+
+        const auto& body = request->GetBody();
+        if (!body.empty()) {
+            nsRequest.HTTPBody = [NSData dataWithBytes:body.data() length:body.size()];
+        }
+
+        NSURLSession *session = [NSURLSession sharedSession];
+        NSURLSessionDataTask *dataTask =
+            [session dataTaskWithRequest:nsRequest
+                       completionHandler:^(NSData *_Nullable data, NSURLResponse *_Nullable response,
+                                           NSError *_Nullable error) {
+                         if (data && data.length > 0) {
+                             resp->SetBody(
+                                 (uint8_t *)data.bytes, data.length,
+                                 [](uint8_t *body, size_t length, void *opaque) { CFRelease(opaque); },
+                                 (__bridge_retained void *)data);
+                         }
+                         if (error) {
+                             static const int SDK_ERROR_STATUS_CODE = 499;
+                             resp->SetStatusCode(SDK_ERROR_STATUS_CODE);
+                             resp->SetStatusText([error.localizedDescription UTF8String]);
+                         } else {
+                             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                             resp->SetStatusCode(httpResponse.statusCode);
+                             resp->SetStatusText("OK");
+                             for (NSString *key in httpResponse.allHeaderFields) {
+                                 NSString *value = httpResponse.allHeaderFields[key];
+                                 if (key && value) {
+                                     resp->AddHeader([key UTF8String], [value UTF8String]);
+                                 }
+                             }
+                         }
+                         resp->Complete();
+                       }];
+
+        [dataTask resume];
     }
 };
 
