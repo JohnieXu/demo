@@ -1,5 +1,9 @@
 import { Icon } from 'lynx-ui'
 import { DemoBlock } from '../../components/DemoBlock'
+import StarPrimaryPng from '@assets/ui-example/images/icon/star-primary.png';
+import HeartRedPng from '@assets/ui-example/images/icon/heart-red.png';
+import HeartGreenPng from '@assets/ui-example/images/icon/heart-green.png';
+import HeartBluePng from '@assets/ui-example/images/icon/heart-blue.png';
 
 // Icon accepts a raw SVG XML string as its `svg` source (see Icon/types.ts),
 // so demos need no external asset files. Color is baked into the fill.
@@ -18,19 +22,19 @@ export function IconDemo() {
     <view>
       <DemoBlock title="尺寸 Size">
         <view className="demo-row demo-row--center">
-          <Icon svg={star('#ff5712')} size={24} />
-          <Icon svg={star('#ff5712')} size={32} />
-          <Icon svg={star('#ff5712')} size={48} />
+          <Icon svg={star('#ff5712')} size={24} png={StarPrimaryPng} />
+          <Icon svg={star('#ff5712')} size={32} png={StarPrimaryPng} />
+          <Icon svg={star('#ff5712')} size={48} png={StarPrimaryPng} />
         </view>
       </DemoBlock>
 
       <DemoBlock title="颜色 Color">
         <view className="demo-row demo-row--center">
-          <Icon svg={heart('#ee0a24')} size={32} />
-          <Icon svg={heart('#07c160')} size={32} />
-          <Icon svg={heart('#1989fa')} size={32} />
+          <Icon svg={heart('#ee0a24')} size={32} png={HeartRedPng} />
+          <Icon svg={heart('#07c160')} size={32} png={HeartGreenPng} />
+          <Icon svg={heart('#1989fa')} size={32} png={HeartBluePng} />
         </view>
       </DemoBlock>
     </view>
-  )
+  );
 }
