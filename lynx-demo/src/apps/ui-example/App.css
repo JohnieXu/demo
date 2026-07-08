@@ -32,6 +32,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 16px 12px 16px;
+  /* FIXME: to set by notchbar height */
+  padding-top: 48px;
 }
 
 .home__title {
