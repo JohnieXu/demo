@@ -4,6 +4,7 @@
 #include <winhttp.h>
 
 #include <condition_variable>
+#include <cctype>
 #include <cstring>
 #include <cstdio>
 #include <cwctype>
@@ -72,6 +73,29 @@ class BackgroundTaskQueue {
 };
 
 namespace {
+
+constexpr wchar_t kUserAgent[] =
+    L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+bool IsContentLengthHeader(const std::string& name) {
+  if (name.size() != 14) return false;
+  const char* expected = "content-length";
+  for (size_t i = 0; i < name.size(); ++i) {
+    if (std::tolower(static_cast<unsigned char>(name[i])) != expected[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void LogDebug(const std::string& message) {
+  OutputDebugStringA(message.c_str());
+  std::ofstream ofs("lynx_http_debug.log", std::ios::app);
+  if (ofs) {
+    ofs << message;
+    ofs.flush();
+  }
+}
 
 std::wstring Utf8ToWide(const std::string& s) {
   if (s.empty()) return std::wstring();
@@ -158,7 +182,7 @@ bool HttpFetch(const std::wstring& wurl, std::vector<uint8_t>& out_body, long& o
     OutputDebugStringW(dbg);
   }
 
-  HINTERNET hSession = WinHttpOpen(L"LynxDemo/1.0",
+  HINTERNET hSession = WinHttpOpen(kUserAgent,
                                    WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
                                    WINHTTP_NO_PROXY_NAME,
                                    WINHTTP_NO_PROXY_BYPASS,
@@ -261,6 +285,278 @@ bool HttpFetch(const std::wstring& wurl, std::vector<uint8_t>& out_body, long& o
   WinHttpCloseHandle(hSession);
 
   return true;
+}
+
+std::string WideToUtf8(const std::wstring& s) {
+  if (s.empty()) return std::string();
+  int required = WideCharToMultiByte(CP_UTF8, 0, s.c_str(), (int)s.size(),
+                                     nullptr, 0, nullptr, nullptr);
+  if (required <= 0) return std::string();
+  std::string out(required, '\0');
+  WideCharToMultiByte(CP_UTF8, 0, s.c_str(), (int)s.size(), &out[0], required,
+                      nullptr, nullptr);
+  return out;
+}
+
+struct HttpRequestResult {
+  bool success = false;
+  int status_code = 0;
+  std::string status_text;
+  std::vector<std::pair<std::string, std::string>> headers;
+  std::vector<uint8_t> body;
+  std::string error_message;
+};
+
+HttpRequestResult PerformHttpRequest(
+    const std::string& method,
+    const std::string& url,
+    const std::unordered_map<std::string, std::string>& request_headers,
+    const std::vector<uint8_t>& request_body) {
+  HttpRequestResult result;
+
+  std::wstring wurl = Utf8ToWide(url);
+  if (wurl.empty()) {
+    result.error_message = "Empty URL";
+    return result;
+  }
+
+  // Parse scheme
+  bool is_https = false;
+  size_t scheme_pos = wurl.find(L"://");
+  if (scheme_pos != std::wstring::npos) {
+    std::wstring scheme = wurl.substr(0, scheme_pos);
+    for (wchar_t& c : scheme) c = std::towlower(c);
+    if (scheme == L"https") {
+      is_https = true;
+    } else if (scheme != L"http") {
+      result.error_message = "Unsupported URL scheme";
+      return result;
+    }
+  }
+
+  // Parse host
+  size_t host_start = (scheme_pos == std::wstring::npos) ? 0 : scheme_pos + 3;
+  size_t host_end = wurl.find_first_of(L":/?#", host_start);
+  std::wstring host_str;
+  if (host_start < wurl.size()) {
+    if (host_end == std::wstring::npos)
+      host_str = wurl.substr(host_start);
+    else
+      host_str = wurl.substr(host_start, host_end - host_start);
+  }
+
+  if (host_str.empty()) {
+    result.error_message = "Invalid URL: empty host";
+    return result;
+  }
+
+  // Default port and path start
+  INTERNET_PORT port = is_https ? INTERNET_DEFAULT_HTTPS_PORT
+                                : INTERNET_DEFAULT_HTTP_PORT;
+  size_t path_start = (host_end == std::wstring::npos) ? wurl.size() : host_end;
+
+  // Parse explicit port
+  if (host_end != std::wstring::npos && wurl[host_end] == L':') {
+    size_t port_start = host_end + 1;
+    size_t port_end = wurl.find_first_of(L"/;?#", port_start);
+    std::wstring port_s;
+    if (port_end == std::wstring::npos)
+      port_s = wurl.substr(port_start);
+    else
+      port_s = wurl.substr(port_start, port_end - port_start);
+    if (!port_s.empty()) {
+      long p = wcstol(port_s.c_str(), nullptr, 10);
+      if (p > 0 && p <= 0xFFFF) port = (INTERNET_PORT)p;
+    }
+    path_start = (port_end == std::wstring::npos) ? wurl.size() : port_end;
+  }
+
+  // Parse path
+  std::wstring path;
+  if (path_start < wurl.size()) path = wurl.substr(path_start);
+  if (path.empty()) path = L"/";
+
+  HINTERNET hSession = WinHttpOpen(
+      kUserAgent, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+      WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+  if (!hSession) {
+    result.error_message = "WinHttpOpen failed";
+    return result;
+  }
+
+  DWORD timeout = 30000;
+  WinHttpSetOption(hSession, WINHTTP_OPTION_RECEIVE_TIMEOUT, &timeout,
+                   sizeof(timeout));
+  WinHttpSetOption(hSession, WINHTTP_OPTION_SEND_TIMEOUT, &timeout,
+                   sizeof(timeout));
+  WinHttpSetOption(hSession, WINHTTP_OPTION_CONNECT_TIMEOUT, &timeout,
+                   sizeof(timeout));
+
+  HINTERNET hConnect = WinHttpConnect(hSession, host_str.c_str(), port, 0);
+  if (!hConnect) {
+    result.error_message = "WinHttpConnect failed";
+    WinHttpCloseHandle(hSession);
+    return result;
+  }
+
+  std::wstring wmethod = Utf8ToWide(method);
+  if (wmethod.empty()) wmethod = L"GET";
+
+  DWORD flags = is_https ? WINHTTP_FLAG_SECURE : 0;
+  HINTERNET hRequest = WinHttpOpenRequest(
+      hConnect, wmethod.c_str(), path.c_str(), nullptr, WINHTTP_NO_REFERER,
+      WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
+  if (!hRequest) {
+    result.error_message = "WinHttpOpenRequest failed";
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hSession);
+    return result;
+  }
+
+  DWORD redirect_policy = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
+  WinHttpSetOption(hRequest, WINHTTP_OPTION_REDIRECT_POLICY, &redirect_policy,
+                   sizeof(redirect_policy));
+
+  // Add request headers
+  std::wstring headers_str;
+  for (const auto& header : request_headers) {
+    // Skip Content-Length so WinHTTP computes it from the actual body length
+    // (dwTotalLength). This avoids truncation when a pre-existing Content-Length
+    // does not match the UTF-8 byte size (e.g., multi-byte characters counted as
+    // string length instead of bytes).
+    if (IsContentLengthHeader(header.first)) {
+      continue;
+    }
+    headers_str += Utf8ToWide(header.first);
+    headers_str += L": ";
+    headers_str += Utf8ToWide(header.second);
+    headers_str += L"\r\n";
+  }
+  if (!headers_str.empty()) {
+    if (!WinHttpAddRequestHeaders(hRequest, headers_str.c_str(),
+                                  static_cast<DWORD>(-1),
+                                  WINHTTP_ADDREQ_FLAG_ADD)) {
+      result.error_message = "WinHttpAddRequestHeaders failed";
+      WinHttpCloseHandle(hRequest);
+      WinHttpCloseHandle(hConnect);
+      WinHttpCloseHandle(hSession);
+      return result;
+    }
+  }
+
+  // Send request with optional body
+  BOOL send_ok;
+  {
+    std::string dbg = "[PerformHttpRequest] about to send body_size=" +
+                      std::to_string(request_body.size()) + "\n";
+    dbg += "body=" + std::string(request_body.begin(), request_body.end()) + "\n";
+    dbg += "filtered headers:\n" + WideToUtf8(headers_str) + "\n";
+    LogDebug(dbg);
+  }
+  if (request_body.empty()) {
+    send_ok = WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+                                 WINHTTP_NO_REQUEST_DATA, 0, 0, 0);
+  } else {
+    send_ok = WinHttpSendRequest(
+        hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+        const_cast<void*>(static_cast<const void*>(request_body.data())),
+        static_cast<DWORD>(request_body.size()),
+        static_cast<DWORD>(request_body.size()), 0);
+  }
+  if (!send_ok) {
+    result.error_message = "WinHttpSendRequest failed";
+    WinHttpCloseHandle(hRequest);
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hSession);
+    return result;
+  }
+
+  if (!WinHttpReceiveResponse(hRequest, nullptr)) {
+    result.error_message = "WinHttpReceiveResponse failed";
+    WinHttpCloseHandle(hRequest);
+    WinHttpCloseHandle(hConnect);
+    WinHttpCloseHandle(hSession);
+    return result;
+  }
+
+  // Status code
+  DWORD status = 0;
+  DWORD status_len = sizeof(status);
+  if (WinHttpQueryHeaders(hRequest,
+                          WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                          WINHTTP_HEADER_NAME_BY_INDEX, &status, &status_len,
+                          WINHTTP_NO_HEADER_INDEX)) {
+    result.status_code = static_cast<int>(status);
+  } else {
+    result.status_code = -1;
+  }
+
+  // Status text
+  DWORD status_text_len = 0;
+  if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_TEXT,
+                           WINHTTP_HEADER_NAME_BY_INDEX, nullptr,
+                           &status_text_len, WINHTTP_NO_HEADER_INDEX) &&
+      GetLastError() == ERROR_INSUFFICIENT_BUFFER && status_text_len > 0) {
+    std::vector<wchar_t> status_text_buf(status_text_len / sizeof(wchar_t) + 1,
+                                         L'\0');
+    if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_STATUS_TEXT,
+                            WINHTTP_HEADER_NAME_BY_INDEX,
+                            status_text_buf.data(), &status_text_len,
+                            WINHTTP_NO_HEADER_INDEX)) {
+      result.status_text = WideToUtf8(status_text_buf.data());
+    }
+  }
+
+  // Raw response headers
+  DWORD raw_headers_len = 0;
+  if (!WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF,
+                           WINHTTP_HEADER_NAME_BY_INDEX, nullptr,
+                           &raw_headers_len, WINHTTP_NO_HEADER_INDEX) &&
+      GetLastError() == ERROR_INSUFFICIENT_BUFFER && raw_headers_len > 0) {
+    std::vector<wchar_t> raw_headers_buf(raw_headers_len / sizeof(wchar_t) + 1,
+                                         L'\0');
+    if (WinHttpQueryHeaders(hRequest, WINHTTP_QUERY_RAW_HEADERS_CRLF,
+                            WINHTTP_HEADER_NAME_BY_INDEX,
+                            raw_headers_buf.data(), &raw_headers_len,
+                            WINHTTP_NO_HEADER_INDEX)) {
+      std::wstring raw(raw_headers_buf.data());
+      size_t start = 0;
+      while (start < raw.size()) {
+        size_t end = raw.find(L"\r\n", start);
+        if (end == std::wstring::npos) end = raw.size();
+        std::wstring line = raw.substr(start, end - start);
+        if (line.rfind(L"HTTP/", 0) != 0) {
+          size_t colon = line.find(L": ");
+          if (colon != std::wstring::npos) {
+            std::wstring key = line.substr(0, colon);
+            std::wstring value = line.substr(colon + 2);
+            result.headers.emplace_back(WideToUtf8(key), WideToUtf8(value));
+          }
+        }
+        start = end + 2;
+      }
+    }
+  }
+
+  // Response body
+  result.body.clear();
+  const DWORD kBufferSize = 4096;
+  std::vector<uint8_t> buffer(kBufferSize);
+  DWORD bytes_read = 0;
+  while (WinHttpReadData(hRequest, buffer.data(), kBufferSize, &bytes_read) &&
+         bytes_read > 0) {
+    result.body.insert(result.body.end(), buffer.begin(),
+                       buffer.begin() + bytes_read);
+    bytes_read = 0;
+  }
+
+  result.success = true;
+
+  WinHttpCloseHandle(hRequest);
+  WinHttpCloseHandle(hConnect);
+  WinHttpCloseHandle(hSession);
+
+  return result;
 }
 
 }  // namespace
@@ -460,7 +756,21 @@ void LynxHttpServiceImpl::SetOnResponseReadyCallback(OnResponseReadyCallback cb)
 
 void LynxHttpServiceImpl::Request(std::shared_ptr<lynx::pub::LynxHttpRequest> request,
                                   std::shared_ptr<lynx::pub::LynxHttpResponse> response) {
-  (void)request;  // ignore request for demo
+  std::string url = request->GetUrl();
+  std::string method = request->GetMethod();
+  std::unordered_map<std::string, std::string> headers = request->GetHeaders();
+  std::vector<uint8_t> body = request->GetBody();
+
+  {
+    std::string dbg = "[LynxHttpServiceImpl::Request] method=" + method + " url=" + url + "\n";
+    dbg += "headers count=" + std::to_string(headers.size()) + "\n";
+    for (const auto& h : headers) {
+      dbg += "  " + h.first + ": " + h.second + "\n";
+    }
+    dbg += "body_size=" + std::to_string(body.size()) + "\n";
+    dbg += "body=" + std::string(body.begin(), body.end()) + "\n";
+    LogDebug(dbg);
+  }
 
   uintptr_t token = 0;
   {
@@ -468,14 +778,22 @@ void LynxHttpServiceImpl::Request(std::shared_ptr<lynx::pub::LynxHttpRequest> re
     token = ++next_token_;
   }
 
-  task_queue_->Post([this, response, token]() {
+  task_queue_->Post([this, response, method, url, headers, body, token]() {
+    HttpRequestResult result = PerformHttpRequest(method, url, headers, body);
+
     PendingResponse pending;
     pending.response = response;
-    pending.status_code = 200;
-    pending.status_text = "OK";
-    pending.headers.emplace_back("Content-Type", "text/plain; charset=utf-8");
-    const std::string body_str = "Hello from LynxHttpServiceImpl";
-    pending.body.assign(body_str.begin(), body_str.end());
+    if (result.success) {
+      pending.status_code = result.status_code;
+      pending.status_text = std::move(result.status_text);
+      pending.headers = std::move(result.headers);
+      pending.body = std::move(result.body);
+    } else {
+      pending.status_code = -1;
+      pending.status_text = result.error_message.empty()
+                                ? "HTTP request failed"
+                                : result.error_message;
+    }
 
     OnResponseReadyCallback cb;
     {

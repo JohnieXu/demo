@@ -135,7 +135,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&ctx));
 
 	auto load_meta = std::make_shared<lynx::pub::LynxLoadMeta>();
-	load_meta->SetUrl("https://lynxjs.org/lynx-examples/hello-world/dist/main.lynx.bundle");
+	//load_meta->SetUrl("https://lynxjs.org/lynx-examples/hello-world/dist/main.lynx.bundle");
+	load_meta->SetUrl("http://192.168.11.145:3001/flight.lynx.bundle?fullscreen=true");
 	lynx_view->LoadTemplate(load_meta);
 
 	// helper: sync builder and view to window client size
