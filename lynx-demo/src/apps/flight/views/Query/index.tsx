@@ -5,62 +5,46 @@ import { Calendar } from 'lynx-ui'
 import { useFlightStore } from '../../store/flightStore'
 import { TabBar } from '../../components/TabBar'
 import { RecentSearches } from './components/RecentSearches'
-import "./index.scss"
+import './index.scss'
 import { Segments } from '../../components/Segments'
-
-type TabType = 'flight' | 'train'
-
-type CabinClass = 'nolimit' | 'business';
-
-const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-
-function parseDisplayDate(dateText: string): Date {
-  const match = dateText.match(/(\d{1,2})月(\d{1,2})日/)
-  if (!match) return new Date()
-
-  const month = parseInt(match[1], 10) - 1
-  const day = parseInt(match[2], 10)
-  const now = new Date()
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  const year = now.getFullYear()
-  let date = new Date(year, month, day)
-  if (date < today) {
-    date = new Date(year + 1, month, day)
-  }
-  return date
-}
-
-function formatDisplayDate(date: Date): { dateText: string; weekday: string } {
-  return {
-    dateText: `${date.getMonth() + 1}月${date.getDate()}日`,
-    weekday: WEEKDAYS[date.getDay()],
-  }
-}
+import { TAB_TYPE, QUERY_CABIN_CLASS } from '../../constants'
+import { formatDateDisplay, formatYyyyMmDd, parseYyyyMmDd } from '../../utils/date'
+import type { TabType, QueryCabinClass } from '../../constants'
 
 export function Query() {
-  const [activeTab, setActiveTab] = useState<TabType>('flight');
-  const [selectedCabin, setSelectedCabin] = useState<CabinClass>('nolimit');
-  const [showCalendar, setShowCalendar] = useState(false)
   const navigate = useNavigate();
   const { searchParams, setSearchParams } = useFlightStore()
+  const [activeTab, setActiveTab] = useState<TabType>(searchParams.tab);
+  const [selectedCabin, setSelectedCabin] = useState<QueryCabinClass>(searchParams.cabin);
+  const [showCalendar, setShowCalendar] = useState(false)
+
+  const departureDisplay = useMemo(
+    () => formatDateDisplay(searchParams.departureDate),
+    [searchParams.departureDate],
+  )
+
+  const arrivalDisplay = useMemo(
+    () => formatDateDisplay(searchParams.arrivalDate),
+    [searchParams.arrivalDate],
+  )
 
   const selectedDate = useMemo(
-    () => parseDisplayDate(searchParams.date),
-    [searchParams.date],
+    () => parseYyyyMmDd(searchParams.departureDate).toDate(),
+    [searchParams.departureDate],
   )
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
+    setSearchParams({ tab })
   };
 
-  const handleCabinChange = (cabin: CabinClass) => {
+  const handleCabinChange = (cabin: QueryCabinClass) => {
     setSelectedCabin(cabin);
+    setSearchParams({ cabin })
   };
 
   const handleSearch = () => {
-    if (activeTab === 'train') {
+    if (activeTab === TAB_TYPE.Train) {
       navigate('/trainList');
     } else {
       navigate('/flightList');
@@ -69,8 +53,7 @@ export function Query() {
 
   const handleDateConfirm = (date: Date | Date[]) => {
     const selected = Array.isArray(date) ? date[0] : date
-    const { dateText, weekday } = formatDisplayDate(selected)
-    setSearchParams({ date: dateText, weekday })
+    setSearchParams({ departureDate: formatYyyyMmDd(selected) })
     setShowCalendar(false)
   }
 
@@ -89,11 +72,11 @@ export function Query() {
         {/* Tabs */}
         <view className="tabs">
           <view className="tabs-bg"></view>
-          <view className="tab-item" bindtap={() => handleTabChange('flight')}>
+          <view className="tab-item" bindtap={() => handleTabChange(TAB_TYPE.Flight)}>
             <text
               className={clsx(
                 'tab-text',
-                activeTab === 'flight' && 'tab-text-active',
+                activeTab === TAB_TYPE.Flight && 'tab-text-active',
               )}
             >
               机票
@@ -101,15 +84,15 @@ export function Query() {
             <view
               className={clsx(
                 'tab-indicator',
-                activeTab === 'flight' && 'tab-indicator-active',
+                activeTab === TAB_TYPE.Flight && 'tab-indicator-active',
               )}
             />
           </view>
-          <view className="tab-item" bindtap={() => handleTabChange('train')}>
+          <view className="tab-item" bindtap={() => handleTabChange(TAB_TYPE.Train)}>
             <text
               className={clsx(
                 'tab-text',
-                activeTab === 'train' && 'tab-text-active',
+                activeTab === TAB_TYPE.Train && 'tab-text-active',
               )}
             >
               火车票
@@ -117,7 +100,7 @@ export function Query() {
             <view
               className={clsx(
                 'tab-indicator',
-                activeTab === 'train' && 'tab-indicator-active',
+                activeTab === TAB_TYPE.Train && 'tab-indicator-active',
               )}
             />
           </view>
@@ -142,20 +125,20 @@ export function Query() {
                   setShowCalendar(true)
                 }}
               >
-                <text className="date-text">{searchParams.date}</text>
-                <text className="weekday-text">{searchParams.weekday}</text>
+                <text className="date-text">{departureDisplay.dateText}</text>
+                <text className="weekday-text">{departureDisplay.weekday}</text>
               </view>
               <view className="date-selection date-selection--end">
-                <text className="date-text">9月1日</text>
-                <text className="weekday-text">周六</text>
+                <text className="date-text">{arrivalDisplay.dateText}</text>
+                <text className="weekday-text">{arrivalDisplay.weekday}</text>
               </view>
             </view>
 
             {/* Cabin Class Selection */}
             <Segments
               segments={[
-                { id: 'nolimit', label: '不限舱位' },
-                { id: 'business', label: '公务/头等舱' },
+                { id: QUERY_CABIN_CLASS.NoLimit, label: '不限舱位' },
+                { id: QUERY_CABIN_CLASS.Business, label: '公务/头等舱' },
               ]}
               activeId={selectedCabin}
               onSegmentChange={handleCabinChange}

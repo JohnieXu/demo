@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-
-export type TabType = 'flight' | 'train'
-export type CabinClass = 'nolimit' | 'business'
+import { TAB_TYPE, QUERY_CABIN_CLASS, LOCATION_TYPE } from '../constants'
+import { getDefaultDates } from '../utils/date'
+import type { TabType, QueryCabinClass, LocationType } from '../constants'
 
 export type CityInfo = {
   departure: string
@@ -9,8 +9,8 @@ export type CityInfo = {
 }
 
 export type DateInfo = {
-  date: string
-  weekday: string
+  departureDate: string
+  arrivalDate: string
 }
 
 export type FlightSearchParams = {
@@ -19,13 +19,11 @@ export type FlightSearchParams = {
   arrival: string
   departureCode: string
   arrivalCode: string
-  departureType: number
-  arrivalType: number
-  date: string
-  weekday: string
-  returnDate?: string
-  returnWeekday?: string
-  cabin: CabinClass
+  departureType: LocationType
+  arrivalType: LocationType
+  departureDate: string
+  arrivalDate: string
+  cabin: QueryCabinClass
 }
 
 export type FlightItem = {
@@ -76,17 +74,19 @@ export type FlightState = {
   resetSearch: () => void
 }
 
+const { departureDate, arrivalDate } = getDefaultDates()
+
 const initialSearchParams: FlightSearchParams = {
-  tab: 'flight',
+  tab: TAB_TYPE.Flight,
   departure: '北京',
   arrival: '上海',
   departureCode: 'BJS',
   arrivalCode: 'SHA',
-  departureType: 2,
-  arrivalType: 2,
-  date: '8月31日',
-  weekday: '周五',
-  cabin: 'nolimit',
+  departureType: LOCATION_TYPE.City,
+  arrivalType: LOCATION_TYPE.City,
+  departureDate,
+  arrivalDate,
+  cabin: QUERY_CABIN_CLASS.NoLimit,
 }
 
 export const useFlightStore = create<FlightState>((set) => ({

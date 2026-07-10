@@ -9,6 +9,7 @@ import {
 import type { NodesRef } from '@lynx-js/types';
 import { clsx } from 'clsx';
 import { useNavigate } from 'react-router';
+import dayjs from '../../utils/dayjs';
 import { NavBar } from '../../components/NavBar';
 import { useFlightStore } from '../../store';
 import { useFlightList, useFlightFilter, useSortBarScroll } from './hooks';
@@ -27,6 +28,7 @@ import type { EntranceSource, Flight, SortType } from 'travel-domain';
 import { mockFlightList } from './mockData';
 import './index.scss';
 import { PageContainer } from '../../components/PageContainer';
+import { parseYyyyMmDd } from '../../utils/date';
 
 function mapMockToFlights(list: typeof mockFlightList): Flight[] {
   return list.map((item) => ({
@@ -81,11 +83,11 @@ const mockFilterLabels: FilterLabelItem[] = [
 ];
 
 function getTodayKey(): string {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}${month}${day}`;
+  return dayjs().format('YYYYMMDD');
+}
+
+function formatYyyyMmDdToKey(dateStr: string): string {
+  return parseYyyyMmDd(dateStr).format('YYYYMMDD');
 }
 
 export function FlightList() {
@@ -111,26 +113,20 @@ export function FlightList() {
 
   // Date selector state
   const [activeDateKey, setActiveDateKey] = useState(() => {
-    if (selectedDate) {
-      const d = new Date(selectedDate);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}${month}${day}`;
+    const dateSource = selectedDate || searchParams.departureDate;
+    if (dateSource) {
+      return formatYyyyMmDdToKey(dateSource);
     }
     return getTodayKey();
   });
 
   // Sync selectedDate from store on mount
   useEffect(() => {
-    if (selectedDate) {
-      const d = new Date(selectedDate);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      setActiveDateKey(`${year}${month}${day}`);
+    const dateSource = selectedDate || searchParams.departureDate;
+    if (dateSource) {
+      setActiveDateKey(formatYyyyMmDdToKey(dateSource));
     }
-  }, [selectedDate]);
+  }, [selectedDate, searchParams.departureDate]);
 
   // Build search criteria
   const getSearchCriteria = useCallback(() => {
@@ -139,11 +135,7 @@ export function FlightList() {
     if (fromDate) {
       fromDate = fromDate.replace(/-/g, '');
     } else {
-      const d = new Date();
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      fromDate = `${year}${month}${day}`;
+      fromDate = dayjs().format('YYYYMMDD');
     }
     return {
       cabinGrade: 0 as const,
@@ -282,7 +274,7 @@ export function FlightList() {
     flightListHook.fetchFlights(filter.appliedQueryParams);
   };
 
-  const useMock = true
+  const useMock = false
   useEffect(() => {
     if (useMock) {
       console.warn('The flight data is mocked.')

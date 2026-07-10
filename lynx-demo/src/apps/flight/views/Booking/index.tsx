@@ -1,11 +1,16 @@
 import { useNavigate } from 'react-router'
 import { useFlightStore } from '../../store'
 import { FocusableInput } from '../../components/input/FocusableInput'
+import { QUERY_CABIN_CLASS } from '../../constants'
+import { formatDateDisplay } from '../../utils/date'
 import "./index.scss"
 
 export function Booking() {
   const { selectedFlight, searchParams } = useFlightStore()
   const navigate = useNavigate()
+
+  const departureDisplay = formatDateDisplay(searchParams.departureDate)
+  const cabinLabel = searchParams.cabin === QUERY_CABIN_CLASS.NoLimit ? '无舱位' : '公务/头等舱'
 
   const handleConfirm = () => {
     const id = 'NEW_ORDER_123'
@@ -18,7 +23,7 @@ export function Booking() {
         <view>
           <FocusableInput
             placeholder="请输入日期"
-            value={searchParams.date}
+            value={departureDisplay.dateText}
             autofocus
           />
         </view>
@@ -40,7 +45,7 @@ export function Booking() {
       <view>
         <FocusableInput
           placeholder="请输入日期"
-          value={searchParams.date}
+          value={departureDisplay.dateText}
           autofocus
         />
       </view>
@@ -61,14 +66,12 @@ export function Booking() {
           <view className="flight-detail-row">
             <text className="flight-detail-label">日期</text>
             <text className="flight-detail-value">
-              {searchParams.date} {searchParams.weekday}
+              {departureDisplay.dateText} {departureDisplay.weekday}
             </text>
           </view>
           <view className="flight-detail-row">
             <text className="flight-detail-label">舱位</text>
-            <text className="flight-detail-value">
-              {searchParams.cabin === 'nolimit' ? '无舱位' : '公务/头等舱'}
-            </text>
+            <text className="flight-detail-value">{cabinLabel}</text>
           </view>
           <view className="flight-detail-row">
             <text className="flight-detail-label">价格</text>
