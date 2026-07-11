@@ -1,0 +1,154 @@
+:root {
+  --lu-toast-z-index: 400;
+  --lu-toast-duration: 0.2s;
+  --lu-toast-max-width: 70%;
+  --lu-toast-top-distance: 20%;
+  --lu-toast-bottom-distance: 20%;
+  --lu-toast-default-width: 96px;
+  --lu-toast-default-min-height: 88px;
+  --lu-toast-icon-size: 36px;
+}
+
+.lu-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--lu-toast-z-index);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--lu-toast-duration) ease;
+}
+
+.lu-toast--show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lu-toast__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--lu-color-mask);
+  pointer-events: auto;
+}
+
+.lu-toast__overlay--transparent {
+  background-color: transparent;
+}
+
+.lu-toast__content {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--lu-toast-default-width);
+  min-height: var(--lu-toast-default-min-height);
+  padding: var(--lu-space-md);
+  color: var(--lu-toast-text-color);
+  background-color: var(--lu-toast-background);
+  border-top-left-radius: var(--lu-radius-lg);
+  border-top-right-radius: var(--lu-radius-lg);
+  border-bottom-right-radius: var(--lu-radius-lg);
+  border-bottom-left-radius: var(--lu-radius-lg);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.lu-toast__content--top {
+  top: var(--lu-toast-top-distance);
+  transform: translateX(-50%);
+}
+
+.lu-toast__content--middle {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.lu-toast__content--bottom {
+  bottom: var(--lu-toast-bottom-distance);
+  transform: translateX(-50%);
+}
+
+.lu-toast--text .lu-toast__content {
+  width: auto;
+  min-width: var(--lu-toast-default-width);
+  min-height: 0;
+  max-width: var(--lu-toast-max-width);
+  padding: var(--lu-space-xs) var(--lu-space-md);
+}
+
+.lu-toast__icon {
+  width: var(--lu-toast-icon-size);
+  height: var(--lu-toast-icon-size);
+  position: relative;
+  color: var(--lu-toast-text-color);
+}
+
+.lu-toast__icon--success,
+.lu-toast__icon--fail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lu-toast__check {
+  width: 22px;
+  height: 12px;
+  border-left: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+.lu-toast__cross {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 3px;
+  margin-top: -1.5px;
+  margin-left: -13px;
+  background-color: currentColor;
+}
+
+.lu-toast__cross--first {
+  transform: rotate(45deg);
+}
+
+.lu-toast__cross--second {
+  transform: rotate(-45deg);
+}
+
+.lu-toast__spinner {
+  width: var(--lu-toast-icon-size);
+  height: var(--lu-toast-icon-size);
+  border: 3px solid rgba(128, 128, 128, 0.2);
+  border-top-color: currentColor;
+  border-radius: 9999px;
+  animation: lu-toast-spin 0.8s linear infinite;
+}
+
+@keyframes lu-toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lu-toast__text {
+  margin-top: var(--lu-space-xs);
+  font-size: var(--lu-font-size-md);
+  line-height: var(--lu-line-height-normal);
+  color: var(--lu-toast-text-color);
+}
+
+.lu-toast--text .lu-toast__text {
+  margin-top: 0;
+}

@@ -37,6 +37,10 @@ page,
   /* Mask / Overlay */
   --lu-color-mask: rgba(0, 0, 0, 0.4);
 
+  /* Toast */
+  --lu-toast-background: rgba(0, 0, 0, 0.7);
+  --lu-toast-text-color: #ffffff;
+
   /* Spacing (px-based for postcss-px-to-viewport conversion) */
   --lu-space-xs: 4px;
   --lu-space-sm: 8px;
@@ -114,6 +118,10 @@ page,
 
   /* Mask / Overlay */
   --lu-color-mask: rgba(0, 0, 0, 0.6);
+
+  /* Toast */
+  --lu-toast-background: rgba(255, 255, 255, 0.9);
+  --lu-toast-text-color: #333333;
 
   /* Calendar-specific */
   --lu-calendar-month-mark-color: rgba(255, 255, 255, 0.05);

@@ -226,3 +226,42 @@
 .calendar-host .lu-calendar {
   height: 100%;
 }
+
+/* ----- Popup demo ----- */
+.popup-demo-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--lu-color-surface);
+}
+
+.popup-demo-panel--center {
+  width: 240px;
+  min-height: 160px;
+}
+
+.popup-demo-panel--bottom,
+.popup-demo-panel--top {
+  width: 100%;
+  min-height: 200px;
+}
+
+.popup-demo-panel--side {
+  width: 200px;
+  height: 100%;
+}
+
+.popup-demo-title {
+  font-size: var(--lu-font-size-xl);
+  font-weight: 600;
+  color: var(--lu-color-text-primary);
+  margin-bottom: 8px;
+}
+
+.popup-demo-desc {
+  font-size: var(--lu-font-size-sm);
+  color: var(--lu-color-text-secondary);
+  margin-bottom: 16px;
+}

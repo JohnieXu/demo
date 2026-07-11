@@ -1,6 +1,8 @@
 import { ButtonDemo } from './views/demos/ButtonDemo'
 import { IconDemo } from './views/demos/IconDemo'
 import { CalendarDemo } from './views/demos/CalendarDemo'
+import { PopupDemo } from './views/demos/PopupDemo'
+import { ToastDemo } from './views/demos/ToastDemo'
 
 export interface DemoEntry {
   /** Route segment and unique key, e.g. 'calendar' → /component/calendar */
@@ -34,6 +36,20 @@ export const DEMOS: DemoEntry[] = [
     subtitle: '跨端 SVG 图标,尺寸与颜色',
     category: '基础组件',
     Component: IconDemo,
+  },
+  {
+    key: 'popup',
+    title: 'Popup 弹出层',
+    subtitle: '居中 / 底部 / 顶部 / 左右抽屉 / 遮罩控制',
+    category: '基础组件',
+    Component: PopupDemo,
+  },
+  {
+    key: 'toast',
+    title: 'Toast 轻提示',
+    subtitle: '文字 / 加载 / 成功 / 失败 / 位置 / 遮罩',
+    category: '基础组件',
+    Component: ToastDemo,
   },
   {
     key: 'calendar',
