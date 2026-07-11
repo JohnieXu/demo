@@ -1,0 +1,32 @@
+.lu-refresh {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lu-refresh--native {
+  flex: 1;
+}
+
+.lu-refresh--simulated {
+  flex: 1;
+}
+
+.lu-refresh__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--lu-color-background, #ffffff);
+}
+
+.lu-refresh__header-text {
+  font-size: var(--lu-font-size-base, 14px);
+  color: var(--lu-color-text-tertiary, #999999);
+}
+
+.lu-refresh__content {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}

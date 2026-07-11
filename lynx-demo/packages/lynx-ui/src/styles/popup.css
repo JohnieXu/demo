@@ -1,0 +1,141 @@
+:root {
+  --lu-popup-z-index: 300;
+  --lu-popup-duration: 0.3s;
+  --lu-popup-round-radius: var(--lu-radius-xl);
+}
+
+.lu-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--lu-popup-z-index);
+  display: flex;
+  pointer-events: none;
+}
+
+.lu-popup--show {
+  pointer-events: auto;
+}
+
+.lu-popup__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--lu-color-mask);
+  opacity: 0;
+  transition: opacity var(--lu-popup-duration) ease;
+  pointer-events: none;
+}
+
+.lu-popup--show .lu-popup__overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lu-popup__content {
+  position: absolute;
+  background-color: var(--lu-color-background);
+  opacity: 0;
+  transition: opacity var(--lu-popup-duration) ease,
+    transform var(--lu-popup-duration) ease;
+  pointer-events: none;
+}
+
+.lu-popup--show .lu-popup__content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Center: flex-centered dialog */
+.lu-popup__content--center {
+  position: relative;
+  margin: auto;
+  width: 80%;
+  max-width: 300px;
+  transform: scale(0.9);
+}
+
+.lu-popup--show .lu-popup__content--center {
+  transform: scale(1);
+}
+
+.lu-popup__content--center.lu-popup__content--round {
+  border-radius: var(--lu-popup-round-radius);
+}
+
+/* Bottom sheet */
+.lu-popup__content--bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(100%);
+}
+
+.lu-popup--show .lu-popup__content--bottom {
+  transform: translateY(0);
+}
+
+.lu-popup__content--bottom.lu-popup__content--round {
+  border-radius: var(--lu-popup-round-radius) var(--lu-popup-round-radius) 0 0;
+}
+
+/* Top sheet */
+.lu-popup__content--top {
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(-100%);
+}
+
+.lu-popup--show .lu-popup__content--top {
+  transform: translateY(0);
+}
+
+.lu-popup__content--top.lu-popup__content--round {
+  border-radius: 0 0 var(--lu-popup-round-radius) var(--lu-popup-round-radius);
+}
+
+/* Left drawer */
+.lu-popup__content--left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.lu-popup--show .lu-popup__content--left {
+  transform: translateX(0);
+}
+
+.lu-popup__content--left.lu-popup__content--round {
+  border-radius: 0 var(--lu-popup-round-radius) var(--lu-popup-round-radius) 0;
+}
+
+/* Right drawer */
+.lu-popup__content--right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  transform: translateX(100%);
+}
+
+.lu-popup--show .lu-popup__content--right {
+  transform: translateX(0);
+}
+
+.lu-popup__content--right.lu-popup__content--round {
+  border-radius: var(--lu-popup-round-radius) 0 0 var(--lu-popup-round-radius);
+}
+
+/* Safe area insets */
+.lu-popup__content--safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.lu-popup__content--safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

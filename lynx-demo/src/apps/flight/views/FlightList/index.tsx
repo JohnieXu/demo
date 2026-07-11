@@ -6,9 +6,9 @@ import {
   useRef,
   useMemo,
 } from '@lynx-js/react';
-import type { NodesRef } from '@lynx-js/types';
 import { clsx } from 'clsx';
 import { useNavigate } from 'react-router';
+import { Refresh } from 'lynx-ui';
 import dayjs from '../../utils/dayjs';
 import { NavBar } from '../../components/NavBar';
 import { useFlightStore } from '../../store';
@@ -178,35 +178,7 @@ export function FlightList() {
         airlineStatistics: [...result.airlineStatistics],
       });
     },
-    /**
-     * FIXME: refresh 属于 xelement 在 macos 上不支持，在当前版本 iOS 的 explorer 上也没有，故 finishRefresh 方法找不到
-     * @see https://lynxjs.org/next/zh/api/elements/built-in/refresh#%E5%85%BC%E5%AE%B9%E6%80%A7
-     */
-    onLoadDone: () => {
-      'background only';
-      refreshRef.current
-        ?.invoke({
-          method: 'finishRefresh',
-        })
-        .exec();
-    },
   });
-
-  // Refresh ref for finishRefresh
-  const refreshRef = useRef<NodesRef>(null);
-
-  // Finish refresh animation when refreshing state becomes false
-  const prevRefreshingRef = useRef(flightListHook.refreshing);
-  useEffect(() => {
-    if (prevRefreshingRef.current && !flightListHook.refreshing) {
-      refreshRef.current
-        ?.invoke({
-          method: 'finishRefresh',
-        })
-        .exec();
-    }
-    prevRefreshingRef.current = flightListHook.refreshing;
-  }, [flightListHook.refreshing]);
 
   // Auto fetch when sort changes
   useEffect(() => {
@@ -274,19 +246,21 @@ export function FlightList() {
     flightListHook.fetchFlights(filter.appliedQueryParams);
   };
 
-  const useMock = false
+  const useMock = false;
   useEffect(() => {
     if (useMock) {
-      console.warn('The flight data is mocked.')
+      console.warn('The flight data is mocked.');
     }
-  }, [useMock])
+  }, [useMock]);
 
   // Determine display data: prefer API result, fallback to mock
   const displayFlights = useMemo(() => {
     return flightListHook.flightList.length > 0
       ? flightListHook.flightList
       : !flightListHook.loading && !flightListHook.refreshing
-        ? useMock ? mapMockToFlights(mockFlightList) : []
+        ? useMock
+          ? mapMockToFlights(mockFlightList)
+          : []
         : [];
   }, [
     flightListHook.flightList,
@@ -303,15 +277,11 @@ export function FlightList() {
         title: `${searchParams.departure}-${searchParams.arrival}`,
       }}
     >
-      <refresh
-        ref={refreshRef}
+      <Refresh
         className="flight-list-refresh"
-        bindstartrefresh={flightListHook.onRefresh}
+        refreshing={flightListHook.refreshing}
+        onRefresh={flightListHook.onRefresh}
       >
-        <refresh-header className="flight-list-refresh__header">
-          <text className="flight-list-refresh__text">正在刷新...</text>
-        </refresh-header>
-
         <view
           style={{
             width: '100%',
@@ -404,7 +374,7 @@ export function FlightList() {
             />
           </view>
         </view>
-      </refresh>
+      </Refresh>
 
       <FilterPopup
         show={filter.showFilterPopup}

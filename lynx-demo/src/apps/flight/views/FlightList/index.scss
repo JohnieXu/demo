@@ -40,19 +40,8 @@
   width: 375px;
   height: 100%;
 
-  &__header {
-    width: 100%;
-    height: 50px;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .lu-refresh__header {
     background-color: #f2f6ff;
-  }
-
-  &__text {
-    font-size: 14px;
-    color: #999;
   }
 }
 

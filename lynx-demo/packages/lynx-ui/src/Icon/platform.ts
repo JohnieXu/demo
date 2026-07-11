@@ -11,22 +11,14 @@
  * call site keeps working.
  */
 
+import { getCurrentPlatform, type LynxPlatform } from '../platform'
+
 /**
- * Union of platforms the Icon component can distinguish.
- *
- * Sourced from `SystemInfo.platform` (@lynx-js/types). Extended with
- * `web` and `unknown` for environments where SystemInfo is not exposed
- * (e.g. lynx-web running in a browser, or test runners).
+ * Re-export the shared platform type so Icon consumers do not need to import
+ * from two places. Icon-specific behavior is driven by the feature matrix
+ * below, not by the platform name itself.
  */
-export type IconPlatform =
-  | 'iOS'
-  | 'Android'
-  | 'Harmony'
-  | 'macOS'
-  | 'windows'
-  | 'pc'
-  | 'web'
-  | 'unknown'
+export type IconPlatform = LynxPlatform
 
 /**
  * The rendering variants the Icon component can produce.
@@ -54,35 +46,6 @@ const FEATURE_MATRIX: Record<IconPlatform, Record<IconVariant, boolean>> = {
   pc: { svg: false, image: true, placeholder: true },
   web: { svg: false, image: true, placeholder: true },
   unknown: { svg: false, image: true, placeholder: true },
-}
-
-/**
- * Resolve the current platform.
- *
- * Order of detection:
- * 1. `SystemInfo.platform` from the Lynx runtime (preferred)
- * 2. Browser globals — fall back to `web` for lynx-web / Storybook
- * 3. `unknown` for everything else (test runners, SSR, ...)
- */
-export function getCurrentPlatform(): IconPlatform {
-  try {
-    // `SystemInfo` is declared as a global by @lynx-js/types.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const info = (globalThis as any).SystemInfo
-    if (info && typeof info.platform === 'string') {
-      const p = info.platform as IconPlatform
-      if (p in FEATURE_MATRIX) {
-        return p
-      }
-    }
-  } catch {
-    // SystemInfo access can throw in some test environments; ignore.
-  }
-  // Browser environment without SystemInfo (lynx-web / dev preview).
-  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-    return 'web'
-  }
-  return 'unknown'
 }
 
 /**

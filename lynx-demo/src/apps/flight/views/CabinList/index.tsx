@@ -1,9 +1,7 @@
-import type { NodesRef } from "@lynx-js/types"
 import { PageContainer } from "../../components/PageContainer"
-import { useRef } from "@lynx-js/react"
+import { Refresh } from "lynx-ui"
 
 export const CabinList = () => {
-  const refreshRef = useRef<NodesRef>(null)
   const onRefresh = () => {}
   return (
     <PageContainer
@@ -13,16 +11,9 @@ export const CabinList = () => {
         title: '舱位列表',
       }}
     >
-      <refresh
-        ref={refreshRef}
-        className="cabin-list-refresh"
-        bindstartrefresh={onRefresh}
-      >
-        <refresh-header className="cabin-list-refresh__header">
-          <text className="cabin-list-refresh__text">正在刷新...</text>
-        </refresh-header>
+      <Refresh className="cabin-list-refresh" onRefresh={onRefresh}>
         <view>舱位列表</view>
-      </refresh>
+      </Refresh>
     </PageContainer>
   )
 }
