@@ -8,17 +8,18 @@ function Box() {
         width: '48px',
         height: '48px',
         borderRadius: '8px',
-        backgroundColor: 'var(--lu-color-primary-subtle)',
+        // backgroundColor: 'var(--lu-color-primary-subtle, "#333333")',
+        backgroundColor: '#666666',
       }}
     />
-  )
+  );
 }
 
 export function BadgeDemo() {
   return (
     <view>
       <DemoBlock title="基础用法">
-        <view className="demo-row--center">
+        <view className="demo-row demo-row--center">
           <Badge content={5}>
             <Box />
           </Badge>
@@ -32,7 +33,7 @@ export function BadgeDemo() {
       </DemoBlock>
 
       <DemoBlock title="位置">
-        <view className="demo-row--center">
+        <view className="demo-row demo-row--center">
           <Badge content={1} position="top-left">
             <Box />
           </Badge>
@@ -49,12 +50,12 @@ export function BadgeDemo() {
       </DemoBlock>
 
       <DemoBlock title="自定义颜色与偏移">
-        <view className="demo-row--center">
+        <view className="demo-row demo-row--center">
           <Badge content={8} color="#07c160" offset={[4, 4]}>
             <Box />
           </Badge>
         </view>
       </DemoBlock>
     </view>
-  )
+  );
 }
