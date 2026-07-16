@@ -1,0 +1,94 @@
+:root,
+page {
+  --lu-skeleton-duration: 1.2s;
+  --lu-skeleton-paragraph-height: 16px;
+  --lu-skeleton-paragraph-background: var(--lu-color-border);
+  --lu-skeleton-paragraph-margin-top: var(--lu-space-sm);
+  --lu-skeleton-title-width: 40%;
+  --lu-skeleton-avatar-size: 32px;
+  --lu-skeleton-avatar-background: var(--lu-color-border);
+  --lu-skeleton-image-size: 96px;
+  --lu-skeleton-image-radius: var(--lu-radius-lg);
+}
+
+.lu-skeleton {
+  display: flex;
+  padding: 0 var(--lu-space-md);
+}
+
+.lu-skeleton__content {
+  width: 100%;
+}
+
+.lu-skeleton--animate {
+  animation: lu-skeleton-blink var(--lu-skeleton-duration) ease-in-out infinite;
+}
+
+@keyframes lu-skeleton-blink {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.lu-skeleton-title {
+  width: var(--lu-skeleton-title-width);
+  height: var(--lu-skeleton-paragraph-height);
+  margin: 0;
+  background: var(--lu-skeleton-paragraph-background);
+}
+
+.lu-skeleton-title--round {
+  border-radius: var(--lu-radius-full);
+}
+
+.lu-skeleton-title + .lu-skeleton-paragraph {
+  margin-top: 20px;
+}
+
+.lu-skeleton-avatar {
+  flex-shrink: 0;
+  width: var(--lu-skeleton-avatar-size);
+  height: var(--lu-skeleton-avatar-size);
+  margin-right: var(--lu-space-md);
+  background: var(--lu-skeleton-avatar-background);
+}
+
+.lu-skeleton-avatar--round {
+  border-radius: var(--lu-radius-full);
+}
+
+.lu-skeleton-avatar + .lu-skeleton__content {
+  padding-top: var(--lu-space-xs);
+}
+
+.lu-skeleton-paragraph {
+  height: var(--lu-skeleton-paragraph-height);
+  background: var(--lu-skeleton-paragraph-background);
+}
+
+.lu-skeleton-paragraph--round {
+  border-radius: var(--lu-radius-full);
+}
+
+.lu-skeleton-paragraph:not(:first-child) {
+  margin-top: var(--lu-skeleton-paragraph-margin-top);
+}
+
+.lu-skeleton-image {
+  display: flex;
+  width: var(--lu-skeleton-image-size);
+  height: var(--lu-skeleton-image-size);
+  align-items: center;
+  justify-content: center;
+  background: var(--lu-skeleton-paragraph-background);
+}
+
+.lu-skeleton-image--round {
+  border-radius: var(--lu-skeleton-image-radius);
+}
+
+.lu-skeleton-image__icon {
+  width: calc(var(--lu-skeleton-image-size) / 2);
+  height: calc(var(--lu-skeleton-image-size) / 2);
+  color: var(--lu-color-text-tertiary);
+}

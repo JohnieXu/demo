@@ -1,0 +1,55 @@
+:root,
+.lynx-theme-light {
+  --lu-switch-width: 2em;
+  --lu-switch-height: 1em;
+  --lu-switch-node-size: 1em;
+  --lu-switch-node-background: #ffffff;
+}
+
+.lu-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 52px;
+  height: 30px;
+  padding: 0;
+  border-radius: var(--lu-radius-full);
+  background-color: var(--lu-color-disabled-bg);
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.lu-switch--on {
+  background-color: var(--lu-color-primary);
+}
+
+.lu-switch--disabled {
+  opacity: 0.4;
+}
+
+.lu-switch__node {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--lu-color-background);
+  border-radius: var(--lu-radius-full);
+  transform: translate(1px, -50%);
+  transition: left 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.lu-switch--on .lu-switch__node {
+  left: 100%;
+  transform: translate(calc(-100% - 1px), -50%);
+}
+
+.lu-switch__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

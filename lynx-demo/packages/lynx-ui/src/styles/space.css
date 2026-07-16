@@ -1,0 +1,35 @@
+.lu-space {
+  display: flex;
+}
+
+.lu-space--horizontal {
+  flex-direction: row;
+}
+
+.lu-space--vertical {
+  flex-direction: column;
+}
+
+.lu-space--align-start {
+  align-items: flex-start;
+}
+
+.lu-space--align-end {
+  align-items: flex-end;
+}
+
+.lu-space--align-center {
+  align-items: center;
+}
+
+.lu-space--align-baseline {
+  align-items: baseline;
+}
+
+.lu-space--wrap {
+  flex-wrap: wrap;
+}
+
+.lu-space--fill {
+  width: 100%;
+}

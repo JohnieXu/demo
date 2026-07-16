@@ -1,0 +1,95 @@
+:root,
+page {
+  --lu-grid-item-content-padding: var(--lu-space-md) var(--lu-space-xs);
+  --lu-grid-item-content-background: var(--lu-color-surface);
+  --lu-grid-item-content-active-color: var(--lu-color-border);
+  --lu-grid-item-icon-size: 28px;
+  --lu-grid-item-text-color: var(--lu-color-text-primary);
+  --lu-grid-item-text-font-size: var(--lu-font-size-sm);
+}
+
+.lu-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.lu-grid--border {
+  border-top: 1px solid var(--lu-color-border);
+}
+
+.lu-grid-item {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.lu-grid-item--square {
+  height: 0;
+}
+
+.lu-grid-item__icon {
+  font-size: var(--lu-grid-item-icon-size);
+}
+
+.lu-grid-item__text {
+  color: var(--lu-grid-item-text-color);
+  font-size: var(--lu-grid-item-text-font-size);
+  line-height: 1.5;
+}
+
+.lu-grid-item__icon + .lu-grid-item__text {
+  margin-top: var(--lu-space-xs);
+}
+
+.lu-grid-item__content {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  padding: var(--lu-grid-item-content-padding);
+  background: var(--lu-grid-item-content-background);
+}
+
+.lu-grid-item__content--square {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.lu-grid-item__content--center {
+  align-items: center;
+  justify-content: center;
+}
+
+.lu-grid-item__content--horizontal {
+  flex-direction: row;
+}
+
+.lu-grid-item__content--horizontal .lu-grid-item__text {
+  margin: 0 0 0 var(--lu-space-xs);
+}
+
+.lu-grid-item__content--reverse {
+  flex-direction: column-reverse;
+}
+
+.lu-grid-item__content--reverse .lu-grid-item__text {
+  margin: 0 0 var(--lu-space-xs);
+}
+
+.lu-grid-item__content--horizontal.lu-grid-item__content--reverse {
+  flex-direction: row-reverse;
+}
+
+.lu-grid-item__content--horizontal.lu-grid-item__content--reverse .lu-grid-item__text {
+  margin: 0 var(--lu-space-xs) 0 0;
+}
+
+.lu-grid-item__content--border {
+  border-right: 1px solid var(--lu-color-border);
+  border-bottom: 1px solid var(--lu-color-border);
+}
+
+.lu-grid-item__content--clickable:active {
+  background-color: var(--lu-grid-item-content-active-color);
+}

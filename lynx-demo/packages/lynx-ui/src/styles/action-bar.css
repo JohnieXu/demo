@@ -1,0 +1,20 @@
+.lu-action-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  box-sizing: content-box;
+  height: var(--lu-action-bar-height, 50px);
+  background: var(--lu-action-bar-background, var(--lu-color-surface));
+  z-index: var(--lu-action-bar-z-index, 100);
+}
+
+.lu-action-bar--safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.lu-action-bar__placeholder {
+  height: var(--lu-action-bar-height, 50px);
+}

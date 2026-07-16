@@ -1,0 +1,104 @@
+.lu-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--lu-space-xs) var(--lu-space-sm);
+  color: var(--lu-tag-default-color);
+  font-size: var(--lu-font-size-sm);
+  line-height: var(--lu-line-height-normal);
+  border-radius: var(--lu-radius-sm);
+  background-color: var(--lu-tag-default-background);
+  border: 1px solid transparent;
+}
+
+.lu-tag--small {
+  padding: 0 var(--lu-space-xs);
+  font-size: var(--lu-font-size-xs);
+}
+
+.lu-tag--large {
+  padding: var(--lu-space-sm) var(--lu-space-md);
+  font-size: var(--lu-font-size-base);
+}
+
+.lu-tag--default {
+  background-color: var(--lu-tag-default-background);
+  color: var(--lu-tag-default-color);
+  border-color: var(--lu-tag-default-border-color);
+}
+
+.lu-tag--primary {
+  background-color: var(--lu-color-primary);
+  color: var(--lu-color-text-inverse);
+}
+
+.lu-tag--success {
+  background-color: var(--lu-color-success);
+  color: var(--lu-color-text-inverse);
+}
+
+.lu-tag--danger {
+  background-color: var(--lu-color-danger);
+  color: var(--lu-color-text-inverse);
+}
+
+.lu-tag--warning {
+  background-color: var(--lu-color-warning);
+  color: var(--lu-color-text-inverse);
+}
+
+.lu-tag--plain {
+  background-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.lu-tag--plain.lu-tag--default {
+  color: var(--lu-tag-default-color);
+  border-color: var(--lu-tag-default-border-color);
+}
+
+.lu-tag--plain.lu-tag--primary {
+  color: var(--lu-color-primary);
+  border-color: var(--lu-color-primary);
+}
+
+.lu-tag--plain.lu-tag--success {
+  color: var(--lu-color-success);
+  border-color: var(--lu-color-success);
+}
+
+.lu-tag--plain.lu-tag--danger {
+  color: var(--lu-color-danger);
+  border-color: var(--lu-color-danger);
+}
+
+.lu-tag--plain.lu-tag--warning {
+  color: var(--lu-color-warning);
+  border-color: var(--lu-color-warning);
+}
+
+.lu-tag--round {
+  border-radius: var(--lu-radius-full);
+}
+
+.lu-tag--mark {
+  border-radius: 0 var(--lu-radius-full) var(--lu-radius-full) 0;
+}
+
+.lu-tag__text {
+  color: inherit;
+}
+
+.lu-tag__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: var(--lu-space-xs);
+}
+
+.lu-tag__close-icon {
+  width: 100%;
+  height: 100%;
+}

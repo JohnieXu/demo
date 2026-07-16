@@ -1,0 +1,79 @@
+:root,
+page {
+  --lu-slider-bar-height: 4px;
+  --lu-slider-button-size: 24px;
+  --lu-slider-active-color: var(--lu-color-primary);
+  --lu-slider-inactive-color: var(--lu-color-disabled-bg);
+}
+
+.lu-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--lu-slider-button-size);
+}
+
+.lu-slider--disabled {
+  opacity: 0.5;
+}
+
+.lu-slider--readonly {
+  opacity: 0.7;
+}
+
+.lu-slider--vertical {
+  display: flex;
+  justify-content: center;
+  width: var(--lu-slider-button-size);
+  height: 100%;
+}
+
+.lu-slider__bar {
+  position: relative;
+  width: 100%;
+  height: var(--lu-slider-bar-height);
+  background-color: var(--lu-slider-inactive-color);
+  border-radius: calc(var(--lu-slider-bar-height) / 2);
+  overflow: hidden;
+}
+
+.lu-slider--vertical .lu-slider__bar {
+  width: var(--lu-slider-bar-height);
+  height: 100%;
+}
+
+.lu-slider__active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: var(--lu-slider-active-color);
+  border-radius: inherit;
+}
+
+.lu-slider--vertical .lu-slider__active {
+  width: 100%;
+  height: 0;
+  top: auto;
+  bottom: 0;
+}
+
+.lu-slider__button {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: var(--lu-slider-button-size);
+  height: var(--lu-slider-button-size);
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  transform: translate(-50%, -50%);
+}
+
+.lu-slider--vertical .lu-slider__button {
+  top: auto;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+}

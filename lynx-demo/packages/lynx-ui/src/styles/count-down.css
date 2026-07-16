@@ -1,0 +1,12 @@
+:root,
+page {
+  --lu-count-down-text-color: var(--lu-color-text-primary);
+  --lu-count-down-font-size: var(--lu-font-size-base);
+  --lu-count-down-line-height: var(--lu-line-height-normal);
+}
+
+.lu-count-down {
+  color: var(--lu-count-down-text-color);
+  font-size: var(--lu-count-down-font-size);
+  line-height: var(--lu-count-down-line-height);
+}

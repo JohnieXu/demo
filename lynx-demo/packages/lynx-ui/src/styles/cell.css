@@ -1,0 +1,105 @@
+.lu-cell {
+  position: relative;
+  display: flex;
+  width: 100%;
+  padding: var(--lu-space-md);
+  font-size: var(--lu-font-size-base);
+  line-height: var(--lu-line-height-normal);
+  color: var(--lu-cell-title-color);
+  background-color: var(--lu-cell-background);
+  box-sizing: border-box;
+}
+
+.lu-cell--large {
+  padding-top: var(--lu-space-lg);
+  padding-bottom: var(--lu-space-lg);
+}
+
+.lu-cell--center {
+  align-items: center;
+}
+
+.lu-cell--clickable {
+  cursor: pointer;
+}
+
+.lu-cell__required {
+  position: absolute;
+  left: var(--lu-space-xs);
+  color: var(--lu-cell-required-color);
+  font-size: var(--lu-font-size-sm);
+}
+
+.lu-cell--borderless {
+  border-bottom: none;
+}
+
+.lu-cell:not(.lu-cell--borderless) {
+  border-bottom: 1px solid var(--lu-cell-border-color);
+}
+
+.lu-cell__left-icon {
+  display: flex;
+  align-items: center;
+  margin-right: var(--lu-space-sm);
+  min-width: 16px;
+  min-height: 16px;
+}
+
+.lu-cell__title {
+  flex: 1;
+}
+
+.lu-cell__title-text {
+  color: var(--lu-cell-title-color);
+}
+
+.lu-cell__label {
+  margin-top: var(--lu-space-xs);
+  color: var(--lu-cell-label-color);
+  font-size: var(--lu-font-size-sm);
+  line-height: var(--lu-line-height-normal);
+}
+
+.lu-cell__value {
+  flex: 1;
+  text-align: right;
+  color: var(--lu-cell-value-color);
+}
+
+.lu-cell__right-icon {
+  display: flex;
+  align-items: center;
+  margin-left: var(--lu-space-sm);
+}
+
+.lu-cell__arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--lu-cell-arrow-color);
+}
+
+.lu-cell-group {
+  background-color: var(--lu-cell-background);
+}
+
+.lu-cell-group--inset {
+  margin: var(--lu-space-md);
+  border-radius: var(--lu-radius-lg);
+  overflow: hidden;
+}
+
+.lu-cell-group--border {
+  border-top: 1px solid var(--lu-cell-border-color);
+  border-bottom: 1px solid var(--lu-cell-border-color);
+}
+
+.lu-cell-group__title {
+  padding: var(--lu-space-md) var(--lu-space-md) var(--lu-space-sm);
+  color: var(--lu-cell-group-title-color);
+  font-size: var(--lu-font-size-sm);
+}
+
+.lu-cell-group__title--inset {
+  padding-left: calc(var(--lu-space-md) + var(--lu-space-md));
+}

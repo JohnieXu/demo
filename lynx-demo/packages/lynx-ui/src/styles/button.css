@@ -5,18 +5,85 @@
   border-radius: var(--lu-radius-lg);
   font-weight: 600;
   cursor: pointer;
+  border: 0 none transparent;
+  box-sizing: border-box;
+}
+
+.lu-btn__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.lu-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.lu-btn__text {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.lu-btn--default {
+  background-color: var(--lu-button-default-bg);
+  color: var(--lu-button-default-color);
+  border: 1px solid var(--lu-button-default-border-color);
+}
+
+.lu-btn--default.lu-btn--plain {
+  background-color: var(--lu-button-plain-bg);
+  color: var(--lu-button-default-color);
+  border-color: var(--lu-button-default-border-color);
 }
 
 .lu-btn--primary {
-  background-color: var(--lu-color-primary);
-  color: var(--lu-color-text-inverse);
+  background-color: var(--lu-button-primary-bg);
+  color: var(--lu-button-primary-color);
 }
 
-.lu-btn--primary.ui-disabled {
-  background-color: var(--lu-color-disabled);
-  color: var(--lu-color-text-disabled);
+.lu-btn--primary.lu-btn--plain {
+  background-color: var(--lu-button-plain-bg);
+  color: var(--lu-button-primary-bg);
+  border: 1px solid var(--lu-button-primary-bg);
 }
 
+.lu-btn--success {
+  background-color: var(--lu-button-success-bg);
+  color: var(--lu-button-success-color);
+}
+
+.lu-btn--success.lu-btn--plain {
+  background-color: var(--lu-button-plain-bg);
+  color: var(--lu-button-success-bg);
+  border: 1px solid var(--lu-button-success-bg);
+}
+
+.lu-btn--danger {
+  background-color: var(--lu-button-danger-bg);
+  color: var(--lu-button-danger-color);
+}
+
+.lu-btn--danger.lu-btn--plain {
+  background-color: var(--lu-button-plain-bg);
+  color: var(--lu-button-danger-bg);
+  border: 1px solid var(--lu-button-danger-bg);
+}
+
+.lu-btn--warning {
+  background-color: var(--lu-button-warning-bg);
+  color: var(--lu-button-warning-color);
+}
+
+.lu-btn--warning.lu-btn--plain {
+  background-color: var(--lu-button-plain-bg);
+  color: var(--lu-button-warning-bg);
+  border: 1px solid var(--lu-button-warning-bg);
+}
+
+/* Legacy variants, kept for backwards compatibility */
 .lu-btn--secondary {
   background-color: var(--lu-color-surface);
   color: var(--lu-color-text-primary);
@@ -46,7 +113,42 @@
   font-size: var(--lu-font-size-lg);
 }
 
-.lu-btn__text {
-  color: inherit;
-  font-weight: inherit;
+.lu-btn--round {
+  border-radius: var(--lu-radius-full);
+}
+
+.lu-btn--square {
+  border-radius: 0;
+}
+
+.lu-btn--block {
+  display: flex;
+  width: 100%;
+}
+
+.lu-btn--loading,
+.lu-btn--disabled,
+.lu-btn.ui-disabled {
+  cursor: not-allowed;
+}
+
+.lu-btn--disabled.lu-btn--default,
+.lu-btn--default.ui-disabled,
+.lu-btn--disabled.lu-btn--primary,
+.lu-btn--primary.ui-disabled,
+.lu-btn--disabled.lu-btn--success,
+.lu-btn--success.ui-disabled,
+.lu-btn--disabled.lu-btn--danger,
+.lu-btn--danger.ui-disabled,
+.lu-btn--disabled.lu-btn--warning,
+.lu-btn--warning.ui-disabled {
+  background-color: var(--lu-button-disabled-bg);
+  color: var(--lu-button-disabled-color);
+  border-color: var(--lu-button-disabled-border-color);
+}
+
+/* Keep legacy primary disabled style for exact backwards compatibility */
+.lu-btn--primary.ui-disabled {
+  background-color: var(--lu-color-disabled);
+  color: var(--lu-color-text-disabled);
 }

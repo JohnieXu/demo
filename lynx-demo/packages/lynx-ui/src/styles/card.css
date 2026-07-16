@@ -1,0 +1,121 @@
+:root,
+page {
+  --lu-card-padding: var(--lu-space-xs) var(--lu-space-md);
+  --lu-card-font-size: var(--lu-font-size-sm);
+  --lu-card-text-color: var(--lu-color-text-primary);
+  --lu-card-background: var(--lu-color-surface);
+  --lu-card-thumb-size: 88px;
+  --lu-card-thumb-radius: var(--lu-radius-lg);
+  --lu-card-title-line-height: 16px;
+  --lu-card-desc-color: var(--lu-color-text-secondary);
+  --lu-card-desc-line-height: var(--lu-line-height-normal);
+  --lu-card-price-color: var(--lu-color-text-primary);
+  --lu-card-origin-price-color: var(--lu-color-text-secondary);
+  --lu-card-num-color: var(--lu-color-text-secondary);
+  --lu-card-origin-price-font-size: var(--lu-font-size-xs);
+  --lu-card-price-font-size: var(--lu-font-size-sm);
+  --lu-card-price-integer-font-size: var(--lu-font-size-lg);
+}
+
+.lu-card {
+  position: relative;
+  box-sizing: border-box;
+  padding: var(--lu-card-padding);
+  color: var(--lu-card-text-color);
+  font-size: var(--lu-card-font-size);
+  background: var(--lu-card-background);
+}
+
+.lu-card__header {
+  display: flex;
+}
+
+.lu-card__thumb {
+  position: relative;
+  flex: none;
+  width: var(--lu-card-thumb-size);
+  height: var(--lu-card-thumb-size);
+  margin-right: var(--lu-space-xs);
+}
+
+.lu-card__thumb image {
+  border-radius: var(--lu-card-thumb-radius);
+}
+
+.lu-card__content {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: var(--lu-card-thumb-size);
+}
+
+.lu-card__content--centered {
+  justify-content: center;
+}
+
+.lu-card__title,
+.lu-card__desc {
+  word-wrap: break-word;
+}
+
+.lu-card__title {
+  max-height: 32px;
+  font-weight: bold;
+  line-height: var(--lu-card-title-line-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.lu-card__desc {
+  max-height: var(--lu-card-desc-line-height);
+  color: var(--lu-card-desc-color);
+  line-height: var(--lu-card-desc-line-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lu-card__bottom {
+  line-height: var(--lu-line-height-normal);
+}
+
+.lu-card__price {
+  display: inline-block;
+  color: var(--lu-card-price-color);
+  font-weight: bold;
+  font-size: var(--lu-card-price-font-size);
+}
+
+.lu-card__price-integer {
+  font-size: var(--lu-card-price-integer-font-size);
+}
+
+.lu-card__origin-price {
+  display: inline-block;
+  margin-left: 5px;
+  color: var(--lu-card-origin-price-color);
+  font-size: var(--lu-card-origin-price-font-size);
+  text-decoration: line-through;
+}
+
+.lu-card__num {
+  float: right;
+  color: var(--lu-card-num-color);
+}
+
+.lu-card__tag {
+  position: absolute;
+  top: 2px;
+  left: 0;
+}
+
+.lu-card__footer {
+  flex: none;
+  text-align: right;
+}

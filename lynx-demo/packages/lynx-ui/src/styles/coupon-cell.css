@@ -1,0 +1,3 @@
+.lu-coupon-cell__value--selected {
+  color: var(--lu-coupon-cell-selected-color, var(--lu-color-danger));
+}

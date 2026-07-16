@@ -1,0 +1,40 @@
+:root {
+  --lu-notify-padding: var(--lu-space-md);
+  --lu-notify-font-size: var(--lu-font-size-md);
+  --lu-notify-line-height: var(--lu-line-height-normal);
+  --lu-notify-text-color: var(--lu-color-text-inverse);
+}
+
+.lu-notify .lu-popup__content {
+  background-color: var(--lu-notify-background, var(--lu-color-danger));
+}
+
+.lu-notify--primary {
+  --lu-notify-background: var(--lu-color-primary);
+}
+
+.lu-notify--success {
+  --lu-notify-background: var(--lu-color-success);
+}
+
+.lu-notify--warning {
+  --lu-notify-background: var(--lu-color-warning);
+}
+
+.lu-notify--danger {
+  --lu-notify-background: var(--lu-color-danger);
+}
+
+.lu-notify__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--lu-notify-padding);
+}
+
+.lu-notify__text {
+  font-size: var(--lu-notify-font-size);
+  line-height: var(--lu-notify-line-height);
+  color: var(--lu-notify-text-color);
+  text-align: center;
+}

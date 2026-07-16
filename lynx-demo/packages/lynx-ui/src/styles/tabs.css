@@ -1,0 +1,83 @@
+.lu-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.lu-tabs__wrap {
+  width: 100%;
+  background-color: var(--lu-color-surface);
+}
+
+.lu-tabs__nav {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+}
+
+.lu-tabs--line .lu-tabs__nav {
+  border-bottom: 1px solid var(--lu-color-border);
+}
+
+.lu-tabs__tab {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 44px;
+  font-size: var(--lu-font-size-base);
+  color: var(--lu-color-text-primary);
+  text-align: center;
+}
+
+.lu-tabs__tab--active {
+  font-weight: 500;
+}
+
+.lu-tabs__tab--disabled {
+  color: var(--lu-color-text-disabled);
+}
+
+.lu-tabs__line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  border-radius: var(--lu-radius-full);
+  background-color: var(--lu-color-primary);
+}
+
+.lu-tabs__content {
+  flex: 1;
+  width: 100%;
+}
+
+.lu-tabs__content--animated {
+  transition: opacity 0.3s;
+}
+
+.lu-tabs__panel {
+  width: 100%;
+}
+
+.lu-tabs--card .lu-tabs__nav {
+  margin: var(--lu-space-sm);
+  padding: var(--lu-space-xs);
+  border: 1px solid var(--lu-color-border);
+  border-radius: var(--lu-radius-md);
+  background-color: var(--lu-color-surface);
+}
+
+.lu-tabs--card .lu-tabs__tab {
+  flex: 1;
+  border-radius: var(--lu-radius-sm);
+  color: var(--lu-color-text-primary);
+}
+
+.lu-tabs--card .lu-tabs__tab--active {
+  color: var(--lu-color-text-inverse);
+  background-color: var(--lu-color-primary);
+}

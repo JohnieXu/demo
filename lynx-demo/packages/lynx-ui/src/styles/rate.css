@@ -1,0 +1,71 @@
+:root,
+.lynx-theme-light {
+  --lu-rate-color: var(--lu-color-warning);
+  --lu-rate-void-color: var(--lu-color-border);
+  --lu-rate-size: 20px;
+  --lu-rate-gutter: 4px;
+  --lu-rate-disabled-opacity: 0.4;
+}
+
+.lu-rate {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.lu-rate__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lu-rate__icon {
+  width: 100%;
+  height: 100%;
+}
+
+.lu-rate__icon--void {
+  color: var(--lu-rate-void-color);
+}
+
+.lu-rate__active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lu-rate__icon--active {
+  color: var(--lu-rate-color);
+  flex-shrink: 0;
+}
+
+.lu-rate__half,
+.lu-rate__touch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.lu-rate__touch {
+  left: 0;
+  right: 0;
+}
+
+.lu-rate__half--left {
+  left: 0;
+  width: 50%;
+}
+
+.lu-rate__half--right {
+  right: 0;
+  width: 50%;
+}
+
+.lu-rate--disabled,
+.lu-rate--readonly {
+  opacity: var(--lu-rate-disabled-opacity);
+}

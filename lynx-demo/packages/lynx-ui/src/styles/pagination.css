@@ -1,0 +1,63 @@
+:root,
+page {
+  --lu-pagination-height: 40px;
+  --lu-pagination-font-size: var(--lu-font-size-base);
+  --lu-pagination-item-width: 36px;
+  --lu-pagination-item-default-color: var(--lu-color-primary);
+  --lu-pagination-item-disabled-color: var(--lu-color-text-tertiary);
+  --lu-pagination-item-disabled-background: var(--lu-color-surface);
+  --lu-pagination-background: var(--lu-color-surface);
+  --lu-pagination-desc-color: var(--lu-color-text-secondary);
+  --lu-pagination-disabled-opacity: 0.6;
+}
+
+.lu-pagination {
+  font-size: var(--lu-pagination-font-size);
+}
+
+.lu-pagination__items {
+  display: flex;
+}
+
+.lu-pagination__item,
+.lu-pagination__page-desc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lu-pagination__item {
+  flex: 1;
+  box-sizing: border-box;
+  min-width: var(--lu-pagination-item-width);
+  height: var(--lu-pagination-height);
+  color: var(--lu-pagination-item-default-color);
+  background: var(--lu-pagination-background);
+}
+
+.lu-pagination__item-text {
+  flex: 1;
+  text-align: center;
+  line-height: var(--lu-pagination-height);
+}
+
+.lu-pagination__item--active {
+  color: var(--lu-color-text-inverse);
+  background-color: var(--lu-pagination-item-default-color);
+}
+
+.lu-pagination__item--page {
+  flex-grow: 0;
+}
+
+.lu-pagination__item--disabled {
+  color: var(--lu-pagination-item-disabled-color);
+  background-color: var(--lu-pagination-item-disabled-background);
+  opacity: var(--lu-pagination-disabled-opacity);
+}
+
+.lu-pagination__page-desc {
+  flex: 1;
+  height: var(--lu-pagination-height);
+  color: var(--lu-pagination-desc-color);
+}

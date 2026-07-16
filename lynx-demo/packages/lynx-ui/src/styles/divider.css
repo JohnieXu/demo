@@ -1,0 +1,52 @@
+.lu-divider {
+  display: flex;
+  align-items: center;
+  margin: var(--lu-space-md) 0;
+  color: var(--lu-divider-color);
+  font-size: var(--lu-font-size-sm);
+}
+
+.lu-divider__line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--lu-divider-border-color);
+}
+
+.lu-divider__line--dashed {
+  background: repeating-linear-gradient(
+    to right,
+    var(--lu-color-border) 0,
+    var(--lu-color-border) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.lu-divider__line--left {
+  margin-right: var(--lu-space-md);
+}
+
+.lu-divider__line--right {
+  margin-left: var(--lu-space-md);
+}
+
+.lu-divider--content-left .lu-divider__line--left {
+  flex: 0.2;
+}
+
+.lu-divider--content-right .lu-divider__line--right {
+  flex: 0.2;
+}
+
+.lu-divider__content {
+  flex-shrink: 0;
+}
+
+.lu-divider--vertical {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin: 0 var(--lu-space-sm);
+  vertical-align: middle;
+  background-color: var(--lu-divider-border-color);
+}

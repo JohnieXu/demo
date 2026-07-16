@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from '@lynx-js/react'
-import { useThrottle } from '@lynx-js/react-use';
+import { useThrottle } from '../utils'
 import type { CSSProperties } from '@lynx-js/types';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarMonth } from './CalendarMonth';

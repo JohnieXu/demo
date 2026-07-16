@@ -1,0 +1,45 @@
+.lu-contact-card {
+  position: relative;
+}
+
+.lu-contact-card__title {
+  margin-left: 5px;
+  line-height: var(--lu-line-height-normal);
+}
+
+.lu-contact-card--add .lu-contact-card__title {
+  line-height: var(--lu-contact-card-add-icon-size, 40px);
+}
+
+.lu-contact-card__icon {
+  width: var(--lu-contact-card-edit-icon-size, 24px);
+  height: var(--lu-contact-card-edit-icon-size, 24px);
+  color: var(--lu-contact-card-icon-color, var(--lu-color-text-secondary));
+}
+
+.lu-contact-card--add .lu-contact-card__icon {
+  width: var(--lu-contact-card-add-icon-size, 40px);
+  height: var(--lu-contact-card-add-icon-size, 40px);
+  color: var(--lu-contact-card-add-icon-color, var(--lu-color-primary));
+}
+
+.lu-contact-card::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--lu-contact-card-border-height, 2px);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--lu-color-warning) 0,
+    var(--lu-color-warning) 20%,
+    transparent 20%,
+    transparent 25%,
+    var(--lu-color-primary) 25%,
+    var(--lu-color-primary) 45%,
+    transparent 45%,
+    transparent 50%
+  );
+  background-size: 80px;
+  content: '';
+}

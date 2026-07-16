@@ -1,0 +1,40 @@
+:root,
+page {
+  --lu-circle-size: 100px;
+  --lu-circle-color: var(--lu-color-primary);
+  --lu-circle-layer-color: var(--lu-color-surface);
+  --lu-circle-text-color: var(--lu-color-text-primary);
+  --lu-circle-text-font-weight: bold;
+  --lu-circle-text-font-size: var(--lu-font-size-base);
+  --lu-circle-text-line-height: var(--lu-line-height-normal);
+}
+
+.lu-circle {
+  position: relative;
+  display: inline-block;
+  width: var(--lu-circle-size);
+  height: var(--lu-circle-size);
+  text-align: center;
+}
+
+.lu-circle__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.lu-circle__text {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 var(--lu-space-xs);
+  color: var(--lu-circle-text-color);
+  font-weight: var(--lu-circle-text-font-weight);
+  font-size: var(--lu-circle-text-font-size);
+  line-height: var(--lu-circle-text-line-height);
+  transform: translateY(-50%);
+}

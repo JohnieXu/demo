@@ -1,0 +1,38 @@
+.lu-tree-select {
+  display: flex;
+  flex-direction: row;
+  height: 300px;
+}
+
+.lu-tree-select__nav {
+  flex: none;
+}
+
+.lu-tree-select__content {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: var(--lu-color-background-2);
+  overflow-y: auto;
+}
+
+.lu-tree-select__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: var(--lu-font-size-md);
+  color: var(--lu-color-text);
+}
+
+.lu-tree-select__item--active {
+  color: var(--lu-color-primary);
+}
+
+.lu-tree-select__item--disabled {
+  color: var(--lu-color-text-disabled);
+}
+
+.lu-tree-select__selected {
+  width: 16px;
+  height: 16px;
+}

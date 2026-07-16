@@ -1,0 +1,29 @@
+.lu-action-bar-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 100%;
+  color: var(--lu-action-bar-icon-color, var(--lu-color-text-primary));
+  font-size: var(--lu-action-bar-icon-text-size, var(--lu-font-size-xs));
+}
+
+.lu-action-bar-icon__icon {
+  width: var(--lu-action-bar-icon-size, 18px);
+  height: var(--lu-action-bar-icon-size, 18px);
+}
+
+.lu-action-bar-icon__text {
+  margin-top: 2px;
+  font-size: var(--lu-action-bar-icon-text-size, var(--lu-font-size-xs));
+  line-height: var(--lu-line-height-tight);
+}
+
+.lu-action-bar-icon--first {
+  margin-left: var(--lu-space-sm);
+}
+
+.lu-action-bar-icon--last {
+  margin-right: var(--lu-space-sm);
+}

@@ -1,0 +1,8 @@
+:root,
+page {
+  --lu-highlight-tag-color: var(--lu-color-primary);
+}
+
+.lu-highlight__tag {
+  color: var(--lu-highlight-tag-color);
+}

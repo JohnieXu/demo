@@ -1,0 +1,97 @@
+:root {
+  --lu-dialog-width: 320px;
+}
+
+/* Let the dialog box define its own width instead of using Popup's default 80%/300px. */
+.lu-dialog-popup .lu-popup__content--center {
+  width: auto;
+  max-width: none;
+}
+
+.lu-dialog {
+  display: flex;
+  flex-direction: column;
+  width: var(--lu-dialog-width);
+  max-width: calc(100vw - 2 * var(--lu-space-lg));
+  background-color: var(--lu-color-surface);
+  overflow: hidden;
+}
+
+.lu-dialog__header {
+  padding-top: var(--lu-space-xl);
+  padding-left: var(--lu-space-lg);
+  padding-right: var(--lu-space-lg);
+  color: var(--lu-color-text-primary);
+  font-size: var(--lu-font-size-lg);
+  font-weight: 600;
+  line-height: var(--lu-line-height-tight);
+  text-align: center;
+}
+
+.lu-dialog__content {
+  padding: var(--lu-space-xl) var(--lu-space-lg);
+  text-align: center;
+}
+
+.lu-dialog__content--has-title {
+  padding-top: var(--lu-space-md);
+}
+
+.lu-dialog__message {
+  color: var(--lu-color-text-secondary);
+  font-size: var(--lu-font-size-base);
+  line-height: var(--lu-line-height-normal);
+}
+
+.lu-dialog__footer {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  border-top: 1px solid var(--lu-color-border);
+}
+
+.lu-dialog__cancel,
+.lu-dialog__confirm {
+  flex: 1;
+  display: flex;
+  min-height: 48px;
+}
+
+.lu-dialog__cancel {
+  border-right: 1px solid var(--lu-color-border);
+}
+
+.lu-dialog__cancel .lu-btn,
+.lu-dialog__confirm .lu-btn {
+  flex: 1;
+  border-radius: 0;
+}
+
+.lu-dialog__cancel .lu-btn:not(.lu-btn--disabled):not(.ui-disabled) {
+  background-color: transparent;
+  border: none;
+  color: var(--lu-color-text-primary);
+}
+
+/* round-button theme */
+.lu-dialog--round-button .lu-dialog__footer {
+  flex-direction: column;
+  padding: var(--lu-space-lg);
+  border-top: none;
+}
+
+.lu-dialog--round-button .lu-dialog__cancel,
+.lu-dialog--round-button .lu-dialog__confirm {
+  flex: none;
+  width: 100%;
+  border-right: none;
+}
+
+.lu-dialog--round-button .lu-dialog__confirm {
+  margin-bottom: var(--lu-space-md);
+}
+
+.lu-dialog--round-button .lu-dialog__cancel .lu-btn,
+.lu-dialog--round-button .lu-dialog__confirm .lu-btn {
+  border-radius: var(--lu-radius-full);
+}

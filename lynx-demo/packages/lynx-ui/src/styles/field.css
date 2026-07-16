@@ -1,0 +1,156 @@
+:root,
+page,
+.lynx-theme-light {
+  --lu-field-label-width: 6.2em;
+  --lu-field-label-color: var(--lu-color-text-primary);
+  --lu-field-value-color: var(--lu-color-text-primary);
+  --lu-field-placeholder-color: var(--lu-color-text-tertiary);
+  --lu-field-icon-color: var(--lu-color-text-tertiary);
+  --lu-field-error-color: var(--lu-color-danger);
+  --lu-field-error-message-color: var(--lu-color-danger);
+  --lu-field-error-message-font-size: var(--lu-font-size-xs);
+  --lu-field-required-color: var(--lu-color-danger);
+  --lu-field-disabled-color: var(--lu-color-text-disabled);
+  --lu-field-clear-icon-size: 16px;
+  --lu-field-word-limit-color: var(--lu-color-text-tertiary);
+  --lu-field-word-limit-font-size: var(--lu-font-size-sm);
+  --lu-field-cell-padding: var(--lu-space-sm) var(--lu-space-md);
+  --lu-field-background: var(--lu-color-surface);
+  --lu-field-border-color: var(--lu-color-border);
+}
+
+.lu-field {
+  display: flex;
+  align-items: center;
+  padding: var(--lu-field-cell-padding);
+  background-color: var(--lu-field-background);
+  box-sizing: border-box;
+}
+
+.lu-field--error .lu-field__control {
+  color: var(--lu-field-error-color);
+}
+
+.lu-field--disabled {
+  color: var(--lu-field-disabled-color);
+}
+
+.lu-field--readonly {
+  color: var(--lu-field-disabled-color);
+}
+
+.lu-field__label {
+  flex: none;
+  width: var(--lu-field-label-width);
+  color: var(--lu-field-label-color);
+  font-size: var(--lu-font-size-base);
+  line-height: var(--lu-line-height-normal);
+}
+
+.lu-field--label-center .lu-field__label {
+  text-align: center;
+}
+
+.lu-field--label-right .lu-field__label {
+  text-align: right;
+}
+
+.lu-field__label-text {
+  color: inherit;
+}
+
+.lu-field__left-icon,
+.lu-field__right-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-right: var(--lu-space-xs);
+  color: var(--lu-field-icon-color);
+}
+
+.lu-field__right-icon {
+  margin-right: 0;
+  margin-left: var(--lu-space-xs);
+}
+
+.lu-field__body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.lu-field__control {
+  flex: 1;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--lu-field-value-color);
+  font-size: var(--lu-font-size-base);
+  line-height: var(--lu-line-height-normal);
+  placeholder-color: var(--lu-field-placeholder-color);
+  outline: none;
+}
+
+.lu-field__control--left {
+  text-align: left;
+}
+
+.lu-field__control--center {
+  text-align: center;
+}
+
+.lu-field__control--right {
+  text-align: right;
+}
+
+.lu-field__control:disabled,
+.lu-field__control[readonly] {
+  color: var(--lu-field-disabled-color);
+}
+
+.lu-field__clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--lu-field-clear-icon-size);
+  height: var(--lu-field-clear-icon-size);
+  margin-left: var(--lu-space-xs);
+  color: var(--lu-field-icon-color);
+}
+
+.lu-field__clear-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.lu-field__word-limit {
+  display: flex;
+  flex: none;
+  margin-left: var(--lu-space-xs);
+  color: var(--lu-field-word-limit-color);
+  font-size: var(--lu-field-word-limit-font-size);
+}
+
+.lu-field__word-num {
+  color: inherit;
+}
+
+.lu-field__error-message {
+  padding: 0 var(--lu-space-md) var(--lu-space-sm);
+  color: var(--lu-field-error-message-color);
+  font-size: var(--lu-field-error-message-font-size);
+  line-height: var(--lu-line-height-normal);
+  background-color: var(--lu-field-background);
+}
+
+.lu-field--required .lu-field__label::before {
+  content: '*';
+  color: var(--lu-field-required-color);
+  margin-right: 2px;
+}

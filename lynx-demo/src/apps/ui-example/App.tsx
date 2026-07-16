@@ -1,6 +1,6 @@
 import { useState } from '@lynx-js/react'
 import { Outlet } from 'react-router'
-import { ConfigProvider, ToastProvider } from 'lynx-ui'
+import { ConfigProvider, NotifyProvider, ToastProvider } from 'lynx-ui'
 import type { ThemeMode } from 'lynx-ui'
 import { useBackHandler } from './hooks/useBackHandler'
 import './App.css'
@@ -21,9 +21,11 @@ export function App() {
   return (
     <ConfigProvider theme={theme} className="ui-example-root">
       <ToastProvider>
-        <view className="ui-example">
-          <Outlet context={context} />
-        </view>
+        <NotifyProvider>
+          <view className="ui-example">
+            <Outlet context={context} />
+          </view>
+        </NotifyProvider>
       </ToastProvider>
     </ConfigProvider>
   )

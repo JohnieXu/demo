@@ -1,0 +1,68 @@
+:root,
+page {
+  --lu-steps-text-color: var(--lu-color-text-primary);
+  --lu-steps-inactive-text-color: var(--lu-color-text-tertiary);
+  --lu-steps-line-color: var(--lu-color-border);
+  --lu-steps-active-line-color: var(--lu-color-primary);
+}
+
+.lu-steps {
+  display: flex;
+}
+
+.lu-steps--horizontal {
+  flex-direction: row;
+}
+
+.lu-steps--vertical {
+  flex-direction: column;
+}
+
+.lu-steps__items {
+  display: flex;
+  flex: 1;
+}
+
+.lu-steps--horizontal .lu-steps__items {
+  flex-direction: row;
+}
+
+.lu-steps--vertical .lu-steps__items {
+  flex-direction: column;
+}
+
+.lu-step {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.lu-steps--horizontal .lu-step {
+  flex-direction: column;
+}
+
+.lu-steps--vertical .lu-step {
+  flex-direction: row;
+}
+
+.lu-step__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.lu-step__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.lu-step__title {
+  font-size: var(--lu-font-size-sm);
+}
+
+.lu-step__desc {
+  font-size: var(--lu-font-size-xs);
+}

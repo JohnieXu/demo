@@ -1,0 +1,62 @@
+.lu-stepper {
+  --lu-stepper-button-size: 28px;
+  --lu-stepper-button-bg: var(--lu-color-disabled-bg);
+  --lu-stepper-button-color: var(--lu-color-text-primary);
+  --lu-stepper-input-width: 40px;
+  --lu-stepper-input-bg: var(--lu-color-disabled-bg);
+  --lu-stepper-input-color: var(--lu-color-text-primary);
+  --lu-stepper-disabled-color: var(--lu-color-text-disabled);
+  --lu-stepper-border-radius: var(--lu-radius-sm);
+
+  display: flex;
+  align-items: center;
+}
+
+.lu-stepper--round {
+  --lu-stepper-border-radius: var(--lu-radius-full);
+}
+
+.lu-stepper--disabled {
+  opacity: 0.5;
+}
+
+.lu-stepper__button {
+  box-sizing: border-box;
+  width: var(--lu-stepper-button-size);
+  height: var(--lu-stepper-button-size);
+  background-color: var(--lu-stepper-button-bg);
+  color: var(--lu-stepper-button-color);
+  border-radius: var(--lu-stepper-border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lu-stepper__button--disabled {
+  color: var(--lu-stepper-disabled-color);
+}
+
+.lu-stepper__icon {
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.lu-stepper__input {
+  box-sizing: border-box;
+  width: var(--lu-stepper-input-width);
+  height: var(--lu-stepper-button-size);
+  margin: 0 4px;
+  padding: 0;
+  text-align: center;
+  background-color: var(--lu-stepper-input-bg);
+  color: var(--lu-stepper-input-color);
+  border-radius: var(--lu-stepper-border-radius);
+  font-size: var(--lu-font-size-base);
+  border: none;
+}
+
+.lu-stepper__input:disabled,
+.lu-stepper__input[readonly] {
+  color: var(--lu-stepper-disabled-color);
+}

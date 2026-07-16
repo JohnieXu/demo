@@ -41,6 +41,51 @@ page,
   --lu-toast-background: rgba(0, 0, 0, 0.7);
   --lu-toast-text-color: #ffffff;
 
+  /* Component tokens — light mode defaults */
+  /* Tag */
+  --lu-tag-default-background: var(--lu-color-surface);
+  --lu-tag-default-color: var(--lu-color-text-primary);
+  --lu-tag-default-border-color: var(--lu-color-border);
+
+  /* Divider */
+  --lu-divider-color: var(--lu-color-text-tertiary);
+  --lu-divider-border-color: var(--lu-color-border);
+
+  /* Cell */
+  --lu-cell-background: var(--lu-color-surface);
+  --lu-cell-border-color: var(--lu-color-border);
+  --lu-cell-title-color: var(--lu-color-text-primary);
+  --lu-cell-value-color: var(--lu-color-text-secondary);
+  --lu-cell-label-color: var(--lu-color-text-tertiary);
+  --lu-cell-required-color: var(--lu-color-danger);
+  --lu-cell-arrow-color: var(--lu-color-text-tertiary);
+  --lu-cell-group-title-color: var(--lu-color-text-tertiary);
+
+  /* Empty */
+  --lu-empty-description-color: var(--lu-color-text-tertiary);
+  --lu-empty-image-color: var(--lu-color-border);
+  --lu-empty-image-bg: var(--lu-color-surface);
+
+  /* Loading */
+  --lu-loading-color: var(--lu-color-text-tertiary);
+
+  /* Button */
+  --lu-button-default-bg: var(--lu-color-surface);
+  --lu-button-default-color: var(--lu-color-text-primary);
+  --lu-button-default-border-color: var(--lu-color-border);
+  --lu-button-primary-bg: var(--lu-color-primary);
+  --lu-button-primary-color: var(--lu-color-text-inverse);
+  --lu-button-success-bg: var(--lu-color-success);
+  --lu-button-success-color: var(--lu-color-text-inverse);
+  --lu-button-danger-bg: var(--lu-color-danger);
+  --lu-button-danger-color: var(--lu-color-text-inverse);
+  --lu-button-warning-bg: var(--lu-color-warning);
+  --lu-button-warning-color: var(--lu-color-text-inverse);
+  --lu-button-plain-bg: transparent;
+  --lu-button-disabled-bg: var(--lu-color-disabled-bg);
+  --lu-button-disabled-color: var(--lu-color-text-disabled);
+  --lu-button-disabled-border-color: var(--lu-color-border);
+
   /* Spacing (px-based for postcss-px-to-viewport conversion) */
   --lu-space-xs: 4px;
   --lu-space-sm: 8px;
@@ -80,6 +125,47 @@ page,
   --lu-calendar-range-middle-opacity: 0.1;
   --lu-calendar-month-mark-color: rgba(242, 243, 245, 0.8);
   --lu-calendar-weekday-color: #999999;
+
+  /* SubmitBar */
+  --lu-submit-bar-height: 50px;
+  --lu-submit-bar-z-index: 100;
+  --lu-submit-bar-background: var(--lu-color-surface);
+  --lu-submit-bar-button-width: 110px;
+  --lu-submit-bar-price-color: var(--lu-color-danger);
+  --lu-submit-bar-price-font-size: var(--lu-font-size-sm);
+  --lu-submit-bar-price-integer-font-size: var(--lu-font-size-2xl);
+  --lu-submit-bar-text-color: var(--lu-color-text-primary);
+  --lu-submit-bar-text-font-size: var(--lu-font-size-md);
+  --lu-submit-bar-tip-padding: var(--lu-space-xs) var(--lu-space-sm);
+  --lu-submit-bar-tip-font-size: var(--lu-font-size-sm);
+  --lu-submit-bar-tip-line-height: var(--lu-line-height-normal);
+  --lu-submit-bar-tip-color: var(--lu-color-warning);
+  --lu-submit-bar-tip-background: rgba(250, 173, 20, 0.1);
+  --lu-submit-bar-tip-icon-size: 12px;
+  --lu-submit-bar-button-height: 40px;
+  --lu-submit-bar-padding: 0 var(--lu-space-md);
+
+  /* ContactCard */
+  --lu-contact-card-add-icon-size: 40px;
+  --lu-contact-card-edit-icon-size: 24px;
+  --lu-contact-card-icon-color: var(--lu-color-text-secondary);
+  --lu-contact-card-add-icon-color: var(--lu-color-primary);
+  --lu-contact-card-border-height: 2px;
+
+  /* CouponCell */
+  --lu-coupon-cell-selected-color: var(--lu-color-danger);
+
+  /* ActionBar */
+  --lu-action-bar-height: 50px;
+  --lu-action-bar-background: var(--lu-color-surface);
+  --lu-action-bar-z-index: 100;
+
+  /* ActionBarButton */
+  --lu-action-bar-button-height: 40px;
+  --lu-action-bar-button-gap: 5px;
+  --lu-action-bar-button-radius: var(--lu-radius-full);
+  --lu-action-bar-button-warning-bg: var(--lu-button-warning-bg);
+  --lu-action-bar-button-danger-bg: var(--lu-button-danger-bg);
 }
 
 .lynx-theme-dark {
@@ -123,7 +209,46 @@ page,
   --lu-toast-background: rgba(255, 255, 255, 0.9);
   --lu-toast-text-color: #333333;
 
+  /* Component tokens — dark mode overrides */
+  --lu-tag-default-background: var(--lu-color-surface);
+  --lu-tag-default-border-color: var(--lu-color-border);
+
+  --lu-cell-background: var(--lu-color-surface);
+  --lu-cell-border-color: var(--lu-color-border);
+
+  --lu-empty-image-color: var(--lu-color-border);
+  --lu-empty-image-bg: var(--lu-color-surface);
+
+  /* Button */
+  --lu-button-default-bg: var(--lu-color-surface);
+  --lu-button-default-color: var(--lu-color-text-primary);
+  --lu-button-default-border-color: var(--lu-color-border);
+  --lu-button-disabled-bg: var(--lu-color-disabled-bg);
+  --lu-button-disabled-color: var(--lu-color-text-disabled);
+  --lu-button-disabled-border-color: var(--lu-color-border);
+
   /* Calendar-specific */
   --lu-calendar-month-mark-color: rgba(255, 255, 255, 0.05);
   --lu-calendar-weekday-color: #808080;
+
+  /* SubmitBar */
+  --lu-submit-bar-background: var(--lu-color-surface);
+  --lu-submit-bar-text-color: var(--lu-color-text-primary);
+  --lu-submit-bar-price-color: var(--lu-color-danger);
+  --lu-submit-bar-tip-color: var(--lu-color-warning);
+  --lu-submit-bar-tip-background: rgba(250, 173, 20, 0.15);
+
+  /* ContactCard */
+  --lu-contact-card-icon-color: var(--lu-color-text-secondary);
+  --lu-contact-card-add-icon-color: var(--lu-color-primary);
+
+  /* CouponCell */
+  --lu-coupon-cell-selected-color: var(--lu-color-danger);
+
+  /* ActionBar */
+  --lu-action-bar-background: var(--lu-color-surface);
+
+  /* ActionBarButton */
+  --lu-action-bar-button-warning-bg: var(--lu-button-warning-bg);
+  --lu-action-bar-button-danger-bg: var(--lu-button-danger-bg);
 }

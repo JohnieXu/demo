@@ -1,0 +1,78 @@
+.lu-submit-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: var(--lu-submit-bar-z-index);
+  width: 100%;
+  background: var(--lu-submit-bar-background);
+  box-sizing: border-box;
+}
+
+.lu-submit-bar__tip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: var(--lu-submit-bar-tip-padding);
+  color: var(--lu-submit-bar-tip-color);
+  font-size: var(--lu-submit-bar-tip-font-size);
+  line-height: var(--lu-submit-bar-tip-line-height);
+  background: var(--lu-submit-bar-tip-background);
+}
+
+.lu-submit-bar__tip-icon {
+  margin-right: var(--lu-space-xs);
+  font-size: var(--lu-submit-bar-tip-icon-size);
+}
+
+.lu-submit-bar__tip-text {
+  flex: 1;
+}
+
+.lu-submit-bar__bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  height: var(--lu-submit-bar-height);
+  padding: var(--lu-submit-bar-padding);
+  font-size: var(--lu-submit-bar-text-font-size);
+}
+
+.lu-submit-bar__text {
+  flex: 1;
+  padding-right: var(--lu-space-sm);
+  color: var(--lu-submit-bar-text-color);
+  text-align: right;
+}
+
+.lu-submit-bar__label,
+.lu-submit-bar__price,
+.lu-submit-bar__suffix-label {
+  display: inline-block;
+}
+
+.lu-submit-bar__suffix-label {
+  margin-left: var(--lu-space-xs);
+  font-weight: bold;
+}
+
+.lu-submit-bar__price {
+  margin-left: var(--lu-space-xs);
+  color: var(--lu-submit-bar-price-color);
+  font-weight: bold;
+  font-size: var(--lu-submit-bar-price-font-size);
+}
+
+.lu-submit-bar__price-integer {
+  font-size: var(--lu-submit-bar-price-integer-font-size);
+}
+
+.lu-submit-bar__button {
+  width: var(--lu-submit-bar-button-width);
+  height: var(--lu-submit-bar-button-height);
+  font-weight: bold;
+}
+
+.lu-submit-bar__placeholder {
+  height: var(--lu-submit-bar-height);
+}

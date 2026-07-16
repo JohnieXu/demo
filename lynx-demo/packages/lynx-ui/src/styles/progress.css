@@ -1,0 +1,51 @@
+:root,
+page {
+  --lu-progress-height: 4px;
+  --lu-progress-color: var(--lu-color-primary);
+  --lu-progress-inactive-color: var(--lu-color-text-tertiary);
+  --lu-progress-background: var(--lu-color-border);
+  --lu-progress-pivot-padding: 0 5px;
+  --lu-progress-pivot-text-color: var(--lu-color-text-inverse);
+  --lu-progress-pivot-font-size: var(--lu-font-size-xs);
+  --lu-progress-pivot-line-height: 1.6;
+  --lu-progress-pivot-background: var(--lu-color-primary);
+}
+
+.lu-progress {
+  position: relative;
+  height: var(--lu-progress-height);
+  background: var(--lu-progress-background);
+  border-radius: var(--lu-progress-height);
+}
+
+.lu-progress__portion {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--lu-progress-color);
+  border-radius: inherit;
+  transform-origin: 0;
+}
+
+.lu-progress__portion--inactive {
+  background: var(--lu-progress-inactive-color);
+}
+
+.lu-progress__pivot {
+  position: absolute;
+  top: 50%;
+  box-sizing: border-box;
+  min-width: 3.6em;
+  padding: var(--lu-progress-pivot-padding);
+  color: var(--lu-progress-pivot-text-color);
+  font-size: var(--lu-progress-pivot-font-size);
+  line-height: var(--lu-progress-pivot-line-height);
+  text-align: center;
+  background: var(--lu-progress-pivot-background);
+  border-radius: 1em;
+}
+
+.lu-progress__pivot--inactive {
+  background: var(--lu-progress-inactive-color);
+}

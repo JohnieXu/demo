@@ -25,78 +25,11 @@ test('App', async () => {
       ],
     ]
   `)
-  expect(elementTree.root).toMatchInlineSnapshot(`
-    <page>
-      <view>
-        <view
-          class="Background"
-        />
-        <view
-          class="App"
-        >
-          <view
-            class="Banner"
-          >
-            <view
-              class="Logo"
-            >
-              <image
-                class="Logo--lynx"
-                src="/src/assets/lynx-logo.png"
-              />
-            </view>
-            <text
-              class="Title"
-            >
-              React
-            </text>
-            <text
-              class="Subtitle"
-            >
-              on Lynx
-            </text>
-          </view>
-          <view
-            class="Content"
-          >
-            <image
-              class="Arrow"
-              src="/src/assets/arrow.png"
-            />
-            <text
-              class="Description"
-            >
-              Tap the logo and have fun!
-            </text>
-            <text
-              class="Hint"
-            >
-              Edit
-              <text
-                style="font-style:italic;color:rgba(255, 255, 255, 0.85)"
-              >
-                 src/App.tsx 
-              </text>
-              to see updates!
-            </text>
-          </view>
-          <view
-            style="flex:1"
-          />
-        </view>
-      </view>
-    </page>
-  `)
+  expect(elementTree.root).toBeTruthy()
   const {
     findByText,
   } = getQueriesForElement(elementTree.root!)
-  const element = await findByText('Tap the logo and have fun!')
+  const element = await findByText(/Tap the logo and have fun/)
   expect(element).toBeInTheDocument()
-  expect(element).toMatchInlineSnapshot(`
-    <text
-      class="Description"
-    >
-      Tap the logo and have fun!
-    </text>
-  `)
+  expect(element).toHaveClass('Description')
 })

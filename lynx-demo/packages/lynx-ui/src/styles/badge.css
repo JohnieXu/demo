@@ -1,0 +1,68 @@
+.lu-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  padding: 0 4px;
+  color: var(--lu-color-text-inverse);
+  font-size: var(--lu-font-size-xs);
+  font-weight: 600;
+  line-height: 16px;
+  border-radius: var(--lu-radius-full);
+  background-color: var(--lu-color-danger);
+  box-sizing: border-box;
+}
+
+.lu-badge__wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Modifier: fixed (absolute, anchored to a corner of __wrapper) */
+.lu-badge--fixed {
+  position: absolute;
+  z-index: 1;
+  transform-origin: 100%;
+}
+
+.lu-badge--fixed.lu-badge--top-left {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.lu-badge--fixed.lu-badge--top-right {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.lu-badge--fixed.lu-badge--bottom-left {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+}
+
+.lu-badge--fixed.lu-badge--bottom-right {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+/* Modifier: inline (no wrapper, badge flows in parent's flex/grid layout) */
+.lu-badge--inline {
+  position: relative;
+}
+
+.lu-badge--dot {
+  min-width: 8px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+}
+
+.lu-badge__text {
+  color: inherit;
+}
