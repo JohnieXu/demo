@@ -1,9 +1,12 @@
-import { useNavigate } from 'react-router'
+import { useNavigate, useOutletContext } from 'react-router'
+import type { ScrollEvent } from '@lynx-js/types'
 import { DEMOS } from '../registry'
 import { ThemeToggle } from '../components/ThemeToggle'
+import type { UiExampleContext } from '../App'
 
 export function Home() {
   const navigate = useNavigate()
+  const { getHomeScrollTop, setHomeScrollTop } = useOutletContext<UiExampleContext>()
 
   // Distinct categories, preserving first-seen order (avoids relying on
   // Set-spread downlevel iteration).
@@ -11,6 +14,18 @@ export function Home() {
     (acc, demo) => (acc.includes(demo.category) ? acc : [...acc, demo.category]),
     [],
   )
+
+  const handleScroll = (e: ScrollEvent) => {
+    'background only'
+    setHomeScrollTop(e.detail.scrollTop ?? 0)
+  }
+
+  const handleItemTap = (key: string) => {
+    // Capture the current scroll position right before navigation to avoid
+    // any race between the last scroll event and the route transition.
+    setHomeScrollTop(getHomeScrollTop())
+    navigate(`/component/${key}`)
+  }
 
   return (
     <view className="home">
@@ -22,6 +37,8 @@ export function Home() {
         className="home__body"
         scroll-orientation="vertical"
         scroll-y
+        initial-scroll-offset={getHomeScrollTop()}
+        bindscroll={handleScroll}
       >
         {categories.map((category) => (
           <view key={category} className="home__group">
@@ -30,7 +47,7 @@ export function Home() {
               <view
                 key={demo.key}
                 className="home__item"
-                bindtap={() => navigate(`/component/${demo.key}`)}
+                bindtap={() => handleItemTap(demo.key)}
               >
                 <view className="home__item-main">
                   <text className="home__item-title">{demo.title}</text>
