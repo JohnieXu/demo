@@ -20,7 +20,8 @@ export const Refresh = forwardRef<RefreshRef, RefreshProps>(
   function Refresh(props, ref) {
     const supported = isRefreshSupported()
     if (supported) {
-      return <NativeRefresh ref={ref} {...props} />
+      // FIXME: refresh has a bug: the elemnt in wrapper is positioned relative to content not it's parent
+      return <NativeRefresh ref={ref} {...props} />;
     }
     return <SimulatedRefresh ref={ref} {...props} />
   },

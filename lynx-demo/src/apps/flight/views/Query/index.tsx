@@ -13,34 +13,34 @@ import type { TabType, QueryCabinClass } from '../../constants'
 
 export function Query() {
   const navigate = useNavigate();
-  const { searchParams, setSearchParams } = useFlightStore()
+  const { searchParams, setSearchParams } = useFlightStore();
   const [activeTab, setActiveTab] = useState<TabType>(searchParams.tab);
-  const [selectedCabin, setSelectedCabin] = useState<QueryCabinClass>(searchParams.cabin);
-  const [showCalendar, setShowCalendar] = useState(false)
+  // const [selectedCabin, setSelectedCabin] = useState<QueryCabinClass>(searchParams.cabin);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const departureDisplay = useMemo(
     () => formatDateDisplay(searchParams.departureDate),
     [searchParams.departureDate],
-  )
+  );
 
   const arrivalDisplay = useMemo(
     () => formatDateDisplay(searchParams.arrivalDate),
     [searchParams.arrivalDate],
-  )
+  );
 
   const selectedDate = useMemo(
     () => parseYyyyMmDd(searchParams.departureDate).toDate(),
     [searchParams.departureDate],
-  )
+  );
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
-    setSearchParams({ tab })
+    setSearchParams({ tab });
   };
 
   const handleCabinChange = (cabin: QueryCabinClass) => {
-    setSelectedCabin(cabin);
-    setSearchParams({ cabin })
+    // setSelectedCabin(cabin);
+    setSearchParams({ cabin });
   };
 
   const handleSearch = () => {
@@ -52,10 +52,10 @@ export function Query() {
   };
 
   const handleDateConfirm = (date: Date | Date[]) => {
-    const selected = Array.isArray(date) ? date[0] : date
-    setSearchParams({ departureDate: formatYyyyMmDd(selected) })
-    setShowCalendar(false)
-  }
+    const selected = Array.isArray(date) ? date[0] : date;
+    setSearchParams({ departureDate: formatYyyyMmDd(selected) });
+    setShowCalendar(false);
+  };
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
     if (tab === 'order') {
@@ -72,7 +72,10 @@ export function Query() {
         {/* Tabs */}
         <view className="tabs">
           <view className="tabs-bg"></view>
-          <view className="tab-item" bindtap={() => handleTabChange(TAB_TYPE.Flight)}>
+          <view
+            className="tab-item"
+            bindtap={() => handleTabChange(TAB_TYPE.Flight)}
+          >
             <text
               className={clsx(
                 'tab-text',
@@ -88,7 +91,10 @@ export function Query() {
               )}
             />
           </view>
-          <view className="tab-item" bindtap={() => handleTabChange(TAB_TYPE.Train)}>
+          <view
+            className="tab-item"
+            bindtap={() => handleTabChange(TAB_TYPE.Train)}
+          >
             <text
               className={clsx(
                 'tab-text',
@@ -121,8 +127,8 @@ export function Query() {
               <view
                 className="date-selection date-selection--start"
                 bindtap={() => {
-                  console.log('点击出发出发日期')
-                  setShowCalendar(true)
+                  console.log('点击出发出发日期');
+                  setShowCalendar(true);
                 }}
               >
                 <text className="date-text">{departureDisplay.dateText}</text>
@@ -140,7 +146,7 @@ export function Query() {
                 { id: QUERY_CABIN_CLASS.NoLimit, label: '不限舱位' },
                 { id: QUERY_CABIN_CLASS.Business, label: '公务/头等舱' },
               ]}
-              activeId={selectedCabin}
+              activeId={searchParams.cabin}
               onSegmentChange={handleCabinChange}
             ></Segments>
 

@@ -290,7 +290,7 @@ export function FlightList() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            paddingTop: '100px',
+            // paddingTop: '100px',
           }}
         >
           <DateSelector
@@ -330,9 +330,9 @@ export function FlightList() {
           {/*  <FlightSkeleton />*/}
           {/*)}*/}
 
-          {/*{!flightListHook.loading && displayFlights.length === 0 && (*/}
-          {/*  <EmptyState text={flightListHook.noDataText} />*/}
-          {/*)}*/}
+          {!flightListHook.loading && displayFlights.length === 0 && (
+            <EmptyState text={flightListHook.noDataText} />
+          )}
           <list
             className="flight-list-scroll"
             scroll-orientation="vertical"

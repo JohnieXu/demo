@@ -238,7 +238,7 @@
 }
 
 .popup-demo-panel--center {
-  width: 240px;
+  width: 100%;
   min-height: 160px;
 }
 

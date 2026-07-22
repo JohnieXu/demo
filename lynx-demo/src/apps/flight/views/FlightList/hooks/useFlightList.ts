@@ -52,7 +52,7 @@ export function useFlightList(options: UseFlightListOptions) {
 
         console.log('search with params', params);
         const result = await repoRef.current.searchV2(params);
-        console.log('result', result);
+        console.log('flight search result', result);
 
         // Race condition protection: discard stale responses
         if (currentReqId !== flightListReqId.current) return;
