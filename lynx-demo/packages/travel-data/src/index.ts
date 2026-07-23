@@ -22,3 +22,16 @@ export * from './flight/dto.js'
 export { TrainRepository } from './train/repository.js'
 export { TrainRemoteDataSource } from './train/datasource.js'
 export * from './train/dto.js'
+
+// Presale ("先囤后约")
+export {
+  PresaleProductRepository,
+  PresaleHotelRepository,
+  PresaleOrderRepository,
+  PresaleAppointmentRepository,
+  PresaleInventoryRepository,
+  PresalePassengerRepository,
+  PresaleRefundRepository,
+} from './presale/repository.js'
+export { PresaleRemoteDataSource } from './presale/datasource.js'
+export * from './presale/dto.js'
