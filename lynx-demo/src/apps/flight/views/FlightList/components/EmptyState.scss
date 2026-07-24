@@ -1,10 +1,12 @@
 .empty-state {
   width: 100%;
+  height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 40px 0;
+  margin: 0 auto;
 
   &__text {
     font-size: 12px;

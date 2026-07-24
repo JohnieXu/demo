@@ -169,7 +169,10 @@ export function FlightList() {
       'background only';
       if (result.labels?.length) {
         setFilterLabels(
-          result.labels.map((l) => ({ label: l.label, value: l.value })),
+          result.labels.map((l) => ({
+            label: l.label,
+            value: l.value || l.label, // FIX: value maybe undefined
+          })),
         );
       }
       filter.syncFilterPopupOptionsByFlightData({
@@ -302,7 +305,7 @@ export function FlightList() {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
               height: '36px',
             }}
           >

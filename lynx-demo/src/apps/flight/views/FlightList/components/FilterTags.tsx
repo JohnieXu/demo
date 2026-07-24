@@ -1,19 +1,20 @@
 import { clsx } from 'clsx'
-import './FilterTags.scss'
+import { useEffect } from '@lynx-js/react';
+import './FilterTags.scss';
 
 export interface FilterLabelItem {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 interface FilterTagsProps {
-  labels: FilterLabelItem[]
-  selectedLabels: string[]
-  onChange: (selectedValues: string[]) => void
-  loading?: boolean
-  nodata?: boolean
-  className?: string
-  style?: Record<string, string | number>
+  labels: FilterLabelItem[];
+  selectedLabels: string[];
+  onChange: (selectedValues: string[]) => void;
+  loading?: boolean;
+  nodata?: boolean;
+  className?: string;
+  style?: Record<string, string | number>;
 }
 
 export function FilterTags({
@@ -25,19 +26,23 @@ export function FilterTags({
   className,
   style,
 }: FilterTagsProps) {
+  useEffect(() => {
+    console.log('FilterTags', labels, selectedLabels);
+  }, [labels, selectedLabels]);
+
   if (loading || nodata || !labels.length) {
-    return null
+    return null;
   }
 
   const toggleLabel = (value: string) => {
-    const set = new Set(selectedLabels)
+    const set = new Set(selectedLabels);
     if (set.has(value)) {
-      set.delete(value)
+      set.delete(value);
     } else {
-      set.add(value)
+      set.add(value);
     }
-    onChange(Array.from(set))
-  }
+    onChange(Array.from(set));
+  };
 
   return (
     <view className={clsx('filter-tags', className)} style={style}>
@@ -48,11 +53,11 @@ export function FilterTags({
       >
         {labels.map((item) => (
           <view
-            key={item.value}
+            key={`${item.label + item.value}`}
             className={clsx(
               'filter-tags__item',
               selectedLabels.includes(item.value) &&
-                'filter-tags__item--active'
+                'filter-tags__item--active',
             )}
             bindtap={() => toggleLabel(item.value)}
           >
@@ -61,5 +66,5 @@ export function FilterTags({
         ))}
       </scroll-view>
     </view>
-  )
+  );
 }
