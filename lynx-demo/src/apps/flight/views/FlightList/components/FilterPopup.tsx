@@ -126,29 +126,31 @@ export function FilterPopup({
       <view className="filter-popup__content">
         <view className="filter-popup__header">
           <text className="filter-popup__title">筛选</text>
-          <text className="filter-popup__close" bindtap={onClose}>✕</text>
+          <text className="filter-popup__close" bindtap={onClose}>
+            ✕
+          </text>
         </view>
 
-        <view className="filter-popup__body">
-          <view className="filter-popup__tabs">
-            {tabs.map((tab) => (
-              <view
-                key={tab.key}
-                className={clsx(
-                  'filter-popup__tab',
-                  activeTab === tab.key && 'filter-popup__tab--active'
-                )}
-                bindtap={() => setActiveTab(tab.key)}
-              >
-                <text className="filter-popup__tab-text">{tab.label}</text>
-              </view>
-            ))}
-          </view>
+        <scroll-view style={{ height: '100%' }}>
+          <view className="filter-popup__body">
+            <view className="filter-popup__tabs">
+              {tabs.map((tab) => (
+                <view
+                  key={tab.key}
+                  className={clsx(
+                    'filter-popup__tab',
+                    activeTab === tab.key && 'filter-popup__tab--active',
+                  )}
+                  bindtap={() => setActiveTab(tab.key)}
+                >
+                  <text className="filter-popup__tab-text">{tab.label}</text>
+                </view>
+              ))}
+            </view>
 
-          <view className="filter-popup__panel">
-            {renderContent()}
+            <view className="filter-popup__panel">{renderContent()}</view>
           </view>
-        </view>
+        </scroll-view>
 
         <view className="filter-popup__footer">
           <view className="filter-popup__reset" bindtap={onReset}>
@@ -156,11 +158,13 @@ export function FilterPopup({
           </view>
           <view className="filter-popup__confirm" bindtap={onConfirm}>
             <text className="filter-popup__confirm-text">
-              {previewLoading ? '加载中...' : `查看结果${previewCount > 0 ? ` (${previewCount})` : ''}`}
+              {previewLoading
+                ? '加载中...'
+                : `查看结果${previewCount > 0 ? ` (${previewCount})` : ''}`}
             </text>
           </view>
         </view>
       </view>
     </view>
-  )
+  );
 }

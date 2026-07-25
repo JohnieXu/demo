@@ -329,9 +329,9 @@ export function FlightList() {
             </view>
           </view>
 
-          {/*{flightListHook.loading && !flightListHook.refreshing && (*/}
-          {/*  <FlightSkeleton />*/}
-          {/*)}*/}
+          {flightListHook.loading && !flightListHook.refreshing && (
+            <FlightSkeleton />
+          )}
 
           {!flightListHook.loading && displayFlights.length === 0 && (
             <EmptyState text={flightListHook.noDataText} />
