@@ -400,6 +400,28 @@ export interface ReservationSnapshotDto {
   checkOutDate: string
 }
 
+export interface StayDateDto {
+  /** 入住日期 yyyy-MM-dd */
+  stayDate: string
+  /** 该晚每份价格（原商品每份每晚单价 + 当晚加价） */
+  price: number
+}
+
+export interface SurchargeDetailDto {
+  /** 酒店连住晚数 */
+  nights: number
+  /** 预约份数 */
+  reserveCount: number
+  /** 预约总价（预约单价 × 晚数 × 份数，不含加价后的总价） */
+  reservationPrice: number
+  /** 当前选中的预约总价（包含加价后的总价） */
+  selectedTotalPrice: number
+  /** 单晚单价（= 预约单价 / 晚数） */
+  unitPricePerNight: number
+  /** 客人入住明细 */
+  stayDates: StayDateDto[]
+}
+
 export interface ReservationValidateRequestDto {
   preSaleOrderBaseId: string
   orderType: number
@@ -411,7 +433,7 @@ export interface ReservationValidateResponseDto {
   failReason?: string
   needSurcharge: boolean
   surchargeAmount?: number
-  surchargeDetail?: string
+  surchargeDetail?: SurchargeDetailDto
 }
 
 export interface CreateReservationOrderRequestDto {

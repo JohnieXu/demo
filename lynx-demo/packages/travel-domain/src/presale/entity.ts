@@ -416,6 +416,28 @@ export interface ReservationSnapshot {
   readonly checkOutDate: string
 }
 
+export interface StayDate {
+  /** 入住日期 yyyy-MM-dd */
+  stayDate: string
+  /** 该晚每份价格（原商品每份每晚单价 + 当晚加价） */
+  price: number
+}
+
+export interface SurchargeDetail {
+  /** 酒店连住晚数 */
+  nights: number
+  /** 预约份数 */
+  reserveCount: number
+  /** 预约总价（预约单价 × 晚数 × 份数，不含加价后的总价） */
+  reservationPrice: number
+  /** 当前选中的预约总价（包含加价后的总价） */
+  selectedTotalPrice: number
+  /** 单晚单价（= 预约单价 / 晚数） */
+  unitPricePerNight: number
+  /** 客人入住明细 */
+  stayDates: StayDate[]
+}
+
 export interface ReservationValidateRequest {
   readonly preSaleOrderBaseId: string
   readonly orderType: OrderType
@@ -427,7 +449,7 @@ export interface ReservationValidateResult {
   readonly failReason?: string
   readonly needSurcharge: boolean
   readonly surchargeAmount?: Money
-  readonly surchargeDetail?: string
+  readonly surchargeDetail?: SurchargeDetail
 }
 
 export interface CreateReservationOrderRequest {
