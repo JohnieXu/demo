@@ -8,6 +8,10 @@ import { travelClient } from '../network/client.js'
 import type {
   OpenApiEncryptedRequestDto,
   LoginResponseDto,
+  OpenApiLoginv1RequestDto,
+  Loginv1ResponseDto,
+  OpenApiGetBasicRequestDto,
+  GetBasicResponseDto,
 } from './dto.js'
 
 /* Header required by the account openapi endpoints. */
@@ -19,6 +23,24 @@ export class AuthRemoteDataSource {
     return travelClient.post<LoginResponseDto>(
       '/openapi/account/v2/login',
       params as unknown as Record<string, unknown>,
+      {
+        headers: {
+          'Request-From': REQUEST_FROM,
+        },
+      }
+    )
+  }
+  async loginv1(params: OpenApiLoginv1RequestDto) {
+    return travelClient.post<Loginv1ResponseDto>('/openapi/account/login', params as unknown as Record<string, unknown>,
+      {
+        headers: {
+          'Request-From': REQUEST_FROM,
+        },
+      }
+    )
+  }
+  async getBasic(params: OpenApiGetBasicRequestDto) {
+    return travelClient.post<GetBasicResponseDto>('/openapi/member/get-basic', params as unknown as Record<string, unknown>,
       {
         headers: {
           'Request-From': REQUEST_FROM,
