@@ -6,14 +6,22 @@
 'background only'
 
 import {
+  GetBasicRequest,
+  GetBasicResult,
+  Loginv1Request,
+  Loginv1Result,
   type DomainError,
   type LoginRequest,
   type LoginResult,
 } from 'travel-domain'
 import type {
+  GetBasicResponseDto,
   LoginPayloadDto,
   LoginResponseDto,
+  Loginv1ResponseDto,
   OpenApiEncryptedRequestDto,
+  OpenApiGetBasicRequestDto,
+  OpenApiLoginv1RequestDto,
 } from './dto.js'
 
 /* ─── Constants for the encrypted envelope ──────────────── */
@@ -102,6 +110,34 @@ export function toLoginResult(dto: LoginResponseDto): LoginResult {
     avatar: dto.avatar,
     extraInfo: dto.extData ?? dto.extraInfo,
   }
+}
+
+/**
+ * Reverse mappers: domain -> DTO
+ */
+export function toOpenApiLoginv1RequestDto(request: Loginv1Request): OpenApiLoginv1RequestDto {
+  return request
+}
+
+/**
+ * Entity mappers: DTO -> domain
+ */
+export function toLoginv1Result(dto: Loginv1ResponseDto): Loginv1Result {
+  return dto
+}
+
+/**
+ * Reverse mappers: domain -> DTO
+ */
+export function toOpenApiGetBasicRequestDto(request: GetBasicRequest): OpenApiGetBasicRequestDto {
+  return request
+}
+
+/**
+ * Entity mappers: DTO -> domain
+ */
+export function toGetBasicResult(dto: GetBasicResponseDto): GetBasicResult {
+  return dto
 }
 
 /* ─── Error helper ──────────────────────────────────────── */
