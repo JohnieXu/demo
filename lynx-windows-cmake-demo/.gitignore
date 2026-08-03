@@ -1,0 +1,5 @@
+# Visual Studio IDE local cache
+.vs/
+
+# CMake build output
+out/
