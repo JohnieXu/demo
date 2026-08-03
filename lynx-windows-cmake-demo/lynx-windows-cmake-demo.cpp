@@ -9,6 +9,7 @@
 #include "lynx_view.h"
 #include "lynx_generic_resource_fetcher.h"
 #include "lynx_services.h"
+#include "dpi_utils.h"
 
 constexpr UINT WM_LYNX_RESOURCE_COMPLETE = WM_APP + 1;
 constexpr UINT WM_LYNX_HTTP_COMPLETE = WM_APP + 2;
@@ -32,11 +33,12 @@ static void ReloadLynxView(HWND hwnd, const std::string& url) {
 
 	RECT rc;
 	::GetClientRect(hwnd, &rc);
-	int w = rc.right - rc.left;
-	int h = rc.bottom - rc.top;
+	float dpi = GetDpiForHWND(hwnd) / 96.0f;
+	int w = static_cast<int>((rc.right - rc.left) / dpi);
+	int h = static_cast<int>((rc.bottom - rc.top) / dpi);
 
 	lynx::pub::LynxView::Builder builder;
-	builder.SetScreenSize(w, h, 2.0)
+	builder.SetScreenSize(w, h, dpi)
 	    .SetFrame(0, 0, w, h)
 	    .SetParent(hwnd)
 	    .SetGenericResourceFetcher(ctx->fetcher);
@@ -171,29 +173,34 @@ class UrlInputDialog {
 
 
 // Helper: sync a LynxView instance to the current client size of a window.
-template <typename T>
-static void SyncLynxViewToWindow(HWND hwnd, T* view) {
+// All sizes passed to Lynx are logical units (physical pixels / dpi), matching
+// the official lynx_explorer behavior.
+static void SyncLynxViewToWindow(HWND hwnd, lynx::pub::LynxView* view) {
+	if (!view) return;
 	RECT rc;
 	::GetClientRect(hwnd, &rc);
-	int w = rc.right - rc.left;
-	int h = rc.bottom - rc.top;
-	if (!view) return;
-	if constexpr (requires { view->SetFrame(0,0,0,0); }) {
-		view->SetFrame(0, 0, w, h);
-	} else if constexpr (requires { view->SetSize(0,0); }) {
-		view->SetSize(w, h);
-	} else if constexpr (requires { view->Resize(0,0); }) {
-		view->Resize(w, h);
-	}
-	if constexpr (requires { view->SetScreenSize(w, h, 1.0); }) {
-		view->SetScreenSize(w, h, 2.0);
-	}
+	float dpi = GetDpiForHWND(hwnd) / 96.0f;
+	float w = (rc.right - rc.left) / dpi;
+	float h = (rc.bottom - rc.top) / dpi;
+	view->UpdateScreenMetrics(w, h, dpi);
+	view->SetFrame(0, 0, w, h);
 }
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
+	case WM_DPICHANGED:
+	{
+		// Resize to the system-suggested rect; the resulting WM_SIZE will
+		// sync the LynxView with the new DPI through the unified path.
+		auto newRectSize = reinterpret_cast<RECT*>(lParam);
+		::SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top,
+			newRectSize->right - newRectSize->left,
+			newRectSize->bottom - newRectSize->top,
+			SWP_NOZORDER | SWP_NOACTIVATE);
+		return 0;
+	}
 	case WM_SIZE:
 	{
 		// Retrieve stored context and sync LynxView to new client size.
@@ -269,12 +276,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpC
 	if (!RegisterClass(&wc))
 		return 0;
 
+	// Scale the logical 800x600 window size by the primary monitor's DPI, as in
+	// lynx_explorer, so the initial client area is 800x600 logical units.
+	float initial_dpi = GetDpiForMonitor(nullptr) / 96.0f;
+	RECT initial_rect = {0, 0,
+		static_cast<LONG>(800 * initial_dpi),
+		static_cast<LONG>(600 * initial_dpi)};
+	AdjustWindowRect(&initial_rect, WS_OVERLAPPEDWINDOW, FALSE);
+
 	HWND hwnd = CreateWindowEx(
 		0,
 		CLASS_NAME,
 		WINDOW_TITLE,
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		initial_rect.right - initial_rect.left,
+		initial_rect.bottom - initial_rect.top,
 		NULL, NULL, hInstance, NULL);
 
 	if (!hwnd)

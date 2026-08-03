@@ -19,8 +19,9 @@ set(LYNX_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/lynx) # Or your locatio
 # Set include directory of LynxSDK.
 include_directories(${LYNX_LIB_PATH}/include)
 
-# Add source to this project's executable.
-add_executable (lynx-windows-cmake-demo WIN32 "lynx-windows-cmake-demo.cpp" "lynx-windows-cmake-demo.h" "lynx_services.cpp" "lynx_services.h")
+# Add source to this project's executable. The .manifest file is embedded by the
+# linker and declares PerMonitorV2 DPI awareness.
+add_executable (lynx-windows-cmake-demo WIN32 "lynx-windows-cmake-demo.cpp" "lynx-windows-cmake-demo.h" "lynx_services.cpp" "lynx_services.h" "dpi_utils.cpp" "dpi_utils.h" "app.manifest")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET lynx-windows-cmake-demo PROPERTY CXX_STANDARD 20)
