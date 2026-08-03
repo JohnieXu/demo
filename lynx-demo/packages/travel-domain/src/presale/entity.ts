@@ -414,6 +414,9 @@ export interface ReservationSnapshot {
   readonly skuId: string
   readonly checkInDate: string
   readonly checkOutDate: string
+  readonly roomType: string
+  readonly hotelName: string
+  readonly productName: string
 }
 
 export interface StayDate {

@@ -678,6 +678,9 @@ function toReservationSnapshot(snapshot: ReservationSnapshot): ReservationSnapsh
     skuId: snapshot.skuId,
     checkInDate: snapshot.checkInDate,
     checkOutDate: snapshot.checkOutDate,
+    roomType: snapshot.roomType,
+    hotelName: snapshot.hotelName,
+    productName: snapshot.productName,
   }
 }
 

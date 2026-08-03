@@ -398,6 +398,12 @@ export interface ReservationSnapshotDto {
   skuId: string
   checkInDate: string
   checkOutDate: string
+  /** 房型名称 */
+  roomType: string
+  /** 酒店名称 */
+  hotelName: string
+  /** 产品名称 */
+  productName: string
 }
 
 export interface StayDateDto {
