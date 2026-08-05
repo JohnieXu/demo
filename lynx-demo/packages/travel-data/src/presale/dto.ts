@@ -126,6 +126,14 @@ export interface PresalePurchasedQuantityDto {
   purchasedQuantity: number
 }
 
+export interface PresaleProductNoticeItemDto {
+  code: string
+  codeDesc: string
+  textList: string[]
+}
+
+export type PresaleProductNoticeResponseDto = PresaleProductNoticeItemDto[]
+
 // ---------------------------------------------------------------------------
 // Hotel exchange
 // ---------------------------------------------------------------------------
@@ -222,6 +230,13 @@ export interface CreatePresaleOrderResponseDto {
   originalAmount: number
   productName: string
   presaleOrderStatus: number
+}
+
+export interface ApplyPresaleOrderRefundRequestDto {
+  orderBaseId: string
+  reason: string
+  quantity: number
+  remark?: string
 }
 
 export interface PresaleOrderListItemDto {
@@ -392,6 +407,7 @@ export interface ReservationCalendarResponseDto {
 }
 
 export interface ReservationSnapshotDto {
+  resourceId: string
   reserveCount: number
   travelers: Array<{ travelerName: string; identityNo?: string }>
   contactPhone: string
@@ -447,7 +463,7 @@ export interface CreateReservationOrderRequestDto {
   orderType: number
   reserveSnapshot: ReservationSnapshotDto
   surchargeAmount?: number
-  surchargeDetail?: string
+  surchargeDetail?: SurchargeDetailDto
 }
 
 export interface CreateReservationOrderResponseDto {
@@ -566,4 +582,20 @@ export interface PresaleRefundDto {
   createdAt?: string
   refundedAt?: string
   operationLogs?: PresaleRefundOperationLogDto[]
+}
+
+/**
+ * One entry from the unified refund list (`/single/order/refund/list`).
+ *
+ * Note: wire field is `redundAmount` (not a typo on our side) — preserved
+ * verbatim from the upstream contract.
+ */
+export interface OrderRefundListItemDto {
+  orderBaseId: string
+  refundRecordId: string
+  redundAmount: number
+  orderType: number
+  refundStatus: number
+  refundType?: number
+  reason?: string
 }

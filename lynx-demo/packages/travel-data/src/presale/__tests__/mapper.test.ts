@@ -9,23 +9,42 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  toApplyPresaleOrderRefundRequestEntity,
+  toCreateReservationOrderRequestEntity,
+  toDomainError,
+  toOrderRefundItemEntity,
+  toOrderRefundListEntity,
   toPresaleAppointmentDetailEntity,
   toPresaleOrderDetail,
   toPresaleOrderList,
   toPresaleProductCalendarEntity,
   toPresaleProductDetailEntity,
+  toPresaleProductNoticeEntity,
+  toPresaleProductNoticeListEntity,
   toPresaleReservationCalendarEntity,
-  toDomainError,
+  toReservationValidateResultEntity,
+  toSurchargeDetailDto,
+  toSurchargeDetailEntity,
   yuanToMoney,
 } from '../mapper.js'
 import type {
+  OrderRefundListItemDto,
   PresaleOrderDetailRawDto,
   PresaleOrderListResponseDto,
   PresaleProductCalendarResponseDto,
   PresaleProductDetailResponseDto,
+  PresaleProductNoticeItemDto,
   ReservationCalendarResponseDto,
   ReservationOrderDetailDto,
+  ReservationValidateResponseDto,
+  SurchargeDetailDto,
 } from '../dto.js'
+import type {
+  ApplyPresaleOrderRefundRequest,
+  CreateReservationOrderRequest,
+  ReservationSnapshot,
+  SurchargeDetail,
+} from 'travel-domain'
 
 describe('presale mapper', () => {
   describe('yuanToMoney', () => {
@@ -358,6 +377,210 @@ describe('presale mapper', () => {
       const err = Object.assign(new Error('forbidden'), { code: 'HTTP_403' })
       const result = toDomainError(err)
       expect(result.code).toBe('HTTP_403')
+    })
+  })
+
+  describe('product notice mapping', () => {
+    it('maps a notice item preserving code / codeDesc / textList', () => {
+      const dto: PresaleProductNoticeItemDto = {
+        code: 'REFUND_RULE',
+        codeDesc: '退改规则',
+        textList: ['未预约可全额退款', '已预约不可退'],
+      }
+      const result = toPresaleProductNoticeEntity(dto)
+      expect(result.code).toBe('REFUND_RULE')
+      expect(result.codeDesc).toBe('退改规则')
+      expect(result.textList).toEqual(['未预约可全额退款', '已预约不可退'])
+    })
+
+    it('maps a list of notice items', () => {
+      const dtos: PresaleProductNoticeItemDto[] = [
+        { code: 'A', codeDesc: 'A desc', textList: ['line 1'] },
+        { code: 'B', codeDesc: 'B desc', textList: [] },
+      ]
+      const result = toPresaleProductNoticeListEntity(dtos)
+      expect(result).toHaveLength(2)
+      expect(result[1]?.textList).toEqual([])
+    })
+  })
+
+  describe('order refund list mapping', () => {
+    it('converts redundAmount (preserved wire spelling) into Money cents', () => {
+      const dto: OrderRefundListItemDto = {
+        orderBaseId: 'o1',
+        refundRecordId: 'rf1',
+        redundAmount: 399,
+        orderType: 6,
+        refundStatus: 40,
+        reason: '不想要了',
+        refundType: 1,
+      }
+      const result = toOrderRefundItemEntity(dto)
+      expect(result.amount.amountInCents).toBe(39900)
+      expect(result.amount.currency).toBe('CNY')
+      expect(result.orderType).toBe(6)
+      expect(result.status).toBe('success')
+      expect(result.reason).toBe('不想要了')
+      expect(result.refundType).toBe(1)
+    })
+
+    it('maps unknown refund status codes to pending_audit', () => {
+      const dto: OrderRefundListItemDto = {
+        orderBaseId: 'o1',
+        refundRecordId: 'rf1',
+        redundAmount: 100,
+        orderType: 6,
+        refundStatus: 999,
+      }
+      const result = toOrderRefundItemEntity(dto)
+      expect(result.status).toBe('pending_audit')
+    })
+
+    it('maps a list of refund items', () => {
+      const dtos: OrderRefundListItemDto[] = [
+        {
+          orderBaseId: 'o1',
+          refundRecordId: 'rf1',
+          redundAmount: 100,
+          orderType: 6,
+          refundStatus: 0,
+        },
+        {
+          orderBaseId: 'o1',
+          refundRecordId: 'rf2',
+          redundAmount: 200,
+          orderType: 7,
+          refundStatus: 50,
+        },
+      ]
+      const result = toOrderRefundListEntity(dtos)
+      expect(result).toHaveLength(2)
+      expect(result[0]?.status).toBe('pending_audit')
+      expect(result[1]?.status).toBe('failed')
+    })
+  })
+
+  describe('presale order refund request mapping', () => {
+    it('forwards every required field', () => {
+      const req: ApplyPresaleOrderRefundRequest = {
+        orderBaseId: 'o1',
+        reason: '不想要了',
+        quantity: 1,
+        remark: '备注',
+      }
+      const result = toApplyPresaleOrderRefundRequestEntity(req)
+      expect(result).toEqual({
+        orderBaseId: 'o1',
+        reason: '不想要了',
+        quantity: 1,
+        remark: '备注',
+      })
+    })
+  })
+
+  describe('surcharge detail round-trip', () => {
+    const sample: SurchargeDetail = {
+      nights: 2,
+      reserveCount: 1,
+      reservationPrice: 398,
+      selectedTotalPrice: 458,
+      unitPricePerNight: 199,
+      stayDates: [
+        { stayDate: '2026-08-01', price: 199 },
+        { stayDate: '2026-08-02', price: 259 },
+      ],
+    }
+
+    it('maps structured detail object', () => {
+      const result = toSurchargeDetailDto(sample)
+      expect(result).toEqual({
+        nights: 2,
+        reserveCount: 1,
+        reservationPrice: 398,
+        selectedTotalPrice: 458,
+        unitPricePerNight: 199,
+        stayDates: [
+          { stayDate: '2026-08-01', price: 199 },
+          { stayDate: '2026-08-02', price: 259 },
+        ],
+      })
+    })
+
+    it('round-trips DTO → entity → DTO identically', () => {
+      const dto = toSurchargeDetailDto(sample)
+      const entity = toSurchargeDetailEntity(dto)
+      expect(entity).toEqual(sample)
+      expect(toSurchargeDetailDto(entity)).toEqual(dto)
+    })
+  })
+
+  describe('reservation snapshot mapping (with resourceId)', () => {
+    it('preserves resourceId when building the snapshot DTO', async () => {
+      const snapshot: ReservationSnapshot = {
+        resourceId: 'r1',
+        reserveCount: 1,
+        travelers: [{ travelerName: '张三' }],
+        contactPhone: '13800000000',
+        skuId: 's1',
+        checkInDate: '2026-08-01',
+        checkOutDate: '2026-08-02',
+        roomType: '大床房',
+        hotelName: '亚朵',
+        productName: '套餐A',
+      }
+      const req: CreateReservationOrderRequest = {
+        preSaleOrderBaseId: 'p1',
+        orderType: 6,
+        reserveSnapshot: snapshot,
+        surchargeAmount: { amountInCents: 6000, currency: 'CNY' },
+        surchargeDetail: {
+          nights: 1,
+          reserveCount: 1,
+          reservationPrice: 399,
+          selectedTotalPrice: 459,
+          unitPricePerNight: 399,
+          stayDates: [{ stayDate: '2026-08-01', price: 459 }],
+        },
+      }
+      const dto = toCreateReservationOrderRequestEntity(req)
+      expect(dto.reserveSnapshot.resourceId).toBe('r1')
+      expect(dto.surchargeAmount).toBe(60)
+      expect(dto.surchargeDetail?.selectedTotalPrice).toBe(459)
+      expect(dto.surchargeDetail?.stayDates).toEqual([
+        { stayDate: '2026-08-01', price: 459 },
+      ])
+    })
+  })
+
+  describe('reservation validate result (structured surchargeDetail)', () => {
+    it('maps structured surchargeDetail to SurchargeDetail (not string)', () => {
+      const dto: ReservationValidateResponseDto = {
+        canReserve: true,
+        needSurcharge: true,
+        surchargeAmount: 60,
+        surchargeDetail: {
+          nights: 1,
+          reserveCount: 1,
+          reservationPrice: 399,
+          selectedTotalPrice: 459,
+          unitPricePerNight: 399,
+          stayDates: [{ stayDate: '2026-08-01', price: 459 }],
+        },
+      }
+      const result = toReservationValidateResultEntity(dto)
+      expect(result.surchargeAmount?.amountInCents).toBe(6000)
+      expect(result.surchargeDetail).toBeDefined()
+      expect(result.surchargeDetail?.selectedTotalPrice).toBe(459)
+      expect(result.surchargeDetail?.stayDates[0]?.stayDate).toBe('2026-08-01')
+    })
+
+    it('leaves surchargeDetail undefined when DTO omits it', () => {
+      const dto: ReservationValidateResponseDto = {
+        canReserve: false,
+        needSurcharge: false,
+      }
+      const result = toReservationValidateResultEntity(dto)
+      expect(result.surchargeDetail).toBeUndefined()
     })
   })
 })

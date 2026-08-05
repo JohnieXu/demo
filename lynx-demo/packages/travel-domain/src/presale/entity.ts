@@ -108,6 +108,18 @@ export interface PresalePurchasedQuantity {
   readonly purchasedQuantity: number
 }
 
+/** One purchase-notice entry returned by the product-notice endpoint. */
+export interface PresaleProductNotice {
+  readonly code: string
+  readonly codeDesc: string
+  readonly textList: readonly string[]
+}
+
+export interface PresaleProductNoticeCriteria {
+  readonly skuId: string
+  readonly orderBaseId?: string
+}
+
 // ---------------------------------------------------------------------------
 // Exchange hotel / room (hotel-exchange only)
 // ---------------------------------------------------------------------------
@@ -280,6 +292,20 @@ export interface CreatePresaleOrderResponse {
   readonly presaleOrderStatus: PresaleOrderStatusCode
 }
 
+/**
+ * Apply a refund against an unreserved presale order.
+ *
+ * Distinct from `ApplyPresaleRefundRequest` (which creates a refund record
+ * via `/openapi/presale/refund/apply`). This drives the simpler
+ * `/openapi/presale-order/refund-apply` endpoint and returns void.
+ */
+export interface ApplyPresaleOrderRefundRequest {
+  readonly orderBaseId: string
+  readonly reason: string
+  readonly quantity: number
+  readonly remark?: string
+}
+
 // ---------------------------------------------------------------------------
 // Appointment / reservation order
 // ---------------------------------------------------------------------------
@@ -408,6 +434,7 @@ export interface PresaleReservationCalendar {
 // ---------------------------------------------------------------------------
 
 export interface ReservationSnapshot {
+  readonly resourceId: string
   readonly reserveCount: number
   readonly travelers: readonly PresaleReservationTraveler[]
   readonly contactPhone: string
@@ -460,7 +487,7 @@ export interface CreateReservationOrderRequest {
   readonly orderType: OrderType
   readonly reserveSnapshot: ReservationSnapshot
   readonly surchargeAmount?: Money
-  readonly surchargeDetail?: string
+  readonly surchargeDetail?: SurchargeDetail
 }
 
 export interface CreateReservationOrderResponse {
@@ -529,6 +556,28 @@ export interface PresaleRefund {
     readonly operatorName: string
     readonly action: string
   }[]
+}
+
+/**
+ * One entry from the unified refund list (`/single/order/refund/list`).
+ *
+ * Distinct from `PresaleRefund` (which is the richer refund-record shape from
+ * `/openapi/presale/refund/*`). The unified list merges refunds across order
+ * types so the per-record fields are deliberately minimal.
+ */
+export interface PresaleOrderRefundItem {
+  readonly orderBaseId: string
+  readonly refundRecordId: string
+  readonly amount: Money
+  readonly orderType: OrderType
+  readonly status: PresaleRefundStatus
+  readonly refundType?: number
+  readonly reason?: string
+}
+
+export interface PresaleOrderRefundListCriteria {
+  readonly orderBaseId: string
+  readonly orderType: OrderType
 }
 
 // ---------------------------------------------------------------------------

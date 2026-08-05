@@ -16,6 +16,7 @@ import {
   type DomainError,
   type AppointmentStatus,
   type CalendarDayStatus,
+  type OrderType,
   type PreOrderCancelReason,
   type PreOrderStatus,
   type PresaleOrderStatusCode,
@@ -23,7 +24,10 @@ import {
   type ProductStatus,
   type ProductType,
   type ReservationOrderStatusCode,
+  type StayDate,
   type StockMode,
+  type SurchargeDetail,
+  type ApplyPresaleOrderRefundRequest,
   type ApplyPresaleRefundRequest,
   type CalendarDay,
   type CreatePresaleOrderRequest,
@@ -48,12 +52,14 @@ import {
   type PresaleOrder,
   type PresaleOrderDetail,
   type PresaleOrderListCriteria,
+  type PresaleOrderRefundItem,
   type PresalePackageCityCriteria,
   type PresalePassenger,
   type PresaleProduct,
   type PresaleProductCalendar,
   type PresaleProductCalendarCriteria,
   type PresaleProductDetail,
+  type PresaleProductNotice,
   type PresalePurchasedQuantity,
   type PresaleRefund,
   type PresaleReservationCalendar,
@@ -67,12 +73,14 @@ import {
   type SavePresalePassengerRequest,
 } from 'travel-domain'
 import type {
+  ApplyPresaleOrderRefundRequestDto,
   ApplyPresaleRefundRequestDto,
   CalendarDayRawDto,
   CreatePresaleOrderRequestDto,
   CreatePresaleOrderResponseDto,
   CreateReservationOrderRequestDto,
   CreateReservationOrderResponseDto,
+  OrderRefundListItemDto,
   PresaleAppointmentBriefRawDto,
   PresaleBrandOptionRawDto,
   PresaleCategoryTabRawDto,
@@ -86,12 +94,13 @@ import type {
   PresaleOrderListItemDto,
   PresaleOrderListResponseDto,
   PresalePassengerDto,
-  PresaleRefundBriefRawDto,
   PresaleProductCalendarResponseDto,
   PresaleProductDetailResponseDto,
   PresaleProductListItemDto,
   PresaleProductListResponseDto,
+  PresaleProductNoticeItemDto,
   PresalePurchasedQuantityDto,
+  PresaleRefundBriefRawDto,
   PresaleRefundDto,
   ReservationCalendarDayRawDto,
   ReservationCalendarResponseDto,
@@ -100,6 +109,8 @@ import type {
   ReservationValidateRequestDto,
   ReservationValidateResponseDto,
   SavePresalePassengerRequestDto,
+  StayDateDto,
+  SurchargeDetailDto,
 } from './dto.js'
 
 /* ─── money ──────────────────────────────────────────────────────────── */
@@ -227,6 +238,35 @@ function toRefundStatus(value: string | undefined): PresaleRefundStatus {
       return 'rejected'
     default:
       console.warn('unknown refund status', value)
+      return 'pending_audit'
+  }
+}
+
+/**
+ * Map the numeric refund-status codes returned by the unified
+ * `/single/order/refund/list` endpoint into our domain status.
+ *
+ * Code table (best-effort — verify against a production payload):
+ *  0/10 → pending_audit, 20 → audit_pass, 30 → refunding,
+ *  40 → success, 50 → failed, 60 → rejected.
+ */
+function toRefundStatusFromCode(code: number | undefined): PresaleRefundStatus {
+  switch (code) {
+    case 0:
+    case 10:
+      return 'pending_audit'
+    case 20:
+      return 'audit_pass'
+    case 30:
+      return 'refunding'
+    case 40:
+      return 'success'
+    case 50:
+      return 'failed'
+    case 60:
+      return 'rejected'
+    default:
+      console.warn('unknown refund status code', code)
       return 'pending_audit'
   }
 }
@@ -397,6 +437,14 @@ function toPresalePurchasedQuantity(dto: PresalePurchasedQuantityDto): PresalePu
   return {
     productId: dto.productId,
     purchasedQuantity: dto.purchasedQuantity,
+  }
+}
+
+function toPresaleProductNotice(dto: PresaleProductNoticeItemDto): PresaleProductNotice {
+  return {
+    code: dto.code,
+    codeDesc: dto.codeDesc,
+    textList: dto.textList ?? [],
   }
 }
 
@@ -667,8 +715,45 @@ function toCreatePresaleOrderRequestDto(req: CreatePresaleOrderRequest): CreateP
 
 /* ─── reservation request / response ─────────────────────────────────── */
 
+function toStayDate(dto: StayDateDto): StayDate {
+  return {
+    stayDate: dto.stayDate,
+    price: dto.price,
+  }
+}
+
+function toStayDateDto(stay: StayDate): StayDateDto {
+  return {
+    stayDate: stay.stayDate,
+    price: stay.price,
+  }
+}
+
+function toSurchargeDetailEntityImpl(dto: SurchargeDetailDto): SurchargeDetail {
+  return {
+    nights: dto.nights,
+    reserveCount: dto.reserveCount,
+    reservationPrice: dto.reservationPrice,
+    selectedTotalPrice: dto.selectedTotalPrice,
+    unitPricePerNight: dto.unitPricePerNight,
+    stayDates: (dto.stayDates ?? []).map(toStayDate),
+  }
+}
+
+function toSurchargeDetailDtoImpl(detail: SurchargeDetail): SurchargeDetailDto {
+  return {
+    nights: detail.nights,
+    reserveCount: detail.reserveCount,
+    reservationPrice: detail.reservationPrice,
+    selectedTotalPrice: detail.selectedTotalPrice,
+    unitPricePerNight: detail.unitPricePerNight,
+    stayDates: detail.stayDates.map(toStayDateDto),
+  }
+}
+
 function toReservationSnapshot(snapshot: ReservationSnapshot): ReservationSnapshotDto {
   return {
+    resourceId: snapshot.resourceId,
     reserveCount: snapshot.reserveCount,
     travelers: snapshot.travelers.map((t) => ({
       travelerName: t.travelerName,
@@ -698,7 +783,7 @@ function toReservationValidateResult(dto: ReservationValidateResponseDto): Reser
     failReason: dto.failReason,
     needSurcharge: dto.needSurcharge,
     surchargeAmount: dto.surchargeAmount !== undefined ? yuanToMoney(dto.surchargeAmount) : undefined,
-    surchargeDetail: dto.surchargeDetail,
+    surchargeDetail: dto.surchargeDetail ? toSurchargeDetailEntityImpl(dto.surchargeDetail) : undefined,
   }
 }
 
@@ -710,7 +795,7 @@ function toCreateReservationOrderRequestDto(
     orderType: req.orderType,
     reserveSnapshot: toReservationSnapshot(req.reserveSnapshot),
     surchargeAmount: req.surchargeAmount ? moneyToYuan(req.surchargeAmount) : undefined,
-    surchargeDetail: req.surchargeDetail,
+    surchargeDetail: req.surchargeDetail ? toSurchargeDetailDtoImpl(req.surchargeDetail) : undefined,
   }
 }
 
@@ -861,6 +946,29 @@ function toApplyRefundRequestDto(req: ApplyPresaleRefundRequest): ApplyPresaleRe
     quantity: req.quantity,
     reason: req.reason,
     remark: req.remark,
+  }
+}
+
+function toApplyPresaleOrderRefundRequestDto(
+  req: ApplyPresaleOrderRefundRequest,
+): ApplyPresaleOrderRefundRequestDto {
+  return {
+    orderBaseId: req.orderBaseId,
+    reason: req.reason,
+    quantity: req.quantity,
+    remark: req.remark,
+  }
+}
+
+function toOrderRefundItem(dto: OrderRefundListItemDto): PresaleOrderRefundItem {
+  return {
+    orderBaseId: dto.orderBaseId,
+    refundRecordId: dto.refundRecordId,
+    amount: yuanToMoney(dto.redundAmount),
+    orderType: dto.orderType as OrderType,
+    status: toRefundStatusFromCode(dto.refundStatus),
+    refundType: dto.refundType,
+    reason: dto.reason,
   }
 }
 
@@ -1019,6 +1127,16 @@ export const toSavePassengerRequestEntity = toSavePassengerRequestDto
 export const toRefundList = (list: readonly PresaleRefundDto[]) => list.map(toRefund)
 export const toRefundEntity = toRefund
 export const toApplyRefundRequestEntity = toApplyRefundRequestDto
+export const toApplyPresaleOrderRefundRequestEntity = toApplyPresaleOrderRefundRequestDto
+export const toOrderRefundItemEntity = toOrderRefundItem
+export const toOrderRefundListEntity = (
+  list: readonly OrderRefundListItemDto[],
+): readonly PresaleOrderRefundItem[] => list.map(toOrderRefundItem)
+export const toPresaleProductNoticeEntity = toPresaleProductNotice
+export const toPresaleProductNoticeListEntity = (list: readonly PresaleProductNoticeItemDto[]) =>
+  list.map(toPresaleProductNotice)
+export const toSurchargeDetailEntity = toSurchargeDetailEntityImpl
+export const toSurchargeDetailDto = toSurchargeDetailDtoImpl
 
 /* request DTO helpers */
 export const toPresaleProductListRequest = toProductListRequestDto

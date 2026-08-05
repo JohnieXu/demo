@@ -33,16 +33,19 @@ class FakeDataSource extends PresaleRemoteDataSource {
   declare getExchangeBrands: ReturnType<typeof vi.fn>
   declare getPurchasedQuantity: ReturnType<typeof vi.fn>
   declare getProductCalendar: ReturnType<typeof vi.fn>
+  declare getProductNotice: ReturnType<typeof vi.fn>
   declare searchExchangeHotels: ReturnType<typeof vi.fn>
   declare getExchangeHotelRooms: ReturnType<typeof vi.fn>
   declare createOrder: ReturnType<typeof vi.fn>
   declare getOrderList: ReturnType<typeof vi.fn>
   declare getOrderDetail: ReturnType<typeof vi.fn>
   declare cancelOrder: ReturnType<typeof vi.fn>
+  declare applyOrderRefund: ReturnType<typeof vi.fn>
   declare getReservationProductCalendar: ReturnType<typeof vi.fn>
   declare validateReservationOrder: ReturnType<typeof vi.fn>
   declare createReservationOrder: ReturnType<typeof vi.fn>
   declare getReservationOrderDetail: ReturnType<typeof vi.fn>
+  declare cancelReservationOrder: ReturnType<typeof vi.fn>
   declare getInventoryCalendar: ReturnType<typeof vi.fn>
   declare getPassengerList: ReturnType<typeof vi.fn>
   declare savePassenger: ReturnType<typeof vi.fn>
@@ -50,6 +53,7 @@ class FakeDataSource extends PresaleRemoteDataSource {
   declare applyRefund: ReturnType<typeof vi.fn>
   declare getRefundDetail: ReturnType<typeof vi.fn>
   declare getRefundListByOrder: ReturnType<typeof vi.fn>
+  declare getOrderRefundList: ReturnType<typeof vi.fn>
 }
 
 function makeFake(): FakeDataSource {
@@ -66,16 +70,19 @@ function makeFake(): FakeDataSource {
     'getExchangeBrands',
     'getPurchasedQuantity',
     'getProductCalendar',
+    'getProductNotice',
     'searchExchangeHotels',
     'getExchangeHotelRooms',
     'createOrder',
     'getOrderList',
     'getOrderDetail',
     'cancelOrder',
+    'applyOrderRefund',
     'getReservationProductCalendar',
     'validateReservationOrder',
     'createReservationOrder',
     'getReservationOrderDetail',
+    'cancelReservationOrder',
     'getInventoryCalendar',
     'getPassengerList',
     'savePassenger',
@@ -83,6 +90,7 @@ function makeFake(): FakeDataSource {
     'applyRefund',
     'getRefundDetail',
     'getRefundListByOrder',
+    'getOrderRefundList',
   ]) {
     fake[key] = vi.fn(async () => {
       throw new Error(`FakeDataSource.${key} not stubbed`)
@@ -231,6 +239,32 @@ describe('presale repository', () => {
       expect(day?.salePrice?.amountInCents).toBe(35900)
       expect(day?.surchargeAmount.amountInCents).toBe(3000)
     })
+
+    it('maps product notice list', async () => {
+      const fake = makeFake()
+      fake.getProductNotice.mockResolvedValue({
+        data: [
+          {
+            code: 'RESERVATION_VALIDITY',
+            codeDesc: '有效期',
+            textList: ['入住有效期至 2026-12-31'],
+          },
+          {
+            code: 'REFUND_RULE',
+            codeDesc: '退改规则',
+            textList: ['未预约可全额退款', '已预约不可退'],
+          },
+        ],
+      })
+      const repo = new PresaleProductRepository(fake)
+      const result = await repo.getProductNotice({ skuId: 's1' })
+      expect(result.isSuccess).toBe(true)
+      if (!result.isSuccess) return
+      expect(result.data).toHaveLength(2)
+      expect(result.data[0]?.code).toBe('RESERVATION_VALIDITY')
+      expect(result.data[1]?.textList[1]).toBe('已预约不可退')
+      expect(fake.getProductNotice).toHaveBeenCalledWith({ skuId: 's1', orderBaseId: undefined })
+    })
   })
 
   describe('PresaleHotelRepository', () => {
@@ -340,6 +374,43 @@ describe('presale repository', () => {
       const result = await repo.cancel('o1')
       expect(result.isSuccess).toBe(true)
     })
+
+    it('applies a presale-order refund', async () => {
+      const fake = makeFake()
+      fake.applyOrderRefund.mockResolvedValue({ data: undefined })
+      const repo = new PresaleOrderRepository(fake)
+      const result = await repo.refundApply({
+        orderBaseId: 'o1',
+        reason: '不想要了',
+        quantity: 1,
+        remark: '测试',
+      })
+      expect(result.isSuccess).toBe(true)
+      expect(fake.applyOrderRefund).toHaveBeenCalledWith({
+        orderBaseId: 'o1',
+        reason: '不想要了',
+        quantity: 1,
+        remark: '测试',
+      })
+    })
+
+    it('wraps refundApply errors into DomainError', async () => {
+      const fake = makeFake()
+      fake.applyOrderRefund.mockRejectedValue(
+        Object.assign(new Error('refund-failed'), { code: 'HTTP_500' }),
+      )
+      const repo = new PresaleOrderRepository(fake)
+      const result = await repo.refundApply({
+        orderBaseId: 'o1',
+        reason: '不想要了',
+        quantity: 1,
+      })
+      expect(result.isFailure).toBe(true)
+      if (result.isFailure) {
+        expect(result.error.code).toBe('HTTP_500')
+        expect(result.error.message).toBe('refund-failed')
+      }
+    })
   })
 
   describe('PresaleAppointmentRepository', () => {
@@ -395,6 +466,15 @@ describe('presale repository', () => {
       expect(result.isSuccess).toBe(true)
       if (!result.isSuccess) return
       expect(result.data.status).toBe('success')
+    })
+
+    it('cancels a reservation order', async () => {
+      const fake = makeFake()
+      fake.cancelReservationOrder.mockResolvedValue({ data: undefined })
+      const repo = new PresaleAppointmentRepository(fake)
+      const result = await repo.cancel('r1')
+      expect(result.isSuccess).toBe(true)
+      expect(fake.cancelReservationOrder).toHaveBeenCalledWith('r1')
     })
   })
 
@@ -515,6 +595,43 @@ describe('presale repository', () => {
       expect(result.isSuccess).toBe(true)
       if (!result.isSuccess) return
       expect(result.data[0]?.id).toBe('rf1')
+    })
+
+    it('maps unified order-refund list with amount conversion', async () => {
+      const fake = makeFake()
+      fake.getOrderRefundList.mockResolvedValue({
+        data: [
+          {
+            orderBaseId: 'o1',
+            refundRecordId: 'rf1',
+            redundAmount: 399,
+            orderType: 6,
+            refundStatus: 40,
+            reason: '不想要了',
+          },
+        ],
+      })
+      const repo = new PresaleRefundRepository(fake)
+      const result = await repo.getOrderRefundList({ orderBaseId: 'o1', orderType: 6 })
+      expect(result.isSuccess).toBe(true)
+      if (!result.isSuccess) return
+      expect(result.data[0]?.amount.amountInCents).toBe(39900)
+      expect(result.data[0]?.status).toBe('success')
+      expect(result.data[0]?.orderType).toBe(6)
+      expect(result.data[0]?.reason).toBe('不想要了')
+    })
+
+    it('wraps getOrderRefundList errors into DomainError', async () => {
+      const fake = makeFake()
+      fake.getOrderRefundList.mockRejectedValue(
+        Object.assign(new Error('boom'), { code: 'HTTP_500' }),
+      )
+      const repo = new PresaleRefundRepository(fake)
+      const result = await repo.getOrderRefundList({ orderBaseId: 'o1', orderType: 6 })
+      expect(result.isFailure).toBe(true)
+      if (result.isFailure) {
+        expect(result.error.code).toBe('HTTP_500')
+      }
     })
   })
 

@@ -9,6 +9,7 @@
 import type { Result } from '../common/result.js'
 import type { PageResult } from '../common/pagination.js'
 import type {
+  ApplyPresaleOrderRefundRequest,
   ApplyPresaleRefundRequest,
   CreatePresaleOrderRequest,
   CreatePresaleOrderResponse,
@@ -31,12 +32,16 @@ import type {
   PresaleOrder,
   PresaleOrderDetail,
   PresaleOrderListCriteria,
+  PresaleOrderRefundItem,
+  PresaleOrderRefundListCriteria,
   PresalePackageCityCriteria,
   PresalePassenger,
   PresaleProduct,
   PresaleProductCalendar,
   PresaleProductCalendarCriteria,
   PresaleProductDetail,
+  PresaleProductNotice,
+  PresaleProductNoticeCriteria,
   PresalePurchasedQuantity,
   PresaleRefund,
   PresaleReservationCalendar,
@@ -84,6 +89,10 @@ export interface IPresaleProductRepository {
   getProductCalendar(
     criteria: PresaleProductCalendarCriteria,
   ): Promise<Result<PresaleProductCalendar>>
+
+  getProductNotice(
+    criteria: PresaleProductNoticeCriteria,
+  ): Promise<Result<readonly PresaleProductNotice[]>>
 }
 
 /** Hotel-exchange only: page hotels, list rooms of one hotel. */
@@ -97,7 +106,7 @@ export interface IPresaleHotelRepository {
   ): Promise<Result<PresaleHotelExchangeDetail>>
 }
 
-/** Pre-sale order lifecycle: create, list, detail, cancel. */
+/** Pre-sale order lifecycle: create, list, detail, cancel, refund-apply. */
 export interface IPresaleOrderRepository {
   create(
     request: CreatePresaleOrderRequest,
@@ -110,6 +119,10 @@ export interface IPresaleOrderRepository {
   getDetail(orderId: string): Promise<Result<PresaleOrderDetail>>
 
   cancel(orderId: string): Promise<Result<void>>
+
+  refundApply(
+    request: ApplyPresaleOrderRefundRequest,
+  ): Promise<Result<void>>
 }
 
 /**
@@ -132,6 +145,8 @@ export interface IPresaleAppointmentRepository {
   getReservationOrderDetail(
     orderId: string,
   ): Promise<Result<PresaleAppointmentDetail>>
+
+  cancel(orderBaseId: string): Promise<Result<void>>
 }
 
 /** Inventory calendar for merchants / availability checks. */
@@ -152,7 +167,7 @@ export interface IPresalePassengerRepository {
   delete(passengerId: string): Promise<Result<void>>
 }
 
-/** Refund flow: apply, detail, list-by-order. */
+/** Refund flow: apply, detail, list-by-order, unified order-refund-list. */
 export interface IPresaleRefundRepository {
   apply(
     request: ApplyPresaleRefundRequest,
@@ -161,6 +176,10 @@ export interface IPresaleRefundRepository {
   getDetail(refundId: string): Promise<Result<PresaleRefund>>
 
   getListByOrder(preOrderId: string): Promise<Result<readonly PresaleRefund[]>>
+
+  getOrderRefundList(
+    criteria: PresaleOrderRefundListCriteria,
+  ): Promise<Result<readonly PresaleOrderRefundItem[]>>
 }
 
 // Re-export entity helpers used by some callers.

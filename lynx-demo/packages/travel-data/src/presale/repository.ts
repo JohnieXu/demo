@@ -26,6 +26,7 @@ import {
   type IPresaleRefundRepository,
   type PageResult,
   type Result,
+  type ApplyPresaleOrderRefundRequest,
   type ApplyPresaleRefundRequest,
   type CreatePresaleOrderRequest,
   type CreatePresaleOrderResponse,
@@ -46,12 +47,16 @@ import {
   type PresaleOrder,
   type PresaleOrderDetail,
   type PresaleOrderListCriteria,
+  type PresaleOrderRefundItem,
+  type PresaleOrderRefundListCriteria,
   type PresalePackageCityCriteria,
   type PresalePassenger,
   type PresaleProduct,
   type PresaleProductCalendar,
   type PresaleProductCalendarCriteria,
   type PresaleProductDetail,
+  type PresaleProductNotice,
+  type PresaleProductNoticeCriteria,
   type PresalePurchasedQuantity,
   type PresaleRefund,
   type PresaleReservationCalendar,
@@ -63,6 +68,7 @@ import {
 } from 'travel-domain'
 import { PresaleRemoteDataSource } from './datasource.js'
 import {
+  toApplyPresaleOrderRefundRequestEntity,
   toApplyRefundRequestEntity,
   toCreatePresaleOrderRequestEntity,
   toCreatePresaleOrderResponseEntity,
@@ -70,6 +76,7 @@ import {
   toCreateReservationOrderResponseEntity,
   toDomainError,
   toInventoryDayList,
+  toOrderRefundListEntity,
   toPassengerEntity,
   toPassengerList,
   toPresaleCategoryTabs,
@@ -91,6 +98,7 @@ import {
   toPresaleProductDetailRequest,
   toPresaleProductList,
   toPresaleProductListRequest,
+  toPresaleProductNoticeListEntity,
   toPresalePurchasedQuantityEntity,
   toPresaleAppointmentDetailEntity,
   toPresaleReservationCalendarEntity,
@@ -203,6 +211,20 @@ export class PresaleProductRepository implements IPresaleProductRepository {
       return err(toDomainError(e))
     }
   }
+
+  async getProductNotice(
+    criteria: PresaleProductNoticeCriteria,
+  ): Promise<Result<readonly PresaleProductNotice[]>> {
+    try {
+      const res = await this.ds.getProductNotice({
+        skuId: criteria.skuId,
+        orderBaseId: criteria.orderBaseId,
+      })
+      return ok(toPresaleProductNoticeListEntity(res.data ?? []))
+    } catch (e) {
+      return err(toDomainError(e))
+    }
+  }
 }
 
 /* ─── Hotel exchange ─────────────────────────────────────────────────── */
@@ -278,6 +300,17 @@ export class PresaleOrderRepository implements IPresaleOrderRepository {
       return err(toDomainError(e))
     }
   }
+
+  async refundApply(
+    request: ApplyPresaleOrderRefundRequest,
+  ): Promise<Result<void>> {
+    try {
+      await this.ds.applyOrderRefund(toApplyPresaleOrderRefundRequestEntity(request))
+      return ok(undefined)
+    } catch (e) {
+      return err(toDomainError(e))
+    }
+  }
 }
 
 /* ─── Appointment ────────────────────────────────────────────────────── */
@@ -330,6 +363,15 @@ export class PresaleAppointmentRepository implements IPresaleAppointmentReposito
     try {
       const res = await this.ds.getReservationOrderDetail(orderId)
       return ok(toPresaleAppointmentDetailEntity(res.data))
+    } catch (e) {
+      return err(toDomainError(e))
+    }
+  }
+
+  async cancel(orderBaseId: string): Promise<Result<void>> {
+    try {
+      await this.ds.cancelReservationOrder(orderBaseId)
+      return ok(undefined)
     } catch (e) {
       return err(toDomainError(e))
     }
@@ -435,6 +477,20 @@ export class PresaleRefundRepository implements IPresaleRefundRepository {
     try {
       const res = await this.ds.getRefundListByOrder(preOrderId)
       return ok(toRefundList(res.data ?? []))
+    } catch (e) {
+      return err(toDomainError(e))
+    }
+  }
+
+  async getOrderRefundList(
+    criteria: PresaleOrderRefundListCriteria,
+  ): Promise<Result<readonly PresaleOrderRefundItem[]>> {
+    try {
+      const res = await this.ds.getOrderRefundList({
+        orderBaseId: criteria.orderBaseId,
+        orderType: criteria.orderType,
+      })
+      return ok(toOrderRefundListEntity(res.data ?? []))
     } catch (e) {
       return err(toDomainError(e))
     }

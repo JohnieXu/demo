@@ -14,11 +14,13 @@
 
 import { travelClient } from '../network/client.js'
 import type {
+  ApplyPresaleOrderRefundRequestDto,
   ApplyPresaleRefundRequestDto,
   CreatePresaleOrderRequestDto,
   CreatePresaleOrderResponseDto,
   CreateReservationOrderRequestDto,
   CreateReservationOrderResponseDto,
+  OrderRefundListItemDto,
   PresaleBrandOptionRawDto,
   PresaleCategoryTabRawDto,
   PresaleCityOptionRawDto,
@@ -31,6 +33,7 @@ import type {
   PresaleProductCalendarResponseDto,
   PresaleProductDetailResponseDto,
   PresaleProductListResponseDto,
+  PresaleProductNoticeResponseDto,
   PresalePurchasedQuantityDto,
   PresaleRefundDto,
   ReservationCalendarResponseDto,
@@ -136,6 +139,13 @@ export class PresaleRemoteDataSource {
     )
   }
 
+  getProductNotice(params: { skuId: string; orderBaseId?: string }) {
+    return travelClient.post<PresaleProductNoticeResponseDto>(
+      '/openapi/presale-order/product-notice',
+      params as unknown as Record<string, unknown>,
+    )
+  }
+
   /* ─── hotel exchange (hotel list / rooms) ────────────────────────────── */
 
   searchExchangeHotels(params: {
@@ -196,6 +206,13 @@ export class PresaleRemoteDataSource {
     )
   }
 
+  applyOrderRefund(params: ApplyPresaleOrderRefundRequestDto) {
+    return travelClient.post<void>(
+      '/openapi/presale-order/refund-apply',
+      params as unknown as Record<string, unknown>,
+    )
+  }
+
   /* ─── appointment / reservation order ───────────────────────────────── */
 
   getReservationProductCalendar(params: {
@@ -229,6 +246,13 @@ export class PresaleRemoteDataSource {
   getReservationOrderDetail(orderBaseId: string) {
     return travelClient.post<ReservationOrderDetailDto>(
       '/openapi/reservation-order/detail',
+      { orderBaseId } as unknown as Record<string, unknown>,
+    )
+  }
+
+  cancelReservationOrder(orderBaseId: string) {
+    return travelClient.post<void>(
+      '/openapi/reservation-order/cancel',
       { orderBaseId } as unknown as Record<string, unknown>,
     )
   }
@@ -289,6 +313,13 @@ export class PresaleRemoteDataSource {
     return travelClient.get<PresaleRefundDto[]>(
       '/openapi/presale/refund/list',
       { params: toQuery({ preOrderId }) },
+    )
+  }
+
+  getOrderRefundList(params: { orderBaseId: string; orderType: number }) {
+    return travelClient.post<OrderRefundListItemDto[]>(
+      '/openapi/single/order/refund/list',
+      params as unknown as Record<string, unknown>,
     )
   }
 }
