@@ -25,7 +25,6 @@ export interface NavBarProps {
 export const NavBar = forwardRef(NavBarIpl)
 
 export function NavBarIpl(props: NavBarProps, ref: Ref<INavbarRefBT | null>) {
-  console.log(props)
   const { title, prefixText, renderLeft, renderCenter, renderRight, 'main-thread:ref': MTref } = props
   const navigate = useNavigate()
 

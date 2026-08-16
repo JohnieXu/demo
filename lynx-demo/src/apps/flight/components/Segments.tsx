@@ -2,7 +2,7 @@
 import { clsx } from "clsx"
 import { useState, useEffect, useMainThreadRef, runOnMainThread, useCallback } from "@lynx-js/react"
 import type { Element } from "@lynx-js/types/main-thread"
-import type { MainThread, NodesRef, SelectorQuery, TouchEvent } from "@lynx-js/types"
+import type { NodesRef, SelectorQuery, TouchEvent } from "@lynx-js/types"
 // import { useDialog } from "./dialog/index"
 import "./Segments.scss"
 
@@ -146,16 +146,6 @@ export function Segments<T extends string = string>({
     }
   }, [segments, innerActiveId, onSegmentChange, updateIndicatorMTS]);
 
-  const handleSegmentChangeMTS = (e: MainThread.TouchEvent) => {
-    'main thread';
-    return;
-    const id = e.currentTarget.getAttribute('data-id') as T;
-    console.log('handleSegmentChange', id);
-    if (!id) return;
-    onSegmentChange?.(id as T);
-    updateIndicatorMTS(indicatorStyle);
-  };
-
   const handleSegmentChange = useCallback(
     (e: TouchEvent) => {
       console.log(
@@ -246,7 +236,6 @@ export function Segments<T extends string = string>({
                   innerActiveId === segment.id && 'active',
                 )}
                 data-id={segment.id}
-                main-thread:bindtap={handleSegmentChangeMTS}
                 bindtap={handleSegmentChange}
               >
                 <text

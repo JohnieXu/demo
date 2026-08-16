@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { runOnBackground, runOnMainThread, useCallback, useEffect, useMemo, useState } from '@lynx-js/react'
 import type { ScrollEvent } from '@lynx-js/types'
+import type { MainThread } from '@lynx-js/types'
 
 export interface UseScrollOpacityOptions {
   /**
@@ -15,11 +16,24 @@ export interface UseScrollOpacityOptions {
   /** Opacity when scrollTop has reached (or passed) the threshold. @default 0 */
   endOpacity?: number
   /**
-   * Main-thread style setter invoked synchronously on the main thread.
+   * Optional main-thread style setter invoked synchronously on the main thread.
    * Must be a function marked with the `'main thread'` directive.
+   *
+   * Prefer `mainThreadRef` when you only need to set the element's opacity —
+   * it is resolved through a hook-owned `MainThreadRef`, so the main-thread
+   * scroll handler does not depend on a caller-supplied callback captured
+   * from background-thread scope.
+   *
    * @default undefined
    */
   setStyleMT?: (opacity: number) => void
+  /**
+   * Optional `MainThreadRef` of the element whose `opacity` style should be
+   * driven directly on the main thread. When provided, the hook sets
+   * `opacity` via `setStyleProperty` on the main thread without requiring a
+   * caller-supplied `setStyleMT` closure.
+   */
+  mainThreadRef?: { current: MainThread.Element | null }
 }
 
 export interface UseScrollOpacityReturn {
@@ -50,7 +64,7 @@ export interface UseScrollOpacityReturn {
 export function useScrollOpacity(
   options: UseScrollOpacityOptions,
 ): UseScrollOpacityReturn {
-  const { threshold, startOpacity = 1, endOpacity = 0, setStyleMT } = options
+  const { threshold, startOpacity = 1, endOpacity = 0, setStyleMT, mainThreadRef } = options
   const [opacity, setOpacity] = useState(startOpacity)
 
   const inverseOpacity = useMemo(() => Math.max(0, 1 - opacity), [opacity])
@@ -105,11 +119,17 @@ export function useScrollOpacity(
 
       runOnBackground(setOpacity)(nextOpacity)
 
-      if (setStyleMT) {
+      // Apply opacity directly on the main thread through the hook-owned
+      // element ref — no caller-supplied callback closure needed.
+      const element = mainThreadRef?.current
+      if (element) {
+        element.setStyleProperty('opacity', nextOpacity.toString())
+      } else if (setStyleMT) {
+        // Legacy path: caller-provided main-thread callback.
         setStyleMT(nextOpacity)
       }
     },
-    [threshold, startOpacity, endOpacity, setStyleMT],
+    [threshold, startOpacity, endOpacity, setStyleMT, mainThreadRef],
   )
 
   return { opacity, inverseOpacity, handleScroll, handleScrollMT }
