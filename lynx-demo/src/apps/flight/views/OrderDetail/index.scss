@@ -1,14 +1,22 @@
 .page-order-detail {
-  // padding: 16px;
+  height: 100%;
+  background: #F3F3F3;
+  display: flex;
+  flex-direction: column;
   /* Detail Section */
-  .booking-section {
-    position: absolute;
-    left: 0;
-    top: 88px;
-    width: 375px;
-    padding: 0 16px;
+  .detail-section {
+    // position: absolute;
+    // left: 0;
+    // top: 88px;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px;
+
+    & + & {
+      margin-top: 16px;
+    }
   
-    .booking-card {
+    .detail-card {
       background-color: white;
       border-radius: 12px;
       padding: 16px;
@@ -83,6 +91,12 @@
         margin-right: 2px;
       }
     }
+  }
+
+  /* Placeholder Row */
+  .placeholder-row {
+    width: 100%;
+    height: 500px;
   }
 }
 
