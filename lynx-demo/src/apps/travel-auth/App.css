@@ -1,0 +1,10 @@
+@import 'lynx-ui/styles/index.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.app-auth {
+  width: 100%;
+  height: 100%;
+}
