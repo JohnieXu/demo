@@ -19,6 +19,14 @@ export function Login() {
     if (res.isSuccess) {
       setAuthToken(res.data.loginToken!);
       showToast('登录成功');
+      const res2 = await authRepo.getBasic({
+        memberId: res.data.memberId!,
+      })
+      if (res2.isSuccess) {
+        showToast('get-basic 成功' + res2.data.userName)
+      } else {
+        showToast('get-basic 失败' + res2.error?.message)
+      }
     } else {
       showToast(res.error?.message || '登录失败');
     }
