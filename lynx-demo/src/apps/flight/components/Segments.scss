@@ -52,6 +52,7 @@ $item-min-width: 64px;
         border-radius: $border-radius;
         background: transparent;
         transition: background 0.2s ease;
+        cursor: pointer;
 
         .segment-label {
           font-size: 14px;
@@ -60,6 +61,7 @@ $item-min-width: 64px;
           font-weight: $text-inactive-weight;
           letter-spacing: 0.28px;
           white-space: nowrap;
+          cursor: pointer;
 
           &.active {
             color: $text-color;
