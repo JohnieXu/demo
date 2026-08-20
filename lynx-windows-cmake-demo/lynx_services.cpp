@@ -298,6 +298,48 @@ std::string WideToUtf8(const std::wstring& s) {
   return out;
 }
 
+std::string Win32ErrorMessage(DWORD err) {
+  wchar_t* buf = nullptr;
+  DWORD len = 0;
+  // WinHTTP error codes (12000-12185) live in winhttp.dll, not the system table.
+  if (err >= 12000 && err <= 12185) {
+    HMODULE winhttp = GetModuleHandleW(L"winhttp.dll");
+    if (winhttp) {
+      len = FormatMessageW(
+          FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_HMODULE |
+              FORMAT_MESSAGE_IGNORE_INSERTS,
+          winhttp, err, 0, reinterpret_cast<LPWSTR>(&buf), 0, nullptr);
+    }
+  }
+  if (len == 0) {
+    len = FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, err, 0, reinterpret_cast<LPWSTR>(&buf), 0, nullptr);
+  }
+  std::string msg;
+  if (len > 0 && buf) {
+    msg = WideToUtf8(buf);
+    while (!msg.empty() &&
+           (msg.back() == '\r' || msg.back() == '\n' || msg.back() == ' ')) {
+      msg.pop_back();
+    }
+  }
+  if (buf) LocalFree(buf);
+  return msg;
+}
+
+std::string MakeWinHttpError(const char* api_name) {
+  DWORD err = GetLastError();
+  std::string msg = api_name;
+  msg += " failed, GetLastError=" + std::to_string(err);
+  std::string decoded = Win32ErrorMessage(err);
+  if (!decoded.empty()) {
+    msg += " (" + decoded + ")";
+  }
+  return msg;
+}
+
 struct HttpRequestResult {
   bool success = false;
   int status_code = 0;
@@ -380,7 +422,8 @@ HttpRequestResult PerformHttpRequest(
       kUserAgent, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
       WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
   if (!hSession) {
-    result.error_message = "WinHttpOpen failed";
+    result.error_message = MakeWinHttpError("WinHttpOpen");
+    LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
     return result;
   }
 
@@ -394,7 +437,8 @@ HttpRequestResult PerformHttpRequest(
 
   HINTERNET hConnect = WinHttpConnect(hSession, host_str.c_str(), port, 0);
   if (!hConnect) {
-    result.error_message = "WinHttpConnect failed";
+    result.error_message = MakeWinHttpError("WinHttpConnect");
+    LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
     WinHttpCloseHandle(hSession);
     return result;
   }
@@ -407,7 +451,8 @@ HttpRequestResult PerformHttpRequest(
       hConnect, wmethod.c_str(), path.c_str(), nullptr, WINHTTP_NO_REFERER,
       WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
   if (!hRequest) {
-    result.error_message = "WinHttpOpenRequest failed";
+    result.error_message = MakeWinHttpError("WinHttpOpenRequest");
+    LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
     return result;
@@ -436,7 +481,8 @@ HttpRequestResult PerformHttpRequest(
     if (!WinHttpAddRequestHeaders(hRequest, headers_str.c_str(),
                                   static_cast<DWORD>(-1),
                                   WINHTTP_ADDREQ_FLAG_ADD)) {
-      result.error_message = "WinHttpAddRequestHeaders failed";
+      result.error_message = MakeWinHttpError("WinHttpAddRequestHeaders");
+      LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
       WinHttpCloseHandle(hRequest);
       WinHttpCloseHandle(hConnect);
       WinHttpCloseHandle(hSession);
@@ -464,7 +510,8 @@ HttpRequestResult PerformHttpRequest(
         static_cast<DWORD>(request_body.size()), 0);
   }
   if (!send_ok) {
-    result.error_message = "WinHttpSendRequest failed";
+    result.error_message = MakeWinHttpError("WinHttpSendRequest");
+    LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
@@ -472,7 +519,8 @@ HttpRequestResult PerformHttpRequest(
   }
 
   if (!WinHttpReceiveResponse(hRequest, nullptr)) {
-    result.error_message = "WinHttpReceiveResponse failed";
+    result.error_message = MakeWinHttpError("WinHttpReceiveResponse");
+    LogDebug("[PerformHttpRequest] " + result.error_message + "\n");
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
