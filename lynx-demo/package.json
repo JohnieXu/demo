@@ -5,7 +5,9 @@
   "scripts": {
     "build": "rspeedy build",
     "dev": "rspeedy dev",
+    "dev:mock": "rspeedy dev --env-mode mock",
     "doctor:dev": "RSDOCTOR=true rspeedy dev",
+    "mock": "node mock/server.mjs",
     "format": "prettier --write .",
     "lint": "eslint .",
     "preview": "rspeedy preview",
@@ -40,6 +42,8 @@
     "@rsbuild/plugin-sass": "^1.5.2",
     "@rsbuild/plugin-type-check": "1.3.4",
     "@tanstack/router-plugin": "^1.168.5",
+    "@koa/router": "^12.0.1",
+    "koa": "^2.15.3",
     "@testing-library/jest-dom": "^6.9.0",
     "@types/react": "^18.3.28",
     "eslint": "^9.39.4",

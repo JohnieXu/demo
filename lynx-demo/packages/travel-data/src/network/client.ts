@@ -8,7 +8,13 @@ import { createFetch } from 'lynx-shared'
 import type { RequestConfig, LynxResponse } from 'lynx-shared'
 import type { ApiResponse } from './types.js'
 
-const TRAVEL_API_BASE_URL = import.meta.env.DEV ? 'https://ts-api.ourtour.com' : 'https://ts-api.ourtour.com'
+// Base URL resolution:
+// - PUBLIC_TRAVEL_API_URL (from .env / .env.local / .env.[mode] / .env.[mode].local)
+//   overrides everything — e.g. `pnpm dev:mock` loads .env.mock which points at the
+//   local Koa debug proxy (mock/server.mjs) on port 4000.
+// - Otherwise fall back to the real backend (same URL in dev and prod today).
+const TRAVEL_API_BASE_URL =
+  import.meta.env.PUBLIC_TRAVEL_API_URL || 'https://ts-api.ourtour.com'
 
 export const travelClient = createFetch({
   baseURL: TRAVEL_API_BASE_URL,
