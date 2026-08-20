@@ -17,6 +17,7 @@ import { getAuthLaunchStrategy, InAppRouteStrategy } from '../strategies/authLau
  * standalone bundle — business call sites stay unchanged.
  */
 export function useRequireAuth() {
+  'background only';
   const navigate = useNavigate()
   const location = useLocation()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)

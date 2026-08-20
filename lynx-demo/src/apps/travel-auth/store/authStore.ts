@@ -21,41 +21,48 @@ export type AuthState = {
   clearAuth: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
-  memberId: null,
-  userName: null,
-  profile: null,
-  isAuthenticated: false,
+export const useAuthStore = create<AuthState>((set) => {
+  'background only';
+  return {
+    token: null,
+    memberId: null,
+    userName: null,
+    profile: null,
+    isAuthenticated: false,
 
-  setAuth: (result) => {
-    const token = result.loginToken ?? null
-    // Internal detail: travel-data's interceptor reads this module-level token
-    // to inject the Authorization header. Consumers only see this store.
-    setAuthToken(token)
-    set({
-      token,
-      memberId: result.memberId ?? null,
-      userName: result.memberBasicInfo?.userName ?? result.name ?? null,
-      profile: result.memberBasicInfo ?? null,
-      isAuthenticated: !!token,
-    })
-  },
+    setAuth: (result) => {
+      'background only';
+      const token = result.loginToken ?? null
+      // Internal detail: travel-data's interceptor reads this module-level token
+      // to inject the Authorization header. Consumers only see this store.
+      setAuthToken(token)
+      set({
+        token,
+        memberId: result.memberId ?? null,
+        userName: result.memberBasicInfo?.userName ?? result.name ?? null,
+        profile: result.memberBasicInfo ?? null,
+        isAuthenticated: !!token,
+      })
+    },
 
-  setProfile: (profile) =>
-    set((state) => ({
-      profile,
-      userName: profile.userName ?? state.userName,
-    })),
+    setProfile: (profile) => {
+      'background only';
+      return set((state) => ({
+        profile,
+        userName: profile.userName ?? state.userName,
+        }))
+    },
 
-  clearAuth: () => {
-    setAuthToken(null)
-    set({
-      token: null,
-      memberId: null,
-      userName: null,
-      profile: null,
-      isAuthenticated: false,
-    })
-  },
-}))
+    clearAuth: () => {
+      'background only';
+      setAuthToken(null)
+      set({
+        token: null,
+        memberId: null,
+        userName: null,
+        profile: null,
+        isAuthenticated: false,
+      })
+    },
+  }
+})
