@@ -8,11 +8,13 @@ export function Login() {
     'background only';
     const authRepo = new AuthRepository();
     const res = await authRepo.loginv1({
-      channel: '',
       userSource: 0,
-      userName: '15827367591',
+      userName: '15272031107',
       password: 'Abcde1234567',
-      userType: '',
+      userType: 'Mobile',
+      // promotionChannelCode: "24",
+      // shopkeeperId: "95",
+      channel: "14|75|76"
     });
     if (res.isSuccess) {
       setAuthToken(res.data.loginToken!);
