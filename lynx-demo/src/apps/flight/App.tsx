@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router'
+import { ToastProvider } from 'lynx-ui'
 import { DialogProvider } from './components/dialog/index';
 import { useBackHandler } from './hooks/useBackHandler';
 import './App.css';
@@ -9,10 +10,12 @@ export function App() {
   useBackHandler();
 
   return (
-    <DialogProvider>
-      <view className="app lynx-theme-light">
-        <Outlet />
-      </view>
-    </DialogProvider>
+    <ToastProvider>
+      <DialogProvider>
+        <view className="app lynx-theme-light">
+          <Outlet />
+        </view>
+      </DialogProvider>
+    </ToastProvider>
   );
 }

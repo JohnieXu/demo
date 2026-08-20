@@ -15,6 +15,10 @@ import { TrainList } from './views/TrainList/index'
 import { FlightList } from './views/FlightList/index'
 import { CabinList } from './views/CabinList/index'
 
+// travel-auth is mounted in-app (no lazy) so login lives in the same
+// ReactLynx instance and shares the auth store. See AuthRoutes doc.
+import { AuthRoutes } from '../travel-auth/public'
+
 // Lazy versions are kept for future reference once the issue above is fixed.
 const QueryLazy = lazy(() => import('./views/Query/index').then(m => ({ default: m.Query })))
 const BookingLazy = lazy(() => import('./views/Booking/index').then(m => ({ default: m.Booking })))
@@ -36,6 +40,7 @@ export function AppRoutes() {
         <Route path='/trainList' element={<TrainList />}></Route>
         <Route path='/flightList' element={<FlightList />}></Route>
         <Route path='/cabinList' element={<CabinList />}></Route>
+        {AuthRoutes()}
       </Route>
     </Routes>
   )

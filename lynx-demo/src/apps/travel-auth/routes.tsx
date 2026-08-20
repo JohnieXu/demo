@@ -12,3 +12,18 @@ export function AppRoutes() {
     </Routes>
   )
 }
+
+/**
+ * Plain route fragment for embedding into a host app (e.g. flight).
+ *
+ * Unlike AppRoutes this is NOT wrapped in <Routes> and brings no providers
+ * (ToastProvider is expected from the host), so it can be dropped directly
+ * inside the host's <Route element={<App/>}> tree.
+ */
+export function AuthRoutes() {
+  return (
+    <>
+      <Route path="/login" element={<Login />} />
+    </>
+  )
+}

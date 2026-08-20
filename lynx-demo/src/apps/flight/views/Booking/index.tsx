@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router'
 import { useFlightStore } from '../../store'
+import { useRequireAuth } from '../../../travel-auth/public'
 import { FocusableInput } from '../../components/input/FocusableInput'
 import { QUERY_CABIN_CLASS } from '../../constants'
 import { formatDateDisplay } from '../../utils/date'
@@ -8,11 +9,14 @@ import "./index.scss"
 export function Booking() {
   const { selectedFlight, searchParams } = useFlightStore()
   const navigate = useNavigate()
+  const { requireAuth } = useRequireAuth()
 
   const departureDisplay = formatDateDisplay(searchParams.departureDate)
   const cabinLabel = searchParams.cabin === QUERY_CABIN_CLASS.NoLimit ? '无舱位' : '公务/头等舱'
 
   const handleConfirm = () => {
+    // Booking requires a session; redirects to /login (and back) otherwise.
+    if (!requireAuth()) return
     const id = 'NEW_ORDER_123'
     navigate(`/order/${id}`)
   }
