@@ -17,6 +17,8 @@ import {
   Loginv1Result,
   GetBasicRequest,
   GetBasicResult,
+  LogoutRequest,
+  LogoutResult,
 } from 'travel-domain'
 import { AuthRemoteDataSource } from './datasource.js'
 import {
@@ -26,6 +28,7 @@ import {
   toOpenApiLoginv1RequestDto,
   toLoginv1Result,
   toGetBasicResult,
+  toLogoutResult,
   toOpenApiGetBasicRequestDto,
 } from './mapper.js'
 
@@ -55,6 +58,15 @@ export class AuthRepository implements IAuthRepository {
       const dtoReq = toOpenApiGetBasicRequestDto(request)
       const res = await this.ds.getBasic(dtoReq)
       return ok(toGetBasicResult(res.data))
+    } catch (e) {
+      return err(toDomainError(e))
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async logout(_request: LogoutRequest): Promise<Result<LogoutResult>> {
+    try {
+      const res = await this.ds.logout()
+      return ok(toLogoutResult(res.data))
     } catch (e) {
       return err(toDomainError(e))
     }

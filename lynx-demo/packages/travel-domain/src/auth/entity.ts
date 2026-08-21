@@ -153,3 +153,18 @@ export interface GetBasicRequest {
 }
 
 export type GetBasicResult = MemberBasicInfo
+
+/**
+ * Logout request. The session is identified by the token the HTTP layer
+ * injects (Authorization / Logintoken headers), so the body is empty.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface LogoutRequest {}
+
+/**
+ * Logout result. The server responds with the shared envelope
+ * {success, errorCode, message, logId, data}; `data` carries no fields
+ * of interest for the client.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface LogoutResult {}

@@ -12,6 +12,7 @@ import type {
   Loginv1ResponseDto,
   OpenApiGetBasicRequestDto,
   GetBasicResponseDto,
+  LogoutResponseDto,
 } from './dto.js'
 
 /* Header required by the account openapi endpoints. */
@@ -41,6 +42,15 @@ export class AuthRemoteDataSource {
   }
   async getBasic(params: OpenApiGetBasicRequestDto) {
     return travelClient.post<GetBasicResponseDto>('/openapi/member/get-basic', params as unknown as Record<string, unknown>,
+      {
+        headers: {
+          'Request-From': REQUEST_FROM,
+        },
+      }
+    )
+  }
+  async logout() {
+    return travelClient.post<LogoutResponseDto>('/openapi/logout', {},
       {
         headers: {
           'Request-From': REQUEST_FROM,

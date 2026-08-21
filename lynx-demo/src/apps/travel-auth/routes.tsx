@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { App } from './App'
 import { Login } from './views/Login'
+import { Logout } from './views/Logout'
 
 export function AppRoutes() {
   return (
@@ -8,6 +9,7 @@ export function AppRoutes() {
       <Route element={<App />}>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
       </Route>
     </Routes>
   )
@@ -24,6 +26,7 @@ export function AuthRoutes() {
   return (
     <>
       <Route path="/login" element={<Login />} />
+      <Route path="/logout" element={<Logout />} />
     </>
   )
 }

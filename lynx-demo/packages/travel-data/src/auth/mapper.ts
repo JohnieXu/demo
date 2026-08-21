@@ -10,6 +10,7 @@ import {
   GetBasicResult,
   Loginv1Request,
   Loginv1Result,
+  LogoutResult,
   type DomainError,
   type LoginRequest,
   type LoginResult,
@@ -19,6 +20,7 @@ import type {
   LoginPayloadDto,
   LoginResponseDto,
   Loginv1ResponseDto,
+  LogoutResponseDto,
   OpenApiEncryptedRequestDto,
   OpenApiGetBasicRequestDto,
   OpenApiLoginv1RequestDto,
@@ -137,6 +139,13 @@ export function toOpenApiGetBasicRequestDto(request: GetBasicRequest): OpenApiGe
  * Entity mappers: DTO -> domain
  */
 export function toGetBasicResult(dto: GetBasicResponseDto): GetBasicResult {
+  return dto
+}
+
+/**
+ * Entity mappers: DTO -> domain
+ */
+export function toLogoutResult(dto: LogoutResponseDto): LogoutResult {
   return dto
 }
 

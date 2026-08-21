@@ -200,3 +200,11 @@ export interface OpenApiGetBasicRequestDto {
  * (same shape as the `memberBasicInfo` field of v1 login).
  */
 export type GetBasicResponseDto = MemberBasicInfoDto
+
+/**
+ * Logout response. Uses the shared envelope
+ * {success, errorCode, message, logId, data} like the other openapi
+ * endpoints; `data` carries no fields of interest for the client.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface LogoutResponseDto {}
