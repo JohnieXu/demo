@@ -3,6 +3,7 @@ import { clsx } from 'clsx'
 import { useNavigate } from 'react-router'
 import { Calendar } from 'lynx-ui'
 import { useFlightStore } from '../../store/flightStore'
+import { useRequireAuth } from '../../../travel-auth/public'
 import { TabBar } from '../../components/TabBar'
 import { RecentSearches } from './components/RecentSearches'
 import './index.scss'
@@ -13,6 +14,7 @@ import type { TabType, QueryCabinClass } from '../../constants'
 
 export function Query() {
   const navigate = useNavigate();
+  const { requireAuth } = useRequireAuth();
   const { searchParams, setSearchParams } = useFlightStore();
   const [activeTab, setActiveTab] = useState<TabType>(searchParams.tab);
   // const [selectedCabin, setSelectedCabin] = useState<QueryCabinClass>(searchParams.cabin);
@@ -59,6 +61,7 @@ export function Query() {
 
   const handleBottomTabChange = (tab: 'booking' | 'order') => {
     if (tab === 'order') {
+      if (!requireAuth()) return;
       navigate('/orderList');
     }
   };
