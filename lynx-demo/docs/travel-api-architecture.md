@@ -214,7 +214,10 @@ export const travelClient = createFetch({
 
 // 1. Request: inject auth token
 travelClient.useRequestInterceptor((config) => {
-  if (authToken) config.headers.Authorization = `Bearer ${authToken}`
+  if (authToken) {
+    config.headers.Authorization = `Bearer ${authToken}`
+    config.headers.Logintoken = authToken
+  }
   return config
 })
 

@@ -21,6 +21,7 @@ export const travelClient = createFetch({
   timeout: 15000,
   headers: {
     Accept: 'application/json',
+    Locale: 'zh-CN',
   },
 })
 
@@ -38,6 +39,7 @@ travelClient.useRequestInterceptor((config: RequestConfig) => {
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${_authToken}`,
+      Logintoken: _authToken,
     }
   }
   return config
