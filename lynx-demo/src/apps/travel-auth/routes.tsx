@@ -1,15 +1,20 @@
 import { Route, Routes } from 'react-router'
 import { App } from './App'
-import { Login } from './views/Login'
+import { QuickLogin } from './views/QuickLogin'
+import { SmsLogin } from './views/SmsLogin'
+import { PasswordLogin } from './views/PasswordLogin'
+import { ForgotPassword } from './views/ForgotPassword'
+import { ResetPassword } from './views/ResetPassword'
+import { CountryCodePicker } from './views/CountryCodePicker'
+import { Agreement } from './views/Agreement'
 import { Logout } from './views/Logout'
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route element={<App />}>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<QuickLogin />} />
+        {AuthRoutes()}
       </Route>
     </Routes>
   )
@@ -25,7 +30,13 @@ export function AppRoutes() {
 export function AuthRoutes() {
   return (
     <>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<QuickLogin />} />
+      <Route path="/login/code" element={<SmsLogin />} />
+      <Route path="/login/password" element={<PasswordLogin />} />
+      <Route path="/login/forgot-password" element={<ForgotPassword />} />
+      <Route path="/login/reset-password" element={<ResetPassword />} />
+      <Route path="/login/country-code" element={<CountryCodePicker />} />
+      <Route path="/agreement/:type" element={<Agreement />} />
       <Route path="/logout" element={<Logout />} />
     </>
   )
