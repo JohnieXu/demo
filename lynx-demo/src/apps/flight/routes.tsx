@@ -1,4 +1,4 @@
-import { lazy, Suspense } from '@lynx-js/react'
+import { Suspense } from '@lynx-js/react'
 import { Route, Routes } from 'react-router'
 
 import { App } from './App'
@@ -7,6 +7,11 @@ import { App } from './App'
 // global CSS imported in the main entry (App.css -> lynx-ui/styles/index.css)
 // is lost inside React.lazy() async chunks. See:
 // https://github.com/lynx-family/lynx-stack/issues/2897
+//
+// Keep these imports synchronous: a `React.lazy(() => import(...))` call
+// produces an async chunk even when the component is never rendered, and
+// the web environment cannot encode async chunks. See
+// ../../../docs/retro/web-target-async-template-encode-crash.md
 import { Query } from './views/Query/index'
 import { Booking } from './views/Booking/index'
 import { OrderList } from './views/OrderList/index'
@@ -18,15 +23,6 @@ import { CabinList } from './views/CabinList/index'
 // travel-auth is mounted in-app (no lazy) so login lives in the same
 // ReactLynx instance and shares the auth store. See AuthRoutes doc.
 import { AuthRoutes } from '../travel-auth/public'
-
-// Lazy versions are kept for future reference once the issue above is fixed.
-const QueryLazy = lazy(() => import('./views/Query/index').then(m => ({ default: m.Query })))
-const BookingLazy = lazy(() => import('./views/Booking/index').then(m => ({ default: m.Booking })))
-const OrderListLazy = lazy(() => import('./views/OrderList/index').then(m => ({ default: m.OrderList })))
-const OrderDetailLazy = lazy(() => import('./views/OrderDetail/index').then(m => ({ default: m.OrderDetail })))
-const TrainListLazy = lazy(() => import('./views/TrainList/index').then(m => ({ default: m.TrainList })))
-const FlightListLazy = lazy(() => import('./views/FlightList/index').then(m => ({ default: m.FlightList })))
-const CabinListLazy = lazy(() => import('./views/CabinList/index').then(m => ({ default: m.CabinList })))
 
 export function AppRoutes() {
   return (
@@ -44,16 +40,6 @@ export function AppRoutes() {
       </Route>
     </Routes>
   )
-}
-
-export {
-  QueryLazy,
-  BookingLazy,
-  OrderListLazy,
-  OrderDetailLazy,
-  TrainListLazy,
-  FlightListLazy,
-  CabinListLazy,
 }
 
 // Kept for compatibility in case other files still expect `LazyLoad`.
