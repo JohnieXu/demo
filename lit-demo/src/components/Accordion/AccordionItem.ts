@@ -90,7 +90,7 @@ export default class AccordionItem extends LitElement {
       return;
     }
     this.open = !this.open;
-    this.dispatchEvent(new CustomEvent('toggle', {
+    this.dispatchEvent(new CustomEvent('x-accordion-item-toggle', {
       cancelable: true,
       bubbles: true,
       detail: {

@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement, property, queryAssignedNodes } from "lit/decorators.js";
+import { customElement, property, queryAssignedElements } from "lit/decorators.js";
 import type AccordionItem from "./AccordionItem";
 
 @customElement('x-accordion')
@@ -8,7 +8,7 @@ export default class Accordion extends LitElement {
   @property({ type: Boolean })
   multiple = false;
 
-  @queryAssignedNodes()
+  @queryAssignedElements()
   private listItems: NodeListOf<AccordionItem> | undefined;
 
   public get items() {
@@ -44,7 +44,7 @@ export default class Accordion extends LitElement {
   protected render() {
     return html`
       <div>
-        <slot @toggle="${this.onToggle}"></slot>
+        <slot @x-accordion-item-toggle="${this.onToggle}"></slot>
       </div>
     `
   }
