@@ -1,0 +1,23 @@
+:root {
+  --apple-color: #000;
+  --apple-background: #fff;
+  --font-family: -apple-system,BlinkMacSystemFont,Apple Color Emoji,SF Pro,SF Pro Icons,Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --apple-color: #fff;
+    --apple-background: #000;
+  }
+}
+
+body {
+  color: var(--apple-color);
+  background-color: var(--apple-background);
+  font-family: var(--font-family);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
