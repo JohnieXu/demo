@@ -2,3 +2,75 @@ algorithm
 lynx-android-demo/.idea/**/*
 lynx-android-demo/gradle/wrapper/gradle-wrapper.jar
 lynx-web-demo/.claude/settings.local.json
+
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Build folders
+/build/
+**/build/
+cmake-build-*/
+bin/
+out/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+install_manifest.txt
+Makefile
+
+# Compiled objects, libraries and executables
+*.obj
+*.o
+*.lo
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.pdb
+*.idb
+*.ilk
+
+# IDEs
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*~
+*.swp
+
+# Node/Python
+node_modules/
+__pycache__/
+*.pyc
+
+# Independent git subprojects (each maintains its own .git)
+/lynx-refresh-bug/
+
+# Claude Code 本地设置（含个人权限，勿入库）
+.claude/settings.local.json
