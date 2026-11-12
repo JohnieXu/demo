@@ -50,6 +50,21 @@
 - design-source: figma
 - ui-mode: none
 
+## 浏览器 / Chrome DevTools MCP 环境（2026-11-12 修复记录）
+- 本机无系统级 Chrome（`/opt/google/chrome/chrome` 不存在且不可写，无免密 sudo）。
+  用户态解包 Chrome：`/home/xu/opt/chrome-extract/opt/google/chrome/chrome`（v157），
+  配套库目录 `/home/xu/opt/chrome-libs/usr/lib/x86_64-linux-gnu`（NSS/ALSA 等）。
+- 启动包装器 `/home/xu/opt/chrome-bin/chrome`：设置 `LD_LIBRARY_PATH` 后 exec 真实二进制。
+- chrome-devtools-mcp 全局配置文件 `/home/xu/.config/cd4a/config.json`（chrome-devtools-mcp 自身的
+  配置发现位置，进程启动时读取）指向包装器，键：executablePath/headless/isolated/viewport；
+  对持久化 MCP 设置之外的进程同样生效。
+- 会话内 MCP 进程若在该配置创建前启动：kill 掉旧进程，SDK 会在下次工具调用时
+  自动按新配置 respawn（本会话即用此方法恢复）。
+- 完整调研与验证记录见 `docs/retro/chrome-mcp-env-verification.md`：
+  chrome-devtools-mcp（无头全链路 ✅ / 有头经 /api/mcp/test ✅）、
+  browser_mcp 控制 Windows Chrome（✅）、SDK 包装层 pageId/timeout schema 冲突及绕过方法。
+
+
 ## 三、业务与文档指路牌
 - 业务规则见 `docs/domains/`
 - 系统架构见 `docs/ARCHITECTURE.md`
